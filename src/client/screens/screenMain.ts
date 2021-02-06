@@ -21,7 +21,6 @@ export function generateMainScreen(): Screen {
     var join_button = document.createElement("button")
     join_button.textContent = "Spiel beitreten"
     join_button.onclick = async () => {
-        console.log("OK")
         State.ws = await createWS()
     }
     if(get_game_id()) div.appendChild(join_button)

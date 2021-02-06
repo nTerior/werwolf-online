@@ -1,23 +1,41 @@
 import { WSPacket } from "../wspacket"
 import { EventEmitter } from "events"
 
+export async function createWS(): Promise<WS> {
+    var wsi = new WebSocket(`ws://${window.location.host}/api/ws`)
+    var ws = new WS(wsi)
+    await ws.waitReady()
+    return ws;
+}
+
 export class WS extends EventEmitter {
     private ws: WebSocket
-
 
     constructor(ws: WebSocket) {
         super()
         this.ws = ws
         this.ws.onmessage = (ev) => this.onmessage(ev.data)
         this.ws.onopen = () => {
-            var name = <HTMLInputElement>document.getElementById("name")
-            this.sendPacket("set-name", {name: name})
+            this.emit("preready")
         }
         this.ws.onclose = (e) => {
             console.log("Disconnected")
         }
+        this.once("preready", async () => {
+            var name = <HTMLInputElement>document.getElementById("name")
+            this.sendPacket("set-name", {name: name})
+            this.emit("ready")
+        })
     }
     
+    async waitReady(): Promise<void> {
+        return new Promise((resolve, reject) => {
+            this.on("ready", () => {
+                resolve()
+            })
+        })
+    }
+
     private onmessage(data: string) {
         var packet: WSPacket = JSON.parse(data)
         this.emit("packet-" + packet.id, packet)

@@ -1,5 +1,7 @@
 import { Screen } from "../screen"
+import { State } from "../state"
 import { get_game_id } from "../util"
+import { createWS } from "../websocket"
 
 export function generateMainScreen(): Screen {
     var div = document.createElement("div")
@@ -18,6 +20,10 @@ export function generateMainScreen(): Screen {
 
     var join_button = document.createElement("button")
     join_button.textContent = "Spiel beitreten"
+    join_button.onclick = async () => {
+        console.log("OK")
+        State.ws = await createWS()
+    }
     if(get_game_id()) div.appendChild(join_button)
 
     var create_button = document.createElement("button")

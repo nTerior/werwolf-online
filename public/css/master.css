@@ -13,6 +13,6 @@ div, body, html {
 body {
     height: 100%;
     width: 100%;
-    overflow: hidden;
+    background-color: rgb(124, 79, 27);
 }
 

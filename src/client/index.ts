@@ -1,11 +1,10 @@
-const get_root = () => document.getElementById("webapp-root")
-
-export function append_element(el:HTMLElement) {
-    get_root()?.appendChild(el)
-}
+import { Screen, pushScreen, popScreen } from "./screen"
+import { generateMainScreen } from "./screens/screenMain"
+import { displayCookieBanner } from "./cookies"
 
 async function init() {
-    // Add your starting point here
+    //pushScreen(generateMainScreen())
+    displayCookieBanner()
 }
 
 window.onload = init

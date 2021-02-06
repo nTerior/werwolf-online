@@ -2,8 +2,7 @@ export interface Screen {
     element: HTMLElement,
     title?: string,
     on_push?: () => any,
-    on_pop?: () => any,
-    main_element?: boolean
+    on_pop?: () => any
 }
 
 export interface ScreenBuild {
@@ -15,9 +14,13 @@ var screen_stack: ScreenBuild[] = []
 
 export const get_root = () => document.getElementById("webapp-root")
 
+export function setScreen(screen: Screen) {
+    popScreen()
+    pushScreen(screen)
+}
+
 export function pushScreen(screen: Screen) {
     var build = buildScreen(screen)
-    if(!screen.main_element) screen_stack.push(build)
     if(screen.on_push) screen.on_push()
     if(screen.title) document.title = screen.title
     get_root()?.appendChild(build.element)
@@ -40,8 +43,6 @@ export function popScreen() {
             document.title = "Werwölfe"
         }
 
-    } else {
-        throw new Error("No screen left to pop")
     }
 }
 

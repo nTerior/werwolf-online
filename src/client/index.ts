@@ -1,8 +1,8 @@
-import { Screen, pushScreen, popScreen } from "./screen"
+import { setScreen } from "./screen"
 import { generateMainScreen } from "./screens/screenMain"
 
 async function init() {
-    pushScreen(generateMainScreen())
+    setScreen(generateMainScreen())
 }
 
 window.onload = init

@@ -1,0 +1,22 @@
+button {
+    padding: 0.5em;
+
+    border: none;
+    border-radius: 8px;
+
+    background-color: cadetblue;
+    color: white;
+
+    cursor: pointer;
+
+    transition: all 0.2s;
+}
+
+button:hover {
+    background-color: rgb(70, 112, 112);
+}
+
+button:disabled {
+    background-color: rgb(47, 75, 75);
+    color: gray;
+}

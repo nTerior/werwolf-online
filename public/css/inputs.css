@@ -1,0 +1,15 @@
+input {
+    border: none;
+    border-bottom: 0.125rem solid #777;
+    outline: none;
+
+    background: transparent;
+
+    text-align: center;
+
+    transition: all 0.2s;
+}
+
+input:focus {
+    border-bottom: 0.125rem solid slateblue;
+}

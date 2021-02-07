@@ -1,4 +1,5 @@
 input {
+    width: 25rem;
     border: none;
     border-bottom: 0.125rem solid #777;
     outline: none;

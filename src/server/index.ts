@@ -6,12 +6,15 @@ import { join } from "path"
 import Webpack from "webpack"
 import WebpackDevMiddleware from "webpack-dev-middleware"
 import { wsServerConnect } from "./websocket"
+import { devModeInit } from "./dev"
 
 const webpackConfig = require('../../webpack.config');
 const compiler = Webpack(webpackConfig)
 const devMiddleware = WebpackDevMiddleware(compiler, {
   publicPath: webpackConfig.output.publicPath
 })
+
+devModeInit()
 
 var app = express()
 var appws = expressWs(app).app
@@ -31,7 +34,7 @@ app.get("/favicon.ico", (req, res) => {
 
 app.use("/js", devMiddleware)
 
-appws.use("/api/ws", wsServerConnect)
+appws.ws("/api/ws", wsServerConnect)
 
 app.use((req, res) => {
   res.status(404)

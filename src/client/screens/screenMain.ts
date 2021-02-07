@@ -1,4 +1,5 @@
-import { Screen } from "../screen"
+import { join } from "path"
+import { popScreen, Screen } from "../screen"
 import { State } from "../state"
 import { get_game_id } from "../util"
 
@@ -39,12 +40,21 @@ export function generateMainScreen(): Screen {
     }
 }
 
+function begin() {
+    var name = <HTMLInputElement>document.getElementById("name")
+    if(!name.value) return
+    State.ws.setName(name.value)
+    popScreen()
+}
+
 function createGame() {
-    State.ws.setName()
-    alert("Created")
+    begin()
+
+    // todo: create a game
+
+    joinGame()
 }
 
 function joinGame() {
-    State.ws.setName()
-    alert("Joined")
+    begin()
 }

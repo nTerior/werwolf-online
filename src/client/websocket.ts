@@ -70,9 +70,8 @@ export class WS extends EventEmitter {
         return res.data
     }
 
-    public setName() {
-        var name = <HTMLInputElement>document.getElementById("name")
-        this.sendPacket("set-name", {name: name.value})
+    public setName(name: string) {
+        this.sendPacket("set-name", {name: name})
     }
 
     async getName(): Promise<string> {

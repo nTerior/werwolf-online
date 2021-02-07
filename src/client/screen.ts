@@ -23,6 +23,7 @@ export function pushScreen(screen: Screen) {
     var build = buildScreen(screen)
     if(screen.on_push) screen.on_push()
     if(screen.title) document.title = screen.title
+    screen_stack.push(build)
     get_root()?.appendChild(build.element)
 }
 

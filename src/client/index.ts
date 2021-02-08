@@ -5,6 +5,7 @@ import { State } from "./state"
 import { createWS } from "./websocket"
 
 async function init() {
+    document.body.classList.add("theme")
     State.ws = await createWS()
     devInit()
     setScreen(generateMainScreen())

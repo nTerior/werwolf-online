@@ -5,6 +5,9 @@ import { State } from "../state"
 import { get_game_id } from "../util"
 import { createWaitRoom } from "./screenWaitRoom"
 
+var game_not_exists = document.createElement("div")
+var empty_name = document.createElement("div")
+
 export function generateMainScreen(): Screen {
     var div = document.createElement("div")
     div.id = "main-screen"
@@ -24,7 +27,8 @@ export function generateMainScreen(): Screen {
     }
     div.appendChild(name)
 
-    div.appendChild(document.createElement("br"))
+    empty_name.classList.add("red-text")
+    div.appendChild(empty_name)
 
     var join_button = document.createElement("button")
     join_button.textContent = "Spiel beitreten"
@@ -36,6 +40,9 @@ export function generateMainScreen(): Screen {
     create_button.onclick = createGameButton
     div.appendChild(create_button)
 
+    game_not_exists.classList.add("red-text")
+    div.appendChild(game_not_exists)
+
     return {
         element: div,
         title: "Werwölfe"
@@ -44,7 +51,12 @@ export function generateMainScreen(): Screen {
 
 function begin() {
     var name = <HTMLInputElement>document.getElementById("name")
-    if(!name.value) return false
+    empty_name.textContent = ""
+    game_not_exists.textContent = ""
+    if(!name.value) {
+        empty_name.textContent = "Du musst deinen Namen angeben"
+        return false
+    }
     State.ws.setName(name.value)
     return true
 }
@@ -68,7 +80,7 @@ async function joinGameButton() {
         State.game = <Game>temp
         await nextScreen()
     } else {
-        alert("Dieses Spiel existiert nicht!")
+        game_not_exists.textContent = "Dieses Spiel gibt es nicht"
     }
 }
 

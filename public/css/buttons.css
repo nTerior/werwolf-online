@@ -4,8 +4,8 @@ button {
     border: none;
     border-radius: 8px;
 
-    background-color: cadetblue;
-    color: white;
+    background-color: var(--button-background);
+    color: var(--button-foreground);
 
     cursor: pointer;
 
@@ -13,10 +13,10 @@ button {
 }
 
 button:hover {
-    background-color: rgb(70, 112, 112);
+    background-color: var(--button-hover-background);
 }
 
 button:disabled {
-    background-color: rgb(47, 75, 75);
-    color: gray;
+    background-color: var(--button-disabled-background);
+    color: var(--button-disabled-foreground);
 }

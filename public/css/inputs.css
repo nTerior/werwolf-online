@@ -1,7 +1,7 @@
 input {
     width: 25rem;
     border: none;
-    border-bottom: 0.125rem solid #777;
+    border-bottom: 0.125rem solid var(--input-border-bottom);
     outline: none;
 
     background: transparent;
@@ -12,19 +12,19 @@ input {
 }
 
 input:focus {
-    border-bottom: 0.125rem solid slateblue;
+    border-bottom: 0.125rem solid var(--input-focus-border-bottom);
 }
 
 
 .link {
     width: 20em;
-    color: white;
-    border: 3px solid cadetblue;
+    color: var(--link-foreground);  
+    border: 3px solid var(--link-border);
     background-color: transparent;
     text-decoration: underline;
     cursor: pointer;
 }
 
-.link:focus {
-    border: 3px solid cadetblue;
+.link:hover {
+    border: 3px solid var(--link-hover-border)
 }

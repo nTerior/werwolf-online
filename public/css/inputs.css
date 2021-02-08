@@ -14,3 +14,17 @@ input {
 input:focus {
     border-bottom: 0.125rem solid slateblue;
 }
+
+
+.link {
+    width: 20em;
+    color: white;
+    border: 3px solid cadetblue;
+    background-color: transparent;
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+.link:focus {
+    border: 3px solid cadetblue;
+}

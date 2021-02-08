@@ -2,6 +2,7 @@ import * as lws from "ws"
 import { v4 } from "uuid"
 import { WSPacket } from "../wspacket"
 import { dev_events } from "./dev"
+import { addPlayer, createGame, deleteGame, Game, getGame, removePlayer } from "./game/game"
 
 
 interface FnRes {
@@ -12,7 +13,7 @@ interface FnRes {
     }
 }
 
-var ws_connections: { id: string, ws: lws, name?: string }[] = []
+var ws_connections: { id: string, ws: lws, name?: string, game?: Game }[] = []
 
 export function wsBroadcast(name: string, data: any) {
     ws_connections.forEach(w => {
@@ -34,6 +35,15 @@ export function wsServerConnect(ws: lws) {
     dev_events.on("packet", devpackethandler)
     ws.onclose = () => {
         dev_events.off("packet", devpackethandler)
+        if(ws_connections[ws_connections.findIndex(e => e.id == id)] != undefined) {
+            var game: Game | undefined = ws_connections[ws_connections.findIndex(e => e.id == id)].game
+            if(game != undefined) {
+                wsPacketHandler["quit-game"]({id: game.id}, ws, id)
+                if(game.players.length == 0) {
+                    deleteGame(game.id)
+                }
+            }
+        }
         ws_connections.splice(ws_connections.findIndex(e => e.id == id), 1)
     }
     const onafteropen = () => {
@@ -70,6 +80,10 @@ export function wsServerConnect(ws: lws) {
     }
 }
 
+function get_ws(id:string) {
+    return ws_connections[ws_connections.findIndex(e => e.id == id)]
+}
+
 const wsPacketHandler: {[key:string]: (data:any, ws: lws, wsid: string) => Promise<FnRes>} = {
     "set-name": async (data, ws, wsid) => {
         for (var i in ws_connections) {
@@ -88,5 +102,34 @@ const wsPacketHandler: {[key:string]: (data:any, ws: lws, wsid: string) => Promi
             }
           }
         return {error: {title: "User not found", data: "User not found"}}
+    },
+    "create-game": async () => {
+        return {ok: createGame().id}
+    },
+    "join-game": async (data, ws, wsid) => {
+        var success = addPlayer(data["id"], get_ws(wsid).name!, get_ws(wsid).ws)
+        if(!success) return {error: {title: "Game is inexistent", data: "No Game like this"}}
+        ws_connections[ws_connections.findIndex(e => e.id == wsid)].game = getGame(data["id"])
+        getGame(data["id"])?.players.forEach((player) => {
+            if(player.ws == ws) return
+            var packet: WSPacket = {name: "joined", data: {name: get_ws(wsid).name!}, id: 0}
+            player.ws.send(JSON.stringify(packet))
+        })
+        return {ok: success}
+    },
+    "quit-game": async (data, ws, wsid) => {
+        var success = removePlayer(data["id"], get_ws(wsid).ws)
+        getGame(data["id"])?.players.forEach((player) => {
+            var packet: WSPacket = {name: "quitted", data: {}, id: 0}
+            player.ws.send(JSON.stringify(packet))
+        })
+        return {ok: success}
+    }
+    ,
+    "get-players": async (data) => {
+        var players = getGame(data["id"])?.players!
+        var names:string[] = []
+        players.forEach(p => names.push(p.name))
+        return {ok: names}
     }
 }

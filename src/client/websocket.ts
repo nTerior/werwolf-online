@@ -42,6 +42,8 @@ export class WS extends EventEmitter {
         var j: WSPacket = JSON.parse(data)
         this.emit("packet-" + j.id, j)
         this.emit("event-" + j.name, j.data)
+        if(j.name == "joined") this.emit("join", j.data["name"])
+        if(j.name == "quitted") this.emit("quit")
     }
 
     private async recvPacket(id: number): Promise<WSPacket> {
@@ -76,5 +78,17 @@ export class WS extends EventEmitter {
 
     async getName(): Promise<string> {
         return await this.packetIO("get-name", {})
+    }
+
+    async createGame(): Promise<string> {
+        return await this.packetIO("create-game", {})
+    }
+
+    async joinGame(id:string) {
+        return await this.packetIO("join-game", {id: id})
+    }
+
+    async getPlayers(game_id:string) {
+        return await this.packetIO("get-players", {id: game_id})
     }
 }

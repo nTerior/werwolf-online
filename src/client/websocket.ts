@@ -91,4 +91,8 @@ export class WS extends EventEmitter {
     async getPlayers(game_id:string) {
         return await this.packetIO("get-players", {id: game_id})
     }
+
+    async isMod(game_id:string) {
+        return await this.packetIO("is-mod", {id: game_id})
+    }
 }

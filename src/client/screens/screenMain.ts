@@ -49,16 +49,16 @@ function begin() {
     return true
 }
 
-function nextScreen() {
+async function nextScreen() {
     popScreen()
-    setScreen(createWaitRoom())
+    setScreen(await createWaitRoom())
 }
 
 async function createGameButton() {
     if(!begin()) return
     State.game = await createGame()
     joinGame(State.game.id)
-    nextScreen()
+    await nextScreen()
 }
 
 async function joinGameButton() {
@@ -66,7 +66,7 @@ async function joinGameButton() {
     var temp = await joinGame(get_game_id()!)
     if(temp != undefined) {
         State.game = <Game>temp
-        nextScreen()
+        await nextScreen()
     } else {
         alert("Dieses Spiel existiert nicht!")
     }

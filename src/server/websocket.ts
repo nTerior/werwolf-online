@@ -103,11 +103,11 @@ const wsPacketHandler: {[key:string]: (data:any, ws: lws, wsid: string) => Promi
           }
         return {error: {title: "User not found", data: "User not found"}}
     },
-    "create-game": async () => {
-        return {ok: createGame().id}
+    "create-game": async (data, ws, wsid) => {
+        return {ok: createGame(wsid).id}
     },
     "join-game": async (data, ws, wsid) => {
-        var success = addPlayer(data["id"], get_ws(wsid).name!, get_ws(wsid).ws)
+        var success = addPlayer(data["id"], get_ws(wsid).name!, get_ws(wsid).ws, wsid)
         if(!success) return {error: {title: "Game is inexistent", data: "No Game like this"}}
         ws_connections[ws_connections.findIndex(e => e.id == wsid)].game = getGame(data["id"])
         getGame(data["id"])?.players.forEach((player) => {
@@ -119,17 +119,29 @@ const wsPacketHandler: {[key:string]: (data:any, ws: lws, wsid: string) => Promi
     },
     "quit-game": async (data, ws, wsid) => {
         var success = removePlayer(data["id"], get_ws(wsid).ws)
-        getGame(data["id"])?.players.forEach((player) => {
-            var packet: WSPacket = {name: "quitted", data: {}, id: 0}
-            player.ws.send(JSON.stringify(packet))
-        })
+        if(!success) return {error: {title: "No such game"}}
+
+        var game = getGame(data["id"])!
+        if(game.players.length != 0) {
+            game.owner = ws_connections[ws_connections.findIndex(e => e.ws == game.players[0].ws)].id
+            game.players.forEach((player) => {
+                var packet: WSPacket = {name: "quitted", data: {}, id: 0}
+                player.ws.send(JSON.stringify(packet))
+            })
+        }
         return {ok: success}
-    }
-    ,
-    "get-players": async (data) => {
+    },
+    "get-players": async (data, ws, wsid) => {
         var players = getGame(data["id"])?.players!
         var names:string[] = []
-        players.forEach(p => names.push(p.name))
+        players.forEach(p => {
+            var name = p.name
+            if (p.ws == ws) name += " (Du)"
+            names.push(name)
+        })
         return {ok: names}
+    },
+    "is-mod": async(data, ws, wsid) => {
+        return {ok: getGame(data["id"])?.owner == wsid}
     }
 }

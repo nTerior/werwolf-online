@@ -9,9 +9,8 @@ interface Player {
 }
 
 export class Game {
-
     public players: Player[] = []
-    constructor(public id: string) {}
+    constructor(public id: string, public owner:string) {}
     public getLink(): string {
         return createGameLink(this.id)
     }
@@ -25,9 +24,9 @@ export function getGame(id: string) {
     return games[index].game
 }
 
-export function createGame(): Game {
+export function createGame(owner:string): Game {
     var id = createId()
-    var game: Game = new Game(id)
+    var game: Game = new Game(id, owner)
     games.push({id, game})
     return game
 }
@@ -36,7 +35,7 @@ export function deleteGame(gameid:string) {
     games.splice(games.findIndex(e => e.id == gameid), 1)
 }
 
-export function addPlayer(gameid: string, name:string, ws:lws): boolean {
+export function addPlayer(gameid: string, name:string, ws:lws, wsid:string): boolean {
     var game = getGame(gameid)
     if(game == undefined) return false
     var player: Player = {
@@ -49,8 +48,9 @@ export function addPlayer(gameid: string, name:string, ws:lws): boolean {
 
 export function removePlayer(gameid:string, ws:lws) {
     var game = getGame(gameid)
-    if(game == undefined) return
+    if(game == undefined) return false
     game.players.splice(game.players.findIndex(e => e.ws == ws), 1)
+    return true
 }
 
 function createGameLink(id: string): string {

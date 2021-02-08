@@ -7,9 +7,7 @@ interface Player {
 interface SelfPlayer {
     name: string,
     role?: Role,
-    in_love?: boolean,
-    
-    moderator?: boolean
+    in_love?: boolean
 }
 
 export class Game {

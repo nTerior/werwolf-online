@@ -1,4 +1,3 @@
-import { Role } from "../../role"
 import { Game } from "../game/game"
 import { popScreen, Screen, setScreen } from "../screen"
 import { State } from "../state"

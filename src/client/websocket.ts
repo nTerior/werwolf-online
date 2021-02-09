@@ -46,6 +46,7 @@ export class WS extends EventEmitter {
         if(j.name == "joined") this.emit("join", j.data["name"])
         if(j.name == "quitted") this.emit("quit")
         if(j.name == "start-game") this.emit("start-game")
+        if(j.name == "role-reveal") this.emit("role-reveal", j.data["role"])
     }
 
     private async recvPacket(id: number): Promise<WSPacket> {

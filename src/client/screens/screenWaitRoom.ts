@@ -22,7 +22,7 @@ export async function createWaitRoom(): Promise<Screen> {
         await updatePlayerList()
     })
     State.ws.on("start-game", async () => {
-        setScreen(createGameScreen())
+        setScreen(await createGameScreen())
     })
 
     var role_settings = document.createElement("div")

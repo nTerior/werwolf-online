@@ -1,9 +1,10 @@
-import { Role } from "../../role"
+import { Role, RoleName } from "../../role"
 import * as lws from "ws"
+import { WSPacket } from "../../wspacket"
 
 interface Player {
     name: string,
-    role?: Role,
+    role?: RoleName,
     inLove?: boolean,
     ws: lws,
     id: string,
@@ -12,13 +13,52 @@ interface Player {
 
 export class Game {
     public players: Player[] = []
-    public roles: {role: Role, amount:number}[] = []
+    public roles: {role: RoleName, amount:number}[] = []
     constructor(public id: string, public owner:string) {}
     public getLink(): string {
         return createGameLink(this.id)
     }
     public start() {
+        this.setRoles()
+        this.transmitRoles()
+        console.log(this.players)
+    }
+
+    private transmitRoles() {
+        this.players.forEach(player => {
+            var packet: WSPacket = {
+                name: "role-reveal",
+                id: 10,
+                data: {
+                    "role": player.role
+                }
+            }
+            console.log(player.role)
+            player.ws.send(JSON.stringify(packet))
+        });
+    }
+
+    private setRoles() {
+        this.players = this.shufflePlayers()
         
+        var i = 0
+        for(var role of this.roles) {
+            for(var next = 0; next < role.amount; next++) {
+                this.players[i].role = role.role
+                i++
+            }
+        }
+    }
+
+    private shufflePlayers() {
+        var j, x, i;
+        for (i = this.players.length - 1; i > 0; i--) {
+            j = Math.floor(Math.random() * (i + 1));
+            x = this.players[i];
+            this.players[i] = this.players[j];
+            this.players[j] = x;
+        }
+        return this.players;
     }
 }
 

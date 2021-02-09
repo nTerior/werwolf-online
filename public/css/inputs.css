@@ -1,5 +1,5 @@
 input {
-    width: 25rem;
+    width: unset;
     border: none;
     border-bottom: 0.125rem solid var(--input-border-bottom);
     outline: none;

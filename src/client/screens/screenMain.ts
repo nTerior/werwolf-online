@@ -17,7 +17,7 @@ export function generateMainScreen(): Screen {
 
     var name = document.createElement("input")
     name.id = "name"
-    name.placeholder = "Dein Name (dieses Feld muss ausgefüllt werden)"
+    name.placeholder = "Dein Name"
     name.onkeydown = (ev) => {
         if(ev.key === "Enter") {
             if(get_game_id()) joinGameButton()

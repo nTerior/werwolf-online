@@ -5,11 +5,9 @@
     right: 0px;
     bottom: 0px;
     left: 0px;
-    position: fixed;
 }
 
 .screen-content {
     position: relative;
-    width: 100%;
     text-align: center;
 }

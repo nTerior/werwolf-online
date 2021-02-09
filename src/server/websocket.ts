@@ -133,11 +133,11 @@ const wsPacketHandler: {[key:string]: (data:any, ws: lws, wsid: string) => Promi
     },
     "get-players": async (data, ws, wsid) => {
         var players = getGame(data["id"])?.players!
-        var names:{name: string, id: string}[] = []
+        var names:{name: string, id: string, major: boolean}[] = []
         players.forEach(p => {
             var name = p.name
             if (p.ws == ws) name += " (Du)"
-            names.push({name: name, id: p.id})
+            names.push({name: name, id: p.id, major: p.major})
         })
         return {ok: names}
     },
@@ -151,6 +151,8 @@ const wsPacketHandler: {[key:string]: (data:any, ws: lws, wsid: string) => Promi
             var packet: WSPacket = {name: "start-game", data: {}, id: 0}
             player.ws.send(JSON.stringify(packet))
         })
+        game.roles = data["amounts"]
+        console.log(game.roles)
         game.start()
 
         return {ok: "ok"}

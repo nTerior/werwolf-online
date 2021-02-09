@@ -85,12 +85,12 @@ async function joinGameButton() {
 }
 
 async function createGame(): Promise<Game> {
-    var game: Game = new Game(await State.ws.createGame(), {name: await State.ws.getName()})
+    var game: Game = new Game(await State.ws.createGame(), {name: await State.ws.getName(), major: false})
     return game
 }
 
 async function joinGame(id:string) {
     if(await State.ws.joinGame(id) == undefined) return undefined
-    var game: Game = new Game(id, {name: await State.ws.getName()})
+    var game: Game = new Game(id, {name: await State.ws.getName(), major: false})
     return game
 }

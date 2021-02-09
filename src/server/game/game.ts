@@ -6,11 +6,13 @@ interface Player {
     role?: Role,
     inLove?: boolean,
     ws: lws,
-    id: string
+    id: string,
+    major: boolean
 }
 
 export class Game {
     public players: Player[] = []
+    public roles: {role: Role, amount:number}[] = []
     constructor(public id: string, public owner:string) {}
     public getLink(): string {
         return createGameLink(this.id)
@@ -45,7 +47,8 @@ export function addPlayer(gameid: string, name:string, ws:lws, id:string): boole
     var player: Player = {
         name: name,
         ws: ws,
-        id: id
+        id: id,
+        major: false
     }
     game.players.push(player)
     return true

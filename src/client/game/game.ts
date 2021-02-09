@@ -4,11 +4,12 @@ import { State } from "../state"
 interface SelfPlayer {
     name: string,
     role?: Role,
-    in_love?: boolean
+    in_love?: boolean,
+    major:boolean
 }
 
 export class Game {
-    public players: {name: string, id: string}[] = []
+    public players: {name: string, id: string, major:boolean}[] = []
     constructor(public id:string, public selfplayer: SelfPlayer) {}
 
     async updatePlayers() {

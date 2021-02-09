@@ -1,9 +1,10 @@
+import { SSL_OP_NETSCAPE_DEMO_CIPHER_CHANGE_BUG } from "constants"
 import e from "express"
+import { Role, RoleName, Villager } from "../../role"
 import { Screen } from "../screen"
 import { State } from "../state"
 
 var player_list = document.createElement("div")
-var playButtonDiv = document.createElement("div")
 
 export async function createWaitRoom(): Promise<Screen> {
 
@@ -25,6 +26,48 @@ export async function createWaitRoom(): Promise<Screen> {
         alert("Das Spiel startet jetzt")
     })
 
+    var role_settings = document.createElement("div")
+    role_settings.classList.add("role-settings")
+    var h = document.createElement("h2")
+    h.textContent = "Rollen"
+    role_settings.appendChild(h)
+    for(var name in RoleName) {
+        var el = document.createElement("div")
+        var rolename = document.createElement("div")
+        rolename.classList.add("role-settings-value")
+        //@ts-expect-error
+        rolename.textContent = RoleName[name]
+        el.appendChild(rolename)
+
+        var rolecount = document.createElement("input")
+        rolecount.classList.add("rolecount", "role-settings-value")
+        rolecount.id = "role-amount-" + name
+        rolecount.value = "0";
+        rolecount.type = "number"
+
+        el.appendChild(rolecount)
+
+        role_settings.appendChild(el)
+    }
+    if(await State.ws.isMod(State.game.id)) div.appendChild(role_settings)
+
+    var playButtonDiv = document.createElement("div")
+    if(await State.ws.isMod(State.game.id)) {
+        var playButton = document.createElement("button")
+        playButton.textContent = "Spiel starten"
+        playButton.onclick = () => {
+            var amounts: {role:RoleName, amount:number}[] = []
+            for(name in RoleName) {
+                amounts.push({
+                    //@ts-expect-error
+                    role: name,
+                    amount: +(<HTMLInputElement>document.getElementById("role-amount-" + name)).value
+                })
+            }
+            State.ws.startGame(State.game.id, amounts)
+        }
+        playButtonDiv.appendChild(playButton)
+    }
     div.appendChild(playButtonDiv)
 
     var gameLink = document.createElement("input")
@@ -43,9 +86,8 @@ export async function createWaitRoom(): Promise<Screen> {
         gameLink.value = "Link kopiert"
         setTimeout(() => {
             gameLink.value = temp
-        }, 1000)
+        }, 2500)
     }
-
     div.appendChild(gameLink)
 
     return {
@@ -74,14 +116,4 @@ async function updatePlayerList() {
 
         player_list.appendChild(el)
     });
-
-    playButtonDiv.innerHTML = ""
-    if(await State.ws.isMod(State.game.id)) {
-        var playButton = document.createElement("button")
-        playButton.textContent = "Spiel starten"
-        playButton.onclick = () => {
-            State.ws.startGame(State.game.id)
-        }
-        playButtonDiv.appendChild(playButton)
-    }
 }

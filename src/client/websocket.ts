@@ -1,5 +1,6 @@
 import { WSPacket } from "../wspacket"
 import { EventEmitter } from "events"
+import { RoleName } from "../role"
 
 export async function createWS(): Promise<WS> {
     console.log("Connecting to Websocket server....")
@@ -97,7 +98,7 @@ export class WS extends EventEmitter {
         return await this.packetIO("is-mod", {id: game_id})
     }
 
-    public startGame(game_id:string) {
-        this.sendPacket("start-game", {id: game_id})
+    public startGame(game_id:string, amounts:{role:RoleName, amount:number}[]) {
+        this.sendPacket("start-game", {id: game_id, amounts: amounts})
     }
 }

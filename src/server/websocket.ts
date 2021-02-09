@@ -123,7 +123,7 @@ const wsPacketHandler: {[key:string]: (data:any, ws: lws, wsid: string) => Promi
 
         var game = getGame(data["id"])!
         if(game.players.length != 0) {
-            game.owner = ws_connections[ws_connections.findIndex(e => e.ws == game.players[0].ws)].id
+            game.owner = game.players[0].id
             game.players.forEach((player) => {
                 var packet: WSPacket = {name: "quitted", data: {}, id: 0}
                 player.ws.send(JSON.stringify(packet))

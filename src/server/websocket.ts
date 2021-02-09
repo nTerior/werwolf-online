@@ -133,11 +133,11 @@ const wsPacketHandler: {[key:string]: (data:any, ws: lws, wsid: string) => Promi
     },
     "get-players": async (data, ws, wsid) => {
         var players = getGame(data["id"])?.players!
-        var names:string[] = []
+        var names:{name: string, id: string}[] = []
         players.forEach(p => {
             var name = p.name
             if (p.ws == ws) name += " (Du)"
-            names.push(name)
+            names.push({name: name, id: p.id})
         })
         return {ok: names}
     },

@@ -53,15 +53,22 @@ export async function createWaitRoom(): Promise<Screen> {
 
 async function updatePlayerList() {
     player_list.innerHTML = ""
-    var players:string[] = await State.ws.getPlayers(State.game.id)
+    await State.game.updatePlayers()
+    console.log(State.game.players.length)
+
     var header = document.createElement("h2")
     header.classList.add("wait-room-player-list-header")
-    header.textContent = "Spieler: (" + players.length + ")"
+    header.textContent = "Spieler: (" + State.game.players.length + ")"
     player_list.appendChild(header)
-    players.forEach(player => {
+    
+    State.game.players.forEach(async player =>  {
         var el = document.createElement("div")
         el.classList.add("wait-room-player-list-player")
-        el.textContent = player
+
+        var name = document.createElement("div")
+        name.textContent = player.name
+        el.appendChild(name)
+
         player_list.appendChild(el)
     });
 

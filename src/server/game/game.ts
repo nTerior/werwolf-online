@@ -5,7 +5,8 @@ interface Player {
     name: string,
     role?: Role,
     inLove?: boolean,
-    ws: lws
+    ws: lws,
+    id: string
 }
 
 export class Game {
@@ -35,12 +36,13 @@ export function deleteGame(gameid:string) {
     games.splice(games.findIndex(e => e.id == gameid), 1)
 }
 
-export function addPlayer(gameid: string, name:string, ws:lws, wsid:string): boolean {
+export function addPlayer(gameid: string, name:string, ws:lws, id:string): boolean {
     var game = getGame(gameid)
     if(game == undefined) return false
     var player: Player = {
         name: name,
-        ws: ws
+        ws: ws,
+        id: id
     }
     game.players.push(player)
     return true

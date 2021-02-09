@@ -1,8 +1,5 @@
 import { Role } from "../../role"
-
-interface Player {
-    name: string
-}
+import { State } from "../state"
 
 interface SelfPlayer {
     name: string,
@@ -11,8 +8,13 @@ interface SelfPlayer {
 }
 
 export class Game {
-    public players: Player[] = []
+    public players: {name: string, id: string}[] = []
     constructor(public id:string, public selfplayer: SelfPlayer) {}
+
+    async updatePlayers() {
+        this.players = await State.ws.getPlayers(this.id)
+    }
+
     public getLink(): string {
         return window.location.host + "?game=" + this.id
     }

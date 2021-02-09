@@ -41,6 +41,7 @@ export async function createWaitRoom(): Promise<Screen> {
         var rolecount = document.createElement("input")
         rolecount.classList.add("rolecount", "role-settings-value")
         rolecount.id = "role-amount-" + name
+        rolecount.min = "0"
         rolecount.value = "0";
         rolecount.type = "number"
 
@@ -52,9 +53,13 @@ export async function createWaitRoom(): Promise<Screen> {
 
     var playButtonDiv = document.createElement("div")
     if(await State.ws.isMod(State.game.id)) {
+        var divError = document.createElement("div")
+        divError.classList.add("red-text")
+
         var playButton = document.createElement("button")
         playButton.textContent = "Spiel starten"
         playButton.onclick = () => {
+            var count:number = 0
             var amounts: {role:RoleName, amount:number}[] = []
             for(name in RoleName) {
                 amounts.push({
@@ -62,10 +67,21 @@ export async function createWaitRoom(): Promise<Screen> {
                     role: name,
                     amount: +(<HTMLInputElement>document.getElementById("role-amount-" + name)).value
                 })
+                count += +(<HTMLInputElement>document.getElementById("role-amount-" + name)).value
             }
+
+            if(count > State.game.players.length) {
+                divError.textContent = "Es gibt wenig Spieler um dieses Spiel zu starten. Es müssen noch " + (count - State.game.players.length) + " Spieler beitreten!"
+                return
+            } else if(count < State.game.players.length) {
+                divError.textContent = "Die Rollenverteilung ist nicht vollständig. Es müssen noch " + (State.game.players.length - count) + " Rollen verteilt werden!"
+                return
+            }
+
             State.ws.startGame(State.game.id, amounts)
         }
         playButtonDiv.appendChild(playButton)
+        playButtonDiv.appendChild(divError)
     }
     div.appendChild(playButtonDiv)
 

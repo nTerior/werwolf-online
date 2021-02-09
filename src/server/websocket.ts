@@ -151,7 +151,7 @@ const wsPacketHandler: {[key:string]: (data:any, ws: lws, wsid: string) => Promi
             var packet: WSPacket = {name: "start-game", data: {}, id: 0}
             player.ws.send(JSON.stringify(packet))
         })
-        game.roles = data["amounts"]
+        game.roles = data["roles"]
         console.log(game.roles)
         game.start()
 

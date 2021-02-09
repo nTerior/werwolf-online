@@ -1,6 +1,6 @@
 import { WSPacket } from "../wspacket"
 import { EventEmitter } from "events"
-import { RoleName } from "../role"
+import { Role, RoleName, roles } from "../role"
 
 export async function createWS(): Promise<WS> {
     console.log("Connecting to Websocket server....")
@@ -100,6 +100,17 @@ export class WS extends EventEmitter {
     }
 
     public startGame(game_id:string, amounts:{role:RoleName, amount:number}[]) {
-        this.sendPacket("start-game", {id: game_id, amounts: amounts})
+
+        var role_amounts: {role: Role, amount: number}[] = []
+        for(var r of amounts) {
+            role_amounts.push({role: getRoleByRoleName(r.role), amount: r.amount})
+        }
+
+        this.sendPacket("start-game", {id: game_id, roles: role_amounts})
     }
+}
+
+function getRoleByRoleName(name: RoleName): Role {
+    //@ts-expect-error
+    return roles[roles.findIndex(e => e.name == RoleName[name])].role
 }

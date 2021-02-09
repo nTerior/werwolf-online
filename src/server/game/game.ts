@@ -4,7 +4,7 @@ import { WSPacket } from "../../wspacket"
 
 interface Player {
     name: string,
-    role?: RoleName,
+    role?: Role,
     inLove?: boolean,
     ws: lws,
     id: string,
@@ -13,7 +13,7 @@ interface Player {
 
 export class Game {
     public players: Player[] = []
-    public roles: {role: RoleName, amount:number}[] = []
+    public roles: {role: Role, amount:number}[] = []
     constructor(public id: string, public owner:string) {}
     public getLink(): string {
         return createGameLink(this.id)

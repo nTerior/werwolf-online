@@ -143,5 +143,16 @@ const wsPacketHandler: {[key:string]: (data:any, ws: lws, wsid: string) => Promi
     },
     "is-mod": async(data, ws, wsid) => {
         return {ok: getGame(data["id"])?.owner == wsid}
+    },
+    "start-game": async(data, ws, wsid) => {
+
+        var game = getGame(data["id"])!
+        game.players.forEach((player) => {
+            var packet: WSPacket = {name: "start-game", data: {}, id: 0}
+            player.ws.send(JSON.stringify(packet))
+        })
+        game.start()
+
+        return {ok: "ok"}
     }
 }

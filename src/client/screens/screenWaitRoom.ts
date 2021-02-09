@@ -21,6 +21,9 @@ export async function createWaitRoom(): Promise<Screen> {
     State.ws.on("quit", async (name) => {
         await updatePlayerList()
     })
+    State.ws.on("start-game", async () => {
+        alert("Das Spiel startet jetzt")
+    })
 
     div.appendChild(playButtonDiv)
 
@@ -77,7 +80,7 @@ async function updatePlayerList() {
         var playButton = document.createElement("button")
         playButton.textContent = "Spiel starten"
         playButton.onclick = () => {
-            alert("Jetzt würde das Spiel starten")
+            State.ws.startGame(State.game.id)
         }
         playButtonDiv.appendChild(playButton)
     }

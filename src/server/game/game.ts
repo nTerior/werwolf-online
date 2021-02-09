@@ -15,6 +15,9 @@ export class Game {
     public getLink(): string {
         return createGameLink(this.id)
     }
+    public start() {
+        
+    }
 }
 
 var games: {id: string, game: Game}[] = []

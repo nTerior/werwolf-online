@@ -44,6 +44,7 @@ export class WS extends EventEmitter {
         this.emit("event-" + j.name, j.data)
         if(j.name == "joined") this.emit("join", j.data["name"])
         if(j.name == "quitted") this.emit("quit")
+        if(j.name == "start-game") this.emit("start-game")
     }
 
     private async recvPacket(id: number): Promise<WSPacket> {
@@ -94,5 +95,9 @@ export class WS extends EventEmitter {
 
     async isMod(game_id:string) {
         return await this.packetIO("is-mod", {id: game_id})
+    }
+
+    public startGame(game_id:string) {
+        this.sendPacket("start-game", {id: game_id})
     }
 }

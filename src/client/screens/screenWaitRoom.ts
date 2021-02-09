@@ -1,6 +1,7 @@
 import { RoleName } from "../../role"
-import { Screen } from "../screen"
+import { Screen, setScreen } from "../screen"
 import { State } from "../state"
+import { createGameScreen } from "./gameScreen"
 
 var player_list = document.createElement("div")
 
@@ -21,7 +22,7 @@ export async function createWaitRoom(): Promise<Screen> {
         await updatePlayerList()
     })
     State.ws.on("start-game", async () => {
-        alert("Das Spiel startet jetzt")
+        setScreen(createGameScreen())
     })
 
     var role_settings = document.createElement("div")

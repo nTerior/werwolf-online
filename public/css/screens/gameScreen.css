@@ -25,6 +25,7 @@
     width: 10000%;
     height: 10000%;
     margin-top: 15em;
+    z-index: 1000;
     background: rgba(0, 0, 0, 0.5);
     transition: all 1s;
 }

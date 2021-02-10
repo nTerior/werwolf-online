@@ -14,6 +14,7 @@ interface Player {
 
 export class Game {
     public players: Player[] = []
+    public night: boolean = true
     public roles: {role: Role, amount:number}[] = []
     constructor(public id: string, public owner:string) {}
     public getLink(): string {
@@ -27,6 +28,31 @@ export class Game {
     public start() {
         this.setRoles()
         this.transmitRoles()
+        this.setNight()
+    }
+
+    public setNight() {
+        this.night = true
+        this.players.forEach(player => {
+            var packet: WSPacket = {
+                name: "game-day",
+                id: 11,
+                data: {}
+            }
+            player.ws.send(JSON.stringify(packet))
+        });
+    }
+
+    public setDay() {
+        this.night = false
+        this.players.forEach(player => {
+            var packet: WSPacket = {
+                name: "game-night",
+                id: 11,
+                data: {}
+            }
+            player.ws.send(JSON.stringify(packet))
+        });
     }
 
     private transmitRoles() {
@@ -94,7 +120,7 @@ export function addPlayer(gameid: string, name:string, ws:lws, id:string): boole
         ws: ws,
         id: id,
         major: false,
-        dead: Math.random() > 0.5 ? true : false
+        dead: false
     }
     game.players.push(player)
     return true

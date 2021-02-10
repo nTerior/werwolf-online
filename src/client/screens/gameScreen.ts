@@ -8,29 +8,55 @@ const wh = 0
 
 var nightDiv = document.createElement("div")
 var users = document.createElement("div")
+var content = document.createElement("div")
 
 export async function createGameScreen(): Promise<Screen> {
-    nightDiv.classList.add("background-darken")
-
     var div = document.createElement("div")
-    State.ws.on("role-reveal", async r => {
+    nightDiv.classList.add("background-darken")
+    div.appendChild(nightDiv)
+    
+    State.ws.on("role-reveal", r => {
         var role: Role = r
         State.game.selfplayer.role = getRoleByRoleName(role.name)
+        create()
     })
 
-    State.ws.on("day",() => {
+    State.ws.on("day", () => {
         nightDiv.style.display = "none";
+        document.title = "Werwölfe | Tag"
     })
-    State.ws.on("night",() => {
+    State.ws.on("night", () => {
         nightDiv.style.display = "unset";
+        document.title = "Werwölfe | Nacht"
+    })
+    State.ws.on("turn", () => {
+        nightDiv.style.display = "none";
+        document.title = "Werwölfe | Du bist dran"
+    })
+    State.ws.on("unturn", () => {
+        nightDiv.style.display = "unset";
+        document.title = "Werwölfe | Nacht"
+    })
+    State.ws.on("player-update", async () => {
+        await updateUserTable()
     })
 
-    await State.game.updatePlayers()
+    div.appendChild(content)
+
+    return {
+        element: div,
+        title: "Werwölfe"
+    }
+}
+
+async function create() {
+    content.innerHTML = ""
+
     users.classList.add("users")
     var ss = document.styleSheets;
     ss[0].insertRule('.users { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); width: ' + String((rx * 2) + wh) + 'px; height: ' + String((ry * 2) + wh) + 'px; }', 1);
     ss[0].insertRule('.user-field { position: absolute; text-align: center; }', 1);
-    div.appendChild(users)
+    content.appendChild(users)
     
     var role = document.createElement("div")
     role.classList.add("role")
@@ -41,18 +67,14 @@ export async function createGameScreen(): Promise<Screen> {
     role_description.textContent = State.role_description[State.game.selfplayer.role?.name!.toLowerCase()!]
     role_description.classList.add("role-description")
     role.appendChild(role_description)
-    div.appendChild(role)
+    content.appendChild(role)
 
-    State.ws.emit("day")
     await updateUserTable()
-    div.appendChild(nightDiv)
-    return {
-        element: div,
-        title: "Werwölfe"
-    }
+    State.ws.emit("night")
 }
 
 async function updateUserTable() {
+    await State.game.updatePlayers()
     users.innerHTML = ""
     var n = State.game.players.length
     
@@ -89,7 +111,7 @@ async function createUser(i:number) {
 }
 
 function userInteraction(player: {name: string, id: string, major:boolean, dead:boolean}) {
-    State.game.selfplayer.role?.on_turn(player)
+    State.game.selfplayer.role?.on_interact(player)
 }
 
 function getRoleByRoleName(name: string): Role {

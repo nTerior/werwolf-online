@@ -1,6 +1,7 @@
 import { WSPacket } from "../wspacket"
 import { EventEmitter } from "events"
 import { Role, RoleName, roles } from "../role"
+import { State } from "./state"
 
 export async function createWS(): Promise<WS> {
     console.log("Connecting to Websocket server....")
@@ -107,6 +108,10 @@ export class WS extends EventEmitter {
         }
 
         this.sendPacket("start-game", {id: game_id, roles: role_amounts})
+    }
+
+    async canInteract(user_id:string) {
+        return await this.packetIO("can-interact", {user_id:user_id, game_id:State.game.id})
     }
 }
 

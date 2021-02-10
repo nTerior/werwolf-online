@@ -19,6 +19,11 @@ export class Game {
     public getLink(): string {
         return createGameLink(this.id)
     }
+
+    public getPlayer(id:string): Player {
+        return this.players[this.players.findIndex(e => e.id == id)]
+    }
+
     public start() {
         this.setRoles()
         this.transmitRoles()
@@ -89,7 +94,7 @@ export function addPlayer(gameid: string, name:string, ws:lws, id:string): boole
         ws: ws,
         id: id,
         major: false,
-        dead: false
+        dead: Math.random() > 0.5 ? true : false
     }
     game.players.push(player)
     return true

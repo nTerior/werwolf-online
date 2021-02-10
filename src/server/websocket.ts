@@ -3,6 +3,7 @@ import { v4 } from "uuid"
 import { WSPacket } from "../wspacket"
 import { dev_events } from "./dev"
 import { addPlayer, createGame, deleteGame, Game, getGame, removePlayer } from "./game/game"
+import { RoleName } from "../role"
 
 
 interface FnRes {
@@ -146,6 +147,8 @@ const wsPacketHandler: {[key:string]: (data:any, ws: lws, wsid: string) => Promi
     },
     "start-game": async(data, ws, wsid) => {
 
+        if(getGame(data["id"])?.owner != wsid) return {error: {title: "Nope"}}
+
         var game = getGame(data["id"])!
         game.players.forEach((player) => {
             var packet: WSPacket = {name: "start-game", data: {}, id: 0}
@@ -156,5 +159,19 @@ const wsPacketHandler: {[key:string]: (data:any, ws: lws, wsid: string) => Promi
         game.start()
 
         return {ok: "ok"}
+    },
+    "can-interact": async(data, ws, wsid) => {
+
+        var game = getGame(data["game_id"])
+        var self = game?.getPlayer(wsid)!
+        var target = game?.getPlayer(data["user_id"])!
+
+        if(self.dead) return {ok: false}
+        if(target.dead) return {ok: false}
+        if(self.id == target.id) return {ok: false}
+        if(self.role?.name == RoleName.VILLAGER) return {ok: false}
+        if(self.role?.name == RoleName.WERWOLF && target.role?.name == RoleName.WERWOLF) return {ok: false}
+
+        return {ok: true}
     }
 }

@@ -7,6 +7,14 @@ var player_list = document.createElement("div")
 var playButtonDiv = document.createElement("div")
 var role_settings = document.createElement("div")
 
+async function playerUpdater() {
+    await updatePlayerList()
+}
+
+async function gameStarter() {
+    setScreen(await createGameScreen())
+}
+
 export async function createWaitRoom(): Promise<Screen> {
 
     updatePlayerList()
@@ -17,15 +25,9 @@ export async function createWaitRoom(): Promise<Screen> {
     player_list.classList.add("wait-room-player-list")
     div.appendChild(player_list)
 
-    State.ws.on("join", async (name) => {
-        await updatePlayerList()
-    })
-    State.ws.on("quit", async (name) => {
-        await updatePlayerList()
-    })
-    State.ws.on("start-game", async () => {
-        setScreen(await createGameScreen())
-    })
+    State.ws.on("join", playerUpdater)
+    State.ws.on("quit", playerUpdater)
+    State.ws.on("start-game", gameStarter)
 
     div.appendChild(role_settings)
     div.appendChild(playButtonDiv)
@@ -52,7 +54,12 @@ export async function createWaitRoom(): Promise<Screen> {
 
     return {
         element: div,
-        title: "Werwölfe | Warteraum"
+        title: "Werwölfe | Warteraum",
+        on_pop: () => {
+            State.ws.removeAllListeners("join")
+            State.ws.removeAllListeners("quit")
+            State.ws.removeAllListeners("start-game")
+        }
     }
 }
 

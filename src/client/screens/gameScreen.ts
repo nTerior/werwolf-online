@@ -2,7 +2,12 @@ import { Role, RoleName, roles } from "../../role"
 import { Screen } from "../screen"
 import { State } from "../state"
 
+const rx = 200
+const ry = rx
+const wh = 0
+
 var nightDiv = document.createElement("div")
+var users = document.createElement("div")
 
 export async function createGameScreen(): Promise<Screen> {
     nightDiv.classList.add("background-darken")
@@ -21,26 +26,10 @@ export async function createGameScreen(): Promise<Screen> {
     })
 
     await State.game.updatePlayers()
-    var users = document.createElement("div")
     users.classList.add("users")
-
-    var n = State.game.players.length
-    var rx = 200
-    var ry = rx
-    var wh = 0
-
     var ss = document.styleSheets;
     ss[0].insertRule('.users { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); width: ' + String((rx * 2) + wh) + 'px; height: ' + String((ry * 2) + wh) + 'px; }', 1);
     ss[0].insertRule('.user-field { position: absolute; text-align: center; }', 1);
-    
-    for (var i = 0; i < n; i++) {
-      
-      var c = createUser(i)
-
-      c.style.top = String(ry + -ry * Math.cos((360 / n / 180) * i * Math.PI)) + 'px';
-      c.style.left = String(rx + rx * Math.sin((360 / n / 180) * i * Math.PI)) + 'px';
-      users.appendChild(c);
-    }
     div.appendChild(users)
     
     var role = document.createElement("div")
@@ -55,6 +44,7 @@ export async function createGameScreen(): Promise<Screen> {
     div.appendChild(role)
 
     State.ws.emit("day")
+    await updateUserTable()
     div.appendChild(nightDiv)
     return {
         element: div,
@@ -62,13 +52,31 @@ export async function createGameScreen(): Promise<Screen> {
     }
 }
 
-function createUser(i:number) {
+async function updateUserTable() {
+    users.innerHTML = ""
+    var n = State.game.players.length
+    
+    for (var i = 0; i < n; i++) {
+      
+      var c = await createUser(i)
+
+      c.style.top = String(ry + -ry * Math.cos((360 / n / 180) * i * Math.PI)) + 'px';
+      c.style.left = String(rx + rx * Math.sin((360 / n / 180) * i * Math.PI)) + 'px';
+      users.appendChild(c);
+    }
+}
+
+async function createUser(i:number) {
     var c = document.createElement('div');
-    c.onclick = () => userInteraction(State.game.players[i])
-    c.classList.add("user-field", "clickable")
+    c.classList.add("user-field")
+    if(await State.ws.canInteract(State.game.players[i].id)) {
+        c.classList.add("clickable")
+        c.onclick = () => userInteraction(State.game.players[i])
+    }
 
     var img = document.createElement("img")
-    img.src = "/static/assets/user.png"
+    if(State.game.players[i].dead) img.src = "/static/assets/user_dead.png"
+    else img.src = "/static/assets/user.png"
     img.style.width = "4em"
     c.appendChild(img)
 

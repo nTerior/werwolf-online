@@ -8,7 +8,8 @@ interface Player {
     inLove?: boolean,
     ws: lws,
     id: string,
-    major: boolean
+    major: boolean,
+    dead: boolean
 }
 
 export class Game {
@@ -87,7 +88,8 @@ export function addPlayer(gameid: string, name:string, ws:lws, id:string): boole
         name: name,
         ws: ws,
         id: id,
-        major: false
+        major: false,
+        dead: false
     }
     game.players.push(player)
     return true

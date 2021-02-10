@@ -2,13 +2,16 @@
     margin: 0 20em;
 }
 
+.clickable {
+    cursor: pointer;
+}
+
 .users {
     margin-top: 19em;
 }
 
 .user-field {
     text-align: left;
-    cursor: pointer;
 }
 
 .user-field div {

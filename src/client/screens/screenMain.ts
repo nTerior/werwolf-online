@@ -61,7 +61,7 @@ function begin() {
 }
 
 async function nextScreen() {
-    popScreen()
+    State.game.selfplayer.name = await State.ws.getName()
     setScreen(await createWaitRoom())
 }
 

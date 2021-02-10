@@ -20,7 +20,7 @@ export enum NightTurns {
 
 export abstract class Role {
     constructor(public name:RoleName) {}
-    public abstract on_turn(): boolean
+    public abstract on_turn(player: {name: string, id: string, major:boolean, dead:boolean}): void;
     public getName(): string {
         //@ts-expect-error
         return RoleName[this.name]
@@ -31,17 +31,15 @@ export class Villager extends Role {
     constructor() {
         super(RoleName.VILLAGER)
     }
-    public on_turn(): boolean {
-        return false
-    }
+    public on_turn(player: {name: string, id: string, major:boolean, dead:boolean}): void {}
 }
 
 export class Witch extends Role {
     constructor() {
         super(RoleName.WITCH)
     }
-    public on_turn(): boolean {
-        return false
+    public on_turn(player: {name: string, id: string, major:boolean, dead:boolean}): void {
+        
     }
 }
 
@@ -49,8 +47,8 @@ export class Hunter extends Role {
     constructor() {
         super(RoleName.HUNTER)
     }
-    public on_turn(): boolean {
-        return false
+    public on_turn(player: {name: string, id: string, major:boolean, dead:boolean}): void {
+        
     }
 }
 
@@ -58,8 +56,8 @@ export class Amor extends Role {
     constructor() {
         super(RoleName.AMOR)
     }
-    public on_turn(): boolean {
-        return false
+    public on_turn(player: {name: string, id: string, major:boolean, dead:boolean}): void {
+        
     }
 }
 
@@ -67,8 +65,8 @@ export class Girl extends Role {
     constructor() {
         super(RoleName.GIRL)
     }
-    public on_turn(): boolean {
-        return false
+    public on_turn(player: {name: string, id: string, major:boolean, dead:boolean}): void {
+        
     }
 }
 
@@ -76,8 +74,8 @@ export class Mattress extends Role {
     constructor() {
         super(RoleName.MATTRESS)
     }
-    public on_turn(): boolean {
-        return false
+    public on_turn(player: {name: string, id: string, major:boolean, dead:boolean}): void {
+        
     }
 }
 
@@ -85,8 +83,8 @@ export class Seer extends Role {
     constructor() {
         super(RoleName.SEER)
     }
-    public on_turn(): boolean {
-        return false
+    public on_turn(player: {name: string, id: string, major:boolean, dead:boolean}): void {
+        
     }
 }
 
@@ -94,8 +92,8 @@ export class Werwolf extends Role {
     constructor() {
         super(RoleName.WERWOLF)
     }
-    public on_turn(): boolean {
-        return false
+    public on_turn(player: {name: string, id: string, major:boolean, dead:boolean}): void {
+        
     }
 }
 
@@ -131,6 +129,5 @@ export const roles: {name: RoleName, role: Role}[] = [
     {
         name: RoleName.WERWOLF,
         role: new Werwolf()
-    },
-    
+    }   
 ]

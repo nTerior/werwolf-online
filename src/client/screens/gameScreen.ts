@@ -1,5 +1,4 @@
-import { SSL_OP_NO_TLSv1_1 } from "constants"
-import { Role, RoleName } from "../../role"
+import { Role, RoleName, roles } from "../../role"
 import { Screen } from "../screen"
 import { State } from "../state"
 
@@ -9,10 +8,9 @@ export async function createGameScreen(): Promise<Screen> {
     nightDiv.classList.add("background-darken")
 
     var div = document.createElement("div")
-    State.ws.on("role-reveal", r => {
+    State.ws.on("role-reveal", async r => {
         var role: Role = r
-        State.game.selfplayer.role = role
-        //alert(role.name)
+        State.game.selfplayer.role = getRoleByRoleName(role.name)
     })
 
     State.ws.on("day",() => {
@@ -66,8 +64,8 @@ export async function createGameScreen(): Promise<Screen> {
 
 function createUser(i:number) {
     var c = document.createElement('div');
-    c.onclick = (ev) => userInteraction()
-    c.className = "user-field";
+    c.onclick = () => userInteraction(State.game.players[i])
+    c.classList.add("user-field", "clickable")
 
     var img = document.createElement("img")
     img.src = "/static/assets/user.png"
@@ -82,7 +80,10 @@ function createUser(i:number) {
     return c
 }
 
-function userInteraction() {
-    
+function userInteraction(player: {name: string, id: string, major:boolean, dead:boolean}) {
+    State.game.selfplayer.role?.on_turn(player)
+}
 
+function getRoleByRoleName(name: string): Role {
+    return roles[roles.findIndex(e => e.name == name)].role
 }

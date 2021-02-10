@@ -1,0 +1,27 @@
+.role-description {
+    margin: 0 20em;
+}
+
+.users {
+    margin-top: 19em;
+}
+
+.user-field {
+    text-align: left;
+    cursor: pointer;
+}
+
+.user-field div {
+    text-align: center;
+}
+
+.background-darken {
+    position: fixed;
+    top: -100%;
+    left: 0;
+    width: 10000%;
+    height: 10000%;
+    margin-top: 15em;
+    background: rgba(0, 0, 0, 0.5);
+    transition: all 1s;
+}

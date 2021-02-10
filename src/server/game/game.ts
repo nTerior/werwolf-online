@@ -21,7 +21,6 @@ export class Game {
     public start() {
         this.setRoles()
         this.transmitRoles()
-        console.log(this.players)
     }
 
     private transmitRoles() {

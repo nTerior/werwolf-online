@@ -1,7 +1,7 @@
 import { devInit } from "./dev"
 import { setScreen } from "./screen"
 import { generateMainScreen } from "./screens/screenMain"
-import { State } from "./state"
+import { loadRoleDescriptions, State } from "./state"
 import { createWS } from "./websocket"
 
 async function init() {
@@ -9,6 +9,7 @@ async function init() {
     document.addEventListener( "contextmenu", function(e) {
         e.preventDefault()
     });
+    await loadRoleDescriptions()
     State.ws = await createWS()
     devInit()
     setScreen(generateMainScreen())

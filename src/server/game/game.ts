@@ -44,7 +44,7 @@ export class Game {
         if(!found) this.nextRole()
     }
 
-    public nextMove() {
+    private nextMove() {
         if(this.currentRole.name == RoleName.WERWOLF) {
             this.roleTurn(this.currentRole)
             this.roleTurn(roles.find(e => e.name == RoleName.GIRL)!.role)
@@ -92,9 +92,10 @@ export class Game {
         this.setRoles()
         this.transmitRoles()
         this.setNight()
+        setTimeout(() => this.moveDone(), 1000)
     }
 
-    public setNight() {
+    private setNight() {
         this.night = true
         var packet: WSPacket = {
             name: "game-night",
@@ -106,7 +107,7 @@ export class Game {
         });
     }
 
-    public setDay() {
+    private setDay() {
         this.night = false
         var packet: WSPacket = {
             name: "game-day",

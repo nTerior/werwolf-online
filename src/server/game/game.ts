@@ -51,6 +51,7 @@ export class Game {
             this.sendPlayerUpdate()
             this.currentRoleIndex = 0
             this.nextMoveDay = false
+            return
         }
         if(this.currentRole.name == RoleName.WERWOLF) {
             this.roleTurn(this.currentRole)
@@ -64,9 +65,9 @@ export class Game {
         }
     }
 
-    public getLastRole(): RoleName {
+    public getLastRole(skip_h:boolean = false): RoleName {
         if(this.roles.find(r => r.role.name == RoleName.VILLAGER)!.amount != 0) return RoleName.VILLAGER
-        if(this.roles.find(r => r.role.name == RoleName.HUNTER)!.amount != 0) return RoleName.HUNTER
+        if(!skip_h) if(this.roles.find(r => r.role.name == RoleName.HUNTER)!.amount != 0) return this.getLastRole(true)
         if(this.roles.find(r => r.role.name == RoleName.WITCH)!.amount != 0) return RoleName.WITCH
         if(this.roles.find(r => r.role.name == RoleName.SEER)!.amount != 0) return RoleName.SEER
         if(this.roles.find(r => r.role.name == RoleName.GIRL)!.amount != 0) return RoleName.GIRL
@@ -225,7 +226,6 @@ export function removePlayer(gameid:string, ws:lws) {
 
     if(p.role != undefined) {
         game.roles.find(e => e.role.name == p.role?.name)!.amount--;
-        console.log(game.roles.find(e => e.role.name == p.role?.name)!.amount)
         game.lastRole = game.getLastRole()
     }
     return true

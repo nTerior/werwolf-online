@@ -19,6 +19,7 @@ export class Game {
 
     public currentRoleIndex = -1
     public currentRole:Role = roles[0].role
+    public lastRole: RoleName = roles.find(e => e.name == RoleName.VILLAGER)!.role.name
 
     constructor(public id: string, public owner:string) {}
 
@@ -43,19 +44,35 @@ export class Game {
         }
         if(!found) this.nextRole()
     }
-
+    private nextMoveDay: boolean = false
     private nextMove() {
+        if(this.nextMoveDay) {
+            this.setDay()
+            this.sendPlayerUpdate()
+            this.currentRoleIndex = 0
+            this.nextMoveDay = false
+        }
         if(this.currentRole.name == RoleName.WERWOLF) {
             this.roleTurn(this.currentRole)
             this.roleTurn(roles.find(e => e.name == RoleName.GIRL)!.role)
             this.currentRoleIndex++
-        } else if (this.currentRole.name == RoleName.VILLAGER) {
-            this.setDay()
-            this.sendPlayerUpdate()
-            this.currentRoleIndex = 0
+        } else if (this.currentRole.name == this.lastRole) {
+            this.roleTurn(this.currentRole)
+            this.nextMoveDay = true
         } else {
             this.roleTurn(this.currentRole)
         }
+    }
+
+    private getLastRole(): RoleName{
+        if(this.roles.find(r => r.role.name == RoleName.VILLAGER)!.amount != 0) return RoleName.VILLAGER
+        if(this.roles.find(r => r.role.name == RoleName.HUNTER)!.amount != 0) return RoleName.HUNTER
+        if(this.roles.find(r => r.role.name == RoleName.WITCH)!.amount != 0) return RoleName.WITCH
+        if(this.roles.find(r => r.role.name == RoleName.SEER)!.amount != 0) return RoleName.SEER
+        if(this.roles.find(r => r.role.name == RoleName.GIRL)!.amount != 0) return RoleName.GIRL
+        if(this.roles.find(r => r.role.name == RoleName.WERWOLF)!.amount != 0) return RoleName.WERWOLF
+        if(this.roles.find(r => r.role.name == RoleName.MATTRESS)!.amount != 0) return RoleName.MATTRESS
+        return RoleName.AMOR
     }
 
     public moveDone() {
@@ -92,6 +109,7 @@ export class Game {
         this.setRoles()
         this.transmitRoles()
         this.setNight()
+        this.lastRole = this.getLastRole()
         setTimeout(() => this.moveDone(), 1000)
     }
 

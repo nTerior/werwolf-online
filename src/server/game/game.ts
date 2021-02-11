@@ -64,7 +64,7 @@ export class Game {
         }
     }
 
-    private getLastRole(): RoleName{
+    public getLastRole(): RoleName {
         if(this.roles.find(r => r.role.name == RoleName.VILLAGER)!.amount != 0) return RoleName.VILLAGER
         if(this.roles.find(r => r.role.name == RoleName.HUNTER)!.amount != 0) return RoleName.HUNTER
         if(this.roles.find(r => r.role.name == RoleName.WITCH)!.amount != 0) return RoleName.WITCH
@@ -219,7 +219,15 @@ export function addPlayer(gameid: string, name:string, ws:lws, id:string): boole
 export function removePlayer(gameid:string, ws:lws) {
     var game = getGame(gameid)
     if(game == undefined) return false
-    game.players.splice(game.players.findIndex(e => e.ws == ws), 1)
+    var pi: number = game.players.findIndex(e => e.ws == ws)
+    var p: Player = game.players[pi]
+    game.players.splice(pi, 1)
+
+    if(p.role != undefined) {
+        game.roles.find(e => e.role.name == p.role?.name)!.amount--;
+        console.log(game.roles.find(e => e.role.name == p.role?.name)!.amount)
+        game.lastRole = game.getLastRole()
+    }
     return true
 }
 

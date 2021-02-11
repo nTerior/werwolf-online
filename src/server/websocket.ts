@@ -173,5 +173,10 @@ const wsPacketHandler: {[key:string]: (data:any, ws: lws, wsid: string) => Promi
         if(self.role?.name == RoleName.WERWOLF && target.role?.name == RoleName.WERWOLF) return {ok: false}
 
         return {ok: true}
+    },
+    "next-move": async(data, ws, wsid) => {
+        var game = getGame(data["id"])
+        game?.moveDone()
+        return {ok: true}
     }
 }

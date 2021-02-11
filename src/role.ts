@@ -10,14 +10,6 @@ export enum RoleName {
     WERWOLF = "Werwolf"
 }
 
-export enum NightTurns {
-    AMOR = -1,
-    LOVED,
-    WERWOLF,
-    WITCH,
-    SEER
-}
-
 export abstract class Role {
     constructor(public name:RoleName) {}
     public abstract on_interact(player: {name: string, id: string, major:boolean, dead:boolean}): void;
@@ -99,22 +91,6 @@ export class Werwolf extends Role {
 
 export const roles: {name: RoleName, role: Role}[] = [
     {
-        name: RoleName.VILLAGER,
-        role: new Villager()
-    },
-    {
-        name: RoleName.WITCH,
-        role: new Witch()
-    },
-    {
-        name: RoleName.HUNTER,
-        role: new Hunter()
-    },
-    {
-        name: RoleName.GIRL,
-        role: new Girl()
-    },
-    {
         name: RoleName.AMOR,
         role: new Amor()
     },
@@ -123,11 +99,27 @@ export const roles: {name: RoleName, role: Role}[] = [
         role: new Mattress()
     },
     {
+        name: RoleName.WERWOLF,
+        role: new Werwolf()
+    },
+    {
+        name: RoleName.GIRL,
+        role: new Girl()
+    },
+    {
         name: RoleName.SEER,
         role: new Seer()
     },
     {
-        name: RoleName.WERWOLF,
-        role: new Werwolf()
-    }   
+        name: RoleName.WITCH,
+        role: new Witch()
+    },
+    {
+        name: RoleName.VILLAGER,
+        role: new Villager()
+    },
+    {
+        name: RoleName.HUNTER,
+        role: new Hunter()
+    }
 ]

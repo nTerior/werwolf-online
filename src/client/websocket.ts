@@ -52,6 +52,8 @@ export class WS extends EventEmitter {
 
         if(j.name == "game-night") this.emit("night")
         if(j.name == "game-day") this.emit("day")
+        if(j.name == "turn") this.emit("turn")
+        if(j.name == "unturn") this.emit("unturn")
     }
 
     private async recvPacket(id: number): Promise<WSPacket> {
@@ -116,6 +118,10 @@ export class WS extends EventEmitter {
 
     async canInteract(user_id:string) {
         return await this.packetIO("can-interact", {user_id:user_id, game_id:State.game.id})
+    }
+
+    public nextMove() {
+        this.sendPacket("next-move", {id: State.game.id})
     }
 }
 

@@ -1,4 +1,4 @@
-import { Role, RoleName } from "../../role"
+import { Role, RoleName, roles } from "../../role"
 import * as lws from "ws"
 import { WSPacket } from "../../wspacket"
 
@@ -16,13 +16,76 @@ export class Game {
     public players: Player[] = []
     public night: boolean = true
     public roles: {role: Role, amount:number}[] = []
+
+    public currentRoleIndex = -1
+    public currentRole:Role = roles[0].role
+
     constructor(public id: string, public owner:string) {}
-    public getLink(): string {
-        return createGameLink(this.id)
+
+    private sendPlayerUpdate() {
+        var packet: WSPacket = {
+            name: "player-update",
+            data: {},
+            id: 189
+        }
+        this.players.forEach(player => {
+            player.ws.send(JSON.stringify(packet))
+        })
     }
 
-    public getPlayer(id:string): Player {
-        return this.players[this.players.findIndex(e => e.id == id)]
+    private nextRole() {
+        if (this.currentRoleIndex == roles.length - 1) this.currentRoleIndex = 0
+        else this.currentRoleIndex++
+        this.currentRole = roles[this.currentRoleIndex].role
+        var found = false
+        for(var r of this.roles) {
+            if(r.role.name == this.currentRole.name && r.amount != 0) found = true
+        }
+        if(!found) this.nextRole()
+    }
+
+    public nextMove() {
+        if(this.currentRole.name == RoleName.WERWOLF) {
+            this.roleTurn(this.currentRole)
+            this.roleTurn(roles.find(e => e.name == RoleName.GIRL)!.role)
+            this.currentRoleIndex++
+        } else if (this.currentRole.name == RoleName.VILLAGER) {
+            this.setDay()
+            this.sendPlayerUpdate()
+            this.currentRoleIndex = 0
+        } else {
+            this.roleTurn(this.currentRole)
+        }
+    }
+
+    public moveDone() {
+        this.roleUnturn()
+        this.nextRole()
+        this.nextMove()
+    }
+
+    private roleTurn(role: Role) {
+        var packet: WSPacket = {
+            name: "turn",
+            id: 126,
+            data: {}
+        }
+        this.players.forEach(player => {
+            if(player.role!.name != role.name) return
+            player.ws.send(JSON.stringify(packet))
+        })
+    }
+
+    private roleUnturn() {
+        var packet: WSPacket = {
+            name: "unturn",
+            id: 126,
+            data: {}
+        }
+        if(this.currentRole.name == RoleName.VILLAGER) packet.name = "game-night"
+        this.players.forEach(player => {
+            player.ws.send(JSON.stringify(packet))
+        })
     }
 
     public start() {
@@ -33,24 +96,24 @@ export class Game {
 
     public setNight() {
         this.night = true
+        var packet: WSPacket = {
+            name: "game-night",
+            id: 11,
+            data: {}
+        }
         this.players.forEach(player => {
-            var packet: WSPacket = {
-                name: "game-day",
-                id: 11,
-                data: {}
-            }
             player.ws.send(JSON.stringify(packet))
         });
     }
 
     public setDay() {
         this.night = false
+        var packet: WSPacket = {
+            name: "game-day",
+            id: 11,
+            data: {}
+        }
         this.players.forEach(player => {
-            var packet: WSPacket = {
-                name: "game-night",
-                id: 11,
-                data: {}
-            }
             player.ws.send(JSON.stringify(packet))
         });
     }
@@ -90,6 +153,14 @@ export class Game {
             this.players[j] = x;
         }
         return this.players;
+    }
+
+    public getLink(): string {
+        return createGameLink(this.id)
+    }
+
+    public getPlayer(id:string): Player {
+        return this.players[this.players.findIndex(e => e.id == id)]
     }
 }
 

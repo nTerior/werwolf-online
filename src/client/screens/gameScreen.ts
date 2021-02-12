@@ -22,6 +22,7 @@ export async function createGameScreen(): Promise<Screen> {
         State.game.selfplayer.secrets = {}
         State.game.selfplayer.secrets["heal_potions"] = 1
         State.game.selfplayer.secrets["kill_potions"] = 1
+        State.game.selfplayer.secrets["love"] = 2
         create()
     })
 

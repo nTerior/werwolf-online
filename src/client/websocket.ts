@@ -141,6 +141,10 @@ export class WS extends EventEmitter {
     public witch_kill(user_id: string) {
         this.sendPacket("witch-kill-other", {user_id: user_id, game_id: State.game.id})
     }
+
+    public amor_love(user_id: string) {
+        this.sendPacket("amor-love", {user_id: user_id, game_id: State.game.id})
+    }
 }
 
 function getRoleByName(name: string): Role {

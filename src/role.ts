@@ -55,7 +55,6 @@ export class Witch extends Role {
         if(State.game.selfplayer.secrets == undefined) State.game.selfplayer.secrets = {}
         State.game.selfplayer.secrets["current_prey"] = prey_id
         if(prey_id != -1) {
-            console.log(prey_id)
             var name = <HTMLDivElement>document.getElementById("player-name-" + prey_id)
             if(name) name.textContent += " » Opfer"
         }
@@ -79,7 +78,20 @@ export class Amor extends Role {
         super(RoleName.AMOR)
     }
     async on_interact(player: {name: string, id: string, major:boolean, dead:boolean}) {
-        
+        var love = State.game.selfplayer.secrets["love"]
+        if(love == 2) {
+            var name = <HTMLDivElement>document.getElementById("player-name-" + player.id)
+            if(name) name.textContent += " » Verliebt"
+            State.game.selfplayer.secrets["love"]--
+            State.ws.amor_love(player.id)
+        }
+        if(love == 1) {
+            var name = <HTMLDivElement>document.getElementById("player-name-" + player.id)
+            if(name) name.textContent += " » Verliebt"
+            State.game.selfplayer.secrets["love"]--
+            State.ws.amor_love(player.id)
+            State.ws.nextMove()
+        }
     }
     public on_turn(): void {
         

@@ -196,5 +196,9 @@ const wsPacketHandler: {[key:string]: (data:any, ws: lws, wsid: string) => Promi
     "witch-kill-other": async(data, ws, wsid) => {
         getGame(data["game_id"])!.kill(data["user_id"])
         return {ok: true}
+    },
+    "amor-love": async(data, ws, wsid) => {
+        getGame(data["game_id"])!.getPlayer(data["user_id"]).inLove = true
+        return {ok: true}
     }
 }

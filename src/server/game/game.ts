@@ -46,6 +46,20 @@ export class Game {
         }
         if(!found) this.nextRole()
     }
+
+    private killLoved() {
+        this.players.forEach(player => {
+            if(!player.inLove) return
+            this.players.forEach(p2 => {
+                if(!p2.inLove) return
+                if(player.id != p2.id) {
+                    player.dead = true
+                    p2.dead = true
+                }
+            })
+        })
+    }
+
     private nextMoveDay: boolean = false
     private nextMove() {
         if(this.nextMoveDay) {
@@ -57,6 +71,7 @@ export class Game {
             for(var i = 0; i < this.preys.length; i++) {
                 var player: Player = this.preys.pop()!
                 player.dead = true
+                if(player.inLove) this.killLoved()
                 this.roles.find(e => e.role.name == player.role!.name)!.amount--
             }
             

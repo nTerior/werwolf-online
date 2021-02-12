@@ -226,5 +226,22 @@ const wsPacketHandler: {[key:string]: (data:any, ws: lws, wsid: string) => Promi
         game.getPlayer(wsid).is_sleeping = true
         game.getPlayer(data["user_id"]).undersleeper_id = wsid
         return {ok: true}
+    },
+
+    "chat-message": async(data, ws, wsid) => {
+        var game = getGame(data["game_id"])!
+        var packet: WSPacket = {
+            name: "chat-message",
+            id: 2378192,
+            data: {
+                sender: data["sender"],
+                message: data["message"]
+            }
+        }
+        game.players.forEach(player => {
+            if(player.role!.name != RoleName.WERWOLF && player.role!.name != RoleName.GIRL) return
+            player.ws.send(JSON.stringify(packet))
+        })
+        return {ok: true}
     }
 }

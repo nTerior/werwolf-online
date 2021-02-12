@@ -1,4 +1,5 @@
-import { Role, roles } from "../../role"
+import { Role, RoleName, roles } from "../../role"
+import { createChatWindow } from "../chat"
 import { Screen } from "../screen"
 import { State } from "../state"
 
@@ -84,6 +85,8 @@ export async function createGameScreen(): Promise<Screen> {
     })
 
     div.appendChild(content)
+
+    if(State.game.selfplayer.role!.name == RoleName.WERWOLF || State.game.selfplayer.role!.name == RoleName.GIRL) div.appendChild(createChatWindow())
 
     return {
         element: div,

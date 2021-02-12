@@ -59,6 +59,8 @@ export class WS extends EventEmitter {
         if(j.name == "gameover" && j.data) this.emit("game-won")
         if(j.name == "you-died") this.emit("you-died")
         if(j.name == "love-reveal") this.emit("love-reveal", j.data)
+
+        if(j.name == "chat-message") this.emit("chat-message", j.data)
     }
 
     private async recvPacket(id: number): Promise<WSPacket> {
@@ -85,6 +87,10 @@ export class WS extends EventEmitter {
             return undefined
         }
         return res.data
+    }
+
+    async sendChatMessage(message: string) {
+        this.sendPacket("chat-message", {game_id:State.game.id, sender: await this.getName(), message:message})
     }
 
     public setName(name: string) {

@@ -178,5 +178,11 @@ const wsPacketHandler: {[key:string]: (data:any, ws: lws, wsid: string) => Promi
         var game = getGame(data["id"])
         game?.moveDone()
         return {ok: true}
+    },
+
+    "execute-seer": async(data, ws, wsid) => {
+        var game = getGame(data["game_id"])!
+        var player = game.getPlayer(data["user_id"])!
+        return {ok: player.role!.name}
     }
 }

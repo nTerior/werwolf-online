@@ -40,6 +40,24 @@ export async function createGameScreen(): Promise<Screen> {
     State.ws.on("player-update", async () => {
         await updateUserTable()
     })
+    State.ws.on("game-lost", async () => {
+        document.title = "Werwölfe | Verloren"
+        var text = document.createElement("div")
+        text.classList.add("game-end", "game-lost")
+        var t_text = document.createElement("div")
+        t_text.textContent = "Du hast verloren"
+        text.appendChild(t_text)
+        div.append(text)
+    })
+    State.ws.on("game-won", async () => {
+        document.title = "Werwölfe | Gewonnen"
+        var text = document.createElement("div")
+        text.classList.add("game-end", "game-won")
+        var t_text = document.createElement("div")
+        t_text.textContent = "Du hast gewonnen 🏆"
+        text.appendChild(t_text)
+        div.append(text)
+    })
 
     div.appendChild(content)
 
@@ -91,9 +109,12 @@ async function updateUserTable() {
 async function createUser(i:number) {
     var c = document.createElement('div');
     c.classList.add("user-field")
-    if(await State.ws.canInteract(State.game.players[i].id)) {
+    if(await State.ws.canInteract(State.game.players[i].id) && !State.game.players[i].dead) {
         c.classList.add("clickable")
-        c.onclick = () => userInteraction(State.game.players[i])
+        c.onclick = () => {
+            if(document.title == "Werwölfe | Du bist dran") userInteraction(State.game.players[i])
+            else return // Todo day interaction
+        }
     }
 
     var img = document.createElement("img")
@@ -105,6 +126,9 @@ async function createUser(i:number) {
     var name = document.createElement("div")
     name.textContent = State.game.players[i].name
     if(State.game.players[i].major) name.textContent += " (Bürgermeister)"
+    if(State.game.selfplayer.secrets) {
+        if(State.game.selfplayer.secrets["seer-" + State.game.players[i].id]) name.textContent += " » " + State.game.selfplayer.secrets["seer-" + State.game.players[i].id]
+    }
     c.appendChild(name)
 
     return c

@@ -54,6 +54,9 @@ export class WS extends EventEmitter {
         if(j.name == "game-day") this.emit("day")
         if(j.name == "turn") this.emit("turn")
         if(j.name == "unturn") this.emit("unturn")
+
+        if(j.name == "gameover" && !j.data) this.emit("game-lost")
+        if(j.name == "gameover" && j.data) this.emit("game-won")
     }
 
     private async recvPacket(id: number): Promise<WSPacket> {
@@ -123,6 +126,14 @@ export class WS extends EventEmitter {
     public nextMove() {
         this.sendPacket("next-move", {id: State.game.id})
     }
+
+    async seer(user_id: string): Promise<RoleName> {
+        return await this.packetIO("execute-seer", {user_id: user_id, game_id: State.game.id})
+    }
+}
+
+function getRoleByName(name: string): Role {
+    return roles[roles.findIndex(e => e.name == name)].role
 }
 
 function getRoleByRoleName(name: RoleName): Role {

@@ -5,7 +5,8 @@ interface SelfPlayer {
     name: string,
     role?: Role,
     in_love?: boolean,
-    major:boolean
+    major:boolean,
+    secrets?: any
 }
 
 export class Game {

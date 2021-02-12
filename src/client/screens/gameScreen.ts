@@ -23,6 +23,7 @@ export async function createGameScreen(): Promise<Screen> {
         State.game.selfplayer.secrets["kill_potions"] = 1
         State.game.selfplayer.secrets["love"] = 2
         State.game.selfplayer.secrets["loved"] = ""
+        State.game.selfplayer.secrets["loved-role"] = ""
         create()
     })
 
@@ -74,10 +75,11 @@ export async function createGameScreen(): Promise<Screen> {
         text.appendChild(t_text)
         div.append(text)
     })
-    State.ws.on("love-reveal", async (id) => {
-        State.game.selfplayer.secrets["loved"] = id
-        var elem = <HTMLDivElement>document.getElementById("player-name-" + id)
-        elem.textContent += " » Verliebt"
+    State.ws.on("love-reveal", async (data) => {
+        State.game.selfplayer.secrets["loved"] = data["id"]
+        State.game.selfplayer.secrets["loved-role"] = data["role"]
+        var elem = <HTMLDivElement>document.getElementById("player-name-" + data["id"])
+        elem.textContent += " » Verliebt (" + data["role"] + ")"
     })
 
     div.appendChild(content)
@@ -159,7 +161,9 @@ async function createUser(i:number) {
     name.id = "player-name-" + State.game.players[i].id
     name.textContent = State.game.players[i].name
     if(State.game.players[i].major) name.textContent += " (Bürgermeister)"
-    if(State.game.players[i].id == State.game.selfplayer.secrets["loved"]) name.textContent += " » Verliebt"
+    if(State.game.players[i].id == State.game.selfplayer.secrets["loved"]) {
+        name.textContent += " » Verliebt (" + State.game.selfplayer.secrets["loved-role"] + ")"
+    } 
     if(State.game.selfplayer.secrets) {
         if(State.game.selfplayer.secrets["seer-" + State.game.players[i].id]) name.textContent += " » " + State.game.selfplayer.secrets["seer-" + State.game.players[i].id]
     }

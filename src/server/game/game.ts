@@ -241,6 +241,8 @@ export class Game {
             data: {}
         }
         this.players.forEach(player => {
+            player.is_sleeping = undefined
+            player.undersleeper_id = undefined
             player.ws.send(JSON.stringify(packet))
         });
     }

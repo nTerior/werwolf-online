@@ -208,10 +208,16 @@ const wsPacketHandler: {[key:string]: (data:any, ws: lws, wsid: string) => Promi
         var packet: WSPacket = {
             name: "love-reveal",
             id: 1298374892,
-            data: p2.id
+            data: {
+                id: p2.id,
+                role: p2.role!.name
+            }
         }
         p1.ws.send(JSON.stringify(packet))
-        packet.data = p1.id
+        packet.data = {
+            id: p1.id,
+            role: p1.role!.name
+        }
         p2.ws.send(JSON.stringify(packet))
         return {ok: true}
     }

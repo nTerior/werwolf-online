@@ -118,6 +118,17 @@ export class Game {
                 else packet.data = false
                 p.ws.send(JSON.stringify(packet))
             })
+        } else if(result == RoleName.AMOR) {
+            this.players.forEach(p => {
+                var packet: WSPacket = {
+                    name: "gameover",
+                    id: 183468,
+                    data: {}
+                }
+                if(p.inLove) packet.data = true
+                else packet.data = false
+                p.ws.send(JSON.stringify(packet))
+            })
         } else if(result == true) {
             this.players.forEach(p => {
                 var packet: WSPacket = {
@@ -142,6 +153,12 @@ export class Game {
             if(p.role!.name == RoleName.WERWOLF && !p.dead) werwolf_sum++
         })
 
+        var loved_sum = 0
+        this.players.forEach(p => {
+            if(p.inLove) loved_sum++
+        })
+
+        if(loved_sum == 2 && villager_sum == 0 && werwolf_sum == 0) return RoleName.AMOR
         if(werwolf_sum >= villager_sum) return RoleName.WERWOLF
         if(werwolf_sum == 0) return true
         return false

@@ -45,6 +45,15 @@ export async function createGameScreen(): Promise<Screen> {
     State.ws.on("player-update", async () => {
         await updateUserTable()
     })
+    State.ws.on("you-died", () => {
+        document.title = "Werwölfe | Gestorben"
+        var text = document.createElement("div")
+        text.classList.add("game-end", "game-lost")
+        var t_text = document.createElement("div")
+        t_text.textContent = "Du hast gestorben"
+        text.appendChild(t_text)
+        div.append(text)
+    })
     State.ws.on("game-lost", async () => {
         document.title = "Werwölfe | Verloren"
         var text = document.createElement("div")

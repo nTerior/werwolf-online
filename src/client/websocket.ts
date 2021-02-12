@@ -57,6 +57,7 @@ export class WS extends EventEmitter {
 
         if(j.name == "gameover" && !j.data) this.emit("game-lost")
         if(j.name == "gameover" && j.data) this.emit("game-won")
+        if(j.name == "you-died" && j.data) this.emit("you-died")
     }
 
     private async recvPacket(id: number): Promise<WSPacket> {

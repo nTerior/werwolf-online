@@ -52,13 +52,16 @@ export class Game {
 
             if(this.prey_index != -1) {
                 this.players[this.prey_index].dead = true
-                var dead_packet: WSPacket = {
-                    name: "you-died",
-                    id: 21125365864342,
-                    data: {}
-                }
-                this.players[this.prey_index].ws.send(JSON.stringify(dead_packet))
             }
+
+            var dead_packet: WSPacket = {
+                name: "you-died",
+                id: 21125365864342,
+                data: {}
+            }
+            this.players.forEach(player => {
+                if(player.dead) player.ws.send(JSON.stringify(dead_packet))
+            })
 
             this.setDay()
             this.sendPlayerUpdate()
@@ -121,8 +124,15 @@ export class Game {
         return false
     }
 
+    public kill(player_id: string) {
+        var player = this.getPlayer(player_id)
+        player.dead = true
+        this.roles.find(e => e.role.name == player.role!.name)!.amount--
+        this.lastRole = this.getLastRole()
+    }
+
     public getLastRole(skip_h:boolean = false): RoleName {
-        if(this.roles.find(r => r.role.name == RoleName.VILLAGER)!.amount != 0) return RoleName.VILLAGER
+        if(!skip_h) if(this.roles.find(r => r.role.name == RoleName.VILLAGER)!.amount != 0) return this.getLastRole(true)
         if(!skip_h) if(this.roles.find(r => r.role.name == RoleName.HUNTER)!.amount != 0) return this.getLastRole(true)
         if(this.roles.find(r => r.role.name == RoleName.SEER)!.amount != 0) return RoleName.SEER
         if(this.roles.find(r => r.role.name == RoleName.WITCH)!.amount != 0) return RoleName.WITCH

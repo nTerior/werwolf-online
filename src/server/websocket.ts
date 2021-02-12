@@ -168,7 +168,6 @@ const wsPacketHandler: {[key:string]: (data:any, ws: lws, wsid: string) => Promi
 
         if(self.dead) return {ok: false}
         if(target.dead) return {ok: false}
-        if(self.id == target.id) return {ok: false}
         if(self.role?.name == RoleName.VILLAGER) return {ok: false}
         if(self.role?.name == RoleName.WERWOLF && target.role?.name == RoleName.WERWOLF) return {ok: false}
 
@@ -184,5 +183,18 @@ const wsPacketHandler: {[key:string]: (data:any, ws: lws, wsid: string) => Promi
         var game = getGame(data["game_id"])!
         var player = game.getPlayer(data["user_id"])!
         return {ok: player.role!.name}
+    },
+    "witch-get-prey": async(data, ws, wsid) => {
+        var game = getGame(data["game_id"])
+        var prey = game?.players[game.prey_index]
+        return {ok: prey?.id}
+    },
+    "witch-heal-prey": async(data, ws, wsid) => {
+        getGame(data["game_id"])!.prey_index = -1
+        return {ok: true}
+    },
+    "witch-kill-other": async(data, ws, wsid) => {
+        getGame(data["game_id"])!.getPlayer(data["user_id"]).dead = true
+        return {ok: true}
     }
 }

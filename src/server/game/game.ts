@@ -21,6 +21,8 @@ export class Game {
     public currentRole:Role = roles[0].role
     public lastRole: RoleName = roles.find(e => e.name == RoleName.VILLAGER)!.role.name
 
+    public prey_index:number = -1
+
     constructor(public id: string, public owner:string) {}
 
     private sendPlayerUpdate() {
@@ -47,6 +49,17 @@ export class Game {
     private nextMoveDay: boolean = false
     private nextMove() {
         if(this.nextMoveDay) {
+
+            if(this.prey_index != -1) {
+                this.players[this.prey_index].dead = true
+                var dead_packet: WSPacket = {
+                    name: "you-died",
+                    id: 21125365864342,
+                    data: {}
+                }
+                this.players[this.prey_index].ws.send(JSON.stringify(dead_packet))
+            }
+
             this.setDay()
             this.sendPlayerUpdate()
             this.currentRoleIndex = 0
@@ -111,8 +124,8 @@ export class Game {
     public getLastRole(skip_h:boolean = false): RoleName {
         if(this.roles.find(r => r.role.name == RoleName.VILLAGER)!.amount != 0) return RoleName.VILLAGER
         if(!skip_h) if(this.roles.find(r => r.role.name == RoleName.HUNTER)!.amount != 0) return this.getLastRole(true)
-        if(this.roles.find(r => r.role.name == RoleName.WITCH)!.amount != 0) return RoleName.WITCH
         if(this.roles.find(r => r.role.name == RoleName.SEER)!.amount != 0) return RoleName.SEER
+        if(this.roles.find(r => r.role.name == RoleName.WITCH)!.amount != 0) return RoleName.WITCH
         if(this.roles.find(r => r.role.name == RoleName.GIRL)!.amount != 0) return RoleName.GIRL
         if(this.roles.find(r => r.role.name == RoleName.WERWOLF)!.amount != 0) return RoleName.WERWOLF
         if(this.roles.find(r => r.role.name == RoleName.MATTRESS)!.amount != 0) return RoleName.MATTRESS

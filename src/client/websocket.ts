@@ -130,6 +130,16 @@ export class WS extends EventEmitter {
     async seer(user_id: string): Promise<RoleName> {
         return await this.packetIO("execute-seer", {user_id: user_id, game_id: State.game.id})
     }
+
+    async witch_get_prey() {
+        return await this.packetIO("witch-get-prey", {game_id: State.game.id})
+    }
+    public witch_heal() {
+        this.sendPacket("witch-heal-prey", {game_id: State.game.id})
+    }
+    public witch_kill(user_id: string) {
+        this.sendPacket("witch-kill-other", {user_id: user_id, game_id: State.game.id})
+    }
 }
 
 function getRoleByName(name: string): Role {

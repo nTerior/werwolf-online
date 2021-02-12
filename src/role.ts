@@ -15,6 +15,7 @@ export enum RoleName {
 export abstract class Role {
     constructor(public name:RoleName) {}
     public abstract on_interact(player: {name: string, id: string, major:boolean, dead:boolean}): void;
+    public abstract on_turn(): void;
     public getName(): string {
         //@ts-expect-error
         return RoleName[this.name]
@@ -25,9 +26,8 @@ export class Villager extends Role {
     constructor() {
         super(RoleName.VILLAGER)
     }
-    async on_interact(player: {name: string, id: string, major:boolean, dead:boolean}) {
-
-    }
+    async on_interact(player: {name: string, id: string, major:boolean, dead:boolean}) {}
+    public on_turn(): void {}
 }
 
 export class Witch extends Role {
@@ -35,7 +35,30 @@ export class Witch extends Role {
         super(RoleName.WITCH)
     }
     async on_interact(player: {name: string, id: string, major:boolean, dead:boolean}) {
-        
+        var prey_id = State.game.selfplayer.secrets["current_prey"]
+        if(prey_id == player.id && State.game.selfplayer.secrets["heal_potions"] == 1) {
+            var name_element = <HTMLDivElement>document.getElementById("player-name-" + prey_id)
+            name_element.textContent += " » Geheilt"
+
+            State.ws.witch_heal()
+            State.game.selfplayer.secrets["heal_potions"] = 0
+        } else if(State.game.selfplayer.secrets["kill_potions"] == 1) {
+            var name_element = <HTMLDivElement>document.getElementById("player-name-" + player.id)
+            name_element.textContent += " » Getötet"
+            State.ws.witch_kill(player.id)
+            State.game.selfplayer.secrets["kill_potions"] = 0
+        }
+    }
+    async on_turn() {
+        (<HTMLButtonElement>document.getElementById("continue-button")).hidden = false
+        var prey_id = await State.ws.witch_get_prey()
+        if(State.game.selfplayer.secrets == undefined) State.game.selfplayer.secrets = {}
+        State.game.selfplayer.secrets["current_prey"] = prey_id
+        if(prey_id != -1) {
+            console.log(prey_id)
+            var name = <HTMLDivElement>document.getElementById("player-name-" + prey_id)
+            name.textContent += " » Opfer"
+        }
     }
 }
 
@@ -44,6 +67,9 @@ export class Hunter extends Role {
         super(RoleName.HUNTER)
     }
     async on_interact(player: {name: string, id: string, major:boolean, dead:boolean}) {
+        
+    }
+    public on_turn(): void {
         
     }
 }
@@ -55,6 +81,9 @@ export class Amor extends Role {
     async on_interact(player: {name: string, id: string, major:boolean, dead:boolean}) {
         
     }
+    public on_turn(): void {
+        
+    }
 }
 
 export class Girl extends Role {
@@ -64,6 +93,9 @@ export class Girl extends Role {
     async on_interact(player: {name: string, id: string, major:boolean, dead:boolean}) {
         
     }
+    public on_turn(): void {
+        
+    }
 }
 
 export class Mattress extends Role {
@@ -71,6 +103,9 @@ export class Mattress extends Role {
         super(RoleName.MATTRESS)
     }
     async on_interact(player: {name: string, id: string, major:boolean, dead:boolean}) {
+        
+    }
+    public on_turn(): void {
         
     }
 }
@@ -85,6 +120,9 @@ export class Seer extends Role {
         console.log(State.game.selfplayer.secrets["seer-" + player.id])
         State.ws.nextMove()
     }
+    public on_turn(): void {
+        
+    }
 }
 
 export class Werwolf extends Role {
@@ -92,6 +130,9 @@ export class Werwolf extends Role {
         super(RoleName.WERWOLF)
     }
     async on_interact(player: {name: string, id: string, major:boolean, dead:boolean}) {
+        
+    }
+    public on_turn(): void {
         
     }
 }

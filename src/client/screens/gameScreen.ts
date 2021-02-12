@@ -1,4 +1,5 @@
 import { Role, RoleName, roles } from "../../role"
+import { addPlayer } from "../../server/game/game"
 import { Screen } from "../screen"
 import { State } from "../state"
 
@@ -18,6 +19,9 @@ export async function createGameScreen(): Promise<Screen> {
     State.ws.on("role-reveal", r => {
         var role: Role = r
         State.game.selfplayer.role = getRoleByRoleName(role.name)
+        State.game.selfplayer.secrets = {}
+        State.game.selfplayer.secrets["heal_potions"] = 1
+        State.game.selfplayer.secrets["kill_potions"] = 1
         create()
     })
 
@@ -29,9 +33,10 @@ export async function createGameScreen(): Promise<Screen> {
         nightDiv.style.display = "unset";
         document.title = "Werwölfe | Nacht"
     })
-    State.ws.on("turn", () => {
+    State.ws.on("turn", async () => {
         nightDiv.style.display = "none";
         document.title = "Werwölfe | Du bist dran"
+        await State.game.selfplayer.role?.on_turn()
     })
     State.ws.on("unturn", () => {
         nightDiv.style.display = "unset";
@@ -88,6 +93,17 @@ async function create() {
     content.appendChild(role)
 
     await updateUserTable()
+
+
+    var continue_btn = document.createElement("button")
+    continue_btn.id = "continue-button"
+    continue_btn.textContent = "Weiter / Zug beenden"
+    continue_btn.onclick = () => { 
+        State.ws.nextMove()
+        continue_btn.hidden = true
+    }
+    continue_btn.hidden = true
+    content.appendChild(continue_btn)
     State.ws.emit("night")
 }
 
@@ -124,6 +140,7 @@ async function createUser(i:number) {
     c.appendChild(img)
 
     var name = document.createElement("div")
+    name.id = "player-name-" + State.game.players[i].id
     name.textContent = State.game.players[i].name
     if(State.game.players[i].major) name.textContent += " (Bürgermeister)"
     if(State.game.selfplayer.secrets) {

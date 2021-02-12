@@ -24,6 +24,7 @@ export async function createGameScreen(): Promise<Screen> {
         State.game.selfplayer.secrets["love"] = 2
         State.game.selfplayer.secrets["loved"] = ""
         State.game.selfplayer.secrets["loved-role"] = ""
+        State.game.selfplayer.secrets["sleeping-id"] = ""
         create()
     })
 

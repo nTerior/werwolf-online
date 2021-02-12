@@ -220,5 +220,11 @@ const wsPacketHandler: {[key:string]: (data:any, ws: lws, wsid: string) => Promi
         }
         p2.ws.send(JSON.stringify(packet))
         return {ok: true}
+    },
+    "mattress-sleeps-by": async(data, ws, wsid) => {
+        var game = getGame(data["game_id"])!
+        game.getPlayer(wsid).is_sleeping = true
+        game.getPlayer(data["user_id"]).undersleeper_id = wsid
+        return {ok: true}
     }
 }

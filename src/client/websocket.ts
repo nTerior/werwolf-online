@@ -57,7 +57,8 @@ export class WS extends EventEmitter {
 
         if(j.name == "gameover" && !j.data) this.emit("game-lost")
         if(j.name == "gameover" && j.data) this.emit("game-won")
-        if(j.name == "you-died" && j.data) this.emit("you-died")
+        if(j.name == "you-died") this.emit("you-died")
+        if(j.name == "love-reveal") this.emit("love-reveal", j.data)
     }
 
     private async recvPacket(id: number): Promise<WSPacket> {
@@ -144,6 +145,9 @@ export class WS extends EventEmitter {
 
     public amor_love(user_id: string) {
         this.sendPacket("amor-love", {user_id: user_id, game_id: State.game.id})
+    }
+    public send_love() {
+        this.sendPacket("send-amor-love", {game_id: State.game.id})
     }
 }
 

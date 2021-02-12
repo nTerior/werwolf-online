@@ -22,6 +22,7 @@ export async function createGameScreen(): Promise<Screen> {
         State.game.selfplayer.secrets["heal_potions"] = 1
         State.game.selfplayer.secrets["kill_potions"] = 1
         State.game.selfplayer.secrets["love"] = 2
+        State.game.selfplayer.secrets["loved"] = ""
         create()
     })
 
@@ -72,6 +73,11 @@ export async function createGameScreen(): Promise<Screen> {
         t_text.textContent = "Du hast gewonnen 🏆"
         text.appendChild(t_text)
         div.append(text)
+    })
+    State.ws.on("love-reveal", async (id) => {
+        State.game.selfplayer.secrets["loved"] = id
+        var elem = <HTMLDivElement>document.getElementById("player-name-" + id)
+        elem.textContent += " » Verliebt"
     })
 
     div.appendChild(content)
@@ -153,6 +159,7 @@ async function createUser(i:number) {
     name.id = "player-name-" + State.game.players[i].id
     name.textContent = State.game.players[i].name
     if(State.game.players[i].major) name.textContent += " (Bürgermeister)"
+    if(State.game.players[i].id == State.game.selfplayer.secrets["loved"]) name.textContent += " » Verliebt"
     if(State.game.selfplayer.secrets) {
         if(State.game.selfplayer.secrets["seer-" + State.game.players[i].id]) name.textContent += " » " + State.game.selfplayer.secrets["seer-" + State.game.players[i].id]
     }

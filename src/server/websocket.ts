@@ -200,5 +200,19 @@ const wsPacketHandler: {[key:string]: (data:any, ws: lws, wsid: string) => Promi
     "amor-love": async(data, ws, wsid) => {
         getGame(data["game_id"])!.getPlayer(data["user_id"]).inLove = true
         return {ok: true}
+    },
+    "send-amor-love": async(data, ws, wsid) => {
+        var game = getGame(data["game_id"])!
+        var p1 = game.players.find(e => e.inLove)!
+        var p2 = game.players.find(e => e.inLove && e.id != p1.id)!
+        var packet: WSPacket = {
+            name: "love-reveal",
+            id: 1298374892,
+            data: p2.id
+        }
+        p1.ws.send(JSON.stringify(packet))
+        packet.data = p1.id
+        p2.ws.send(JSON.stringify(packet))
+        return {ok: true}
     }
 }

@@ -90,6 +90,7 @@ export class Amor extends Role {
             if(name) name.textContent += " » Verliebt"
             State.game.selfplayer.secrets["love"]--
             State.ws.amor_love(player.id)
+            State.ws.send_love()
             State.ws.nextMove()
         }
     }

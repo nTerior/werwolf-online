@@ -57,7 +57,7 @@ export class Witch extends Role {
         if(prey_id != -1) {
             console.log(prey_id)
             var name = <HTMLDivElement>document.getElementById("player-name-" + prey_id)
-            name.textContent += " » Opfer"
+            if(name) name.textContent += " » Opfer"
         }
     }
 }

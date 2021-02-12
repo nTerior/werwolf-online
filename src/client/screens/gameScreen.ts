@@ -1,5 +1,4 @@
-import { Role, RoleName, roles } from "../../role"
-import { addPlayer } from "../../server/game/game"
+import { Role, roles } from "../../role"
 import { Screen } from "../screen"
 import { State } from "../state"
 

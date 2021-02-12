@@ -40,7 +40,8 @@ export async function createGameScreen(): Promise<Screen> {
     })
     State.ws.on("unturn", () => {
         nightDiv.style.display = "unset";
-        document.title = "Werwölfe | Nacht"
+        document.title = "Werwölfe | Nacht";
+        (<HTMLButtonElement>document.getElementById("continue-button")).hidden = true
     })
     State.ws.on("player-update", async () => {
         await updateUserTable()
@@ -50,7 +51,7 @@ export async function createGameScreen(): Promise<Screen> {
         var text = document.createElement("div")
         text.classList.add("game-end", "game-lost")
         var t_text = document.createElement("div")
-        t_text.textContent = "Du hast gestorben"
+        t_text.textContent = "Du bist gestorben"
         text.appendChild(t_text)
         div.append(text)
     })

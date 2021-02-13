@@ -1,3 +1,13 @@
+.user-image {
+    width: 5em;
+}
+
+.heart {
+    left: -3.45em;
+    position: relative;
+    width: 2em;
+}
+
 #continue-button {
     margin-top: 1em;
 }

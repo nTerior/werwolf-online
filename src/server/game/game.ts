@@ -156,20 +156,17 @@ export class Game {
 
     private checkGameOver(): RoleName | boolean {
         var villager_sum = 0
+        var werwolf_sum = 0
+        var loved_sum = 0
+        var total_sum = 0
         this.players.forEach(p => {
             if(p.role!.name != RoleName.WERWOLF && !p.dead) villager_sum++
-        })
-        var werwolf_sum = 0
-        this.players.forEach(p => {
             if(p.role!.name == RoleName.WERWOLF && !p.dead) werwolf_sum++
+            if(p.inLove && !p.dead) loved_sum++
+            if(!p.dead) total_sum++
         })
 
-        var loved_sum = 0
-        this.players.forEach(p => {
-            if(p.inLove) loved_sum++
-        })
-
-        if(loved_sum == 2 && villager_sum == 0 && werwolf_sum == 0) return RoleName.AMOR
+        if(loved_sum == 2 && total_sum == 2) return RoleName.AMOR
         if(werwolf_sum >= villager_sum) return RoleName.WERWOLF
         if(werwolf_sum == 0) return true
         return false

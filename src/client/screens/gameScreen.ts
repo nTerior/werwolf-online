@@ -86,8 +86,6 @@ export async function createGameScreen(): Promise<Screen> {
 
     div.appendChild(content)
 
-    if(State.game.selfplayer.role!.name == RoleName.WERWOLF || State.game.selfplayer.role!.name == RoleName.GIRL) div.appendChild(createChatWindow())
-
     return {
         element: div,
         title: "Werwölfe"
@@ -127,6 +125,8 @@ async function create() {
     continue_btn.hidden = true
     content.appendChild(continue_btn)
     State.ws.emit("night")
+
+    if(State.game.selfplayer.role!.name == RoleName.WERWOLF || State.game.selfplayer.role!.name == RoleName.GIRL) content.appendChild(createChatWindow())
 }
 
 async function updateUserTable() {

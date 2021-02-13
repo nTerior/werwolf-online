@@ -63,6 +63,16 @@ export class Game {
         if(player.undersleeper_id) this.killPlayerNight(player.undersleeper_id)
         this.roles.find(e => e.role.name == player.role!.name)!.amount--
     }
+    private possiblePreys: string[] = []
+    public werwolfChoice(prey_id:string) {
+        this.possiblePreys.push(prey_id)
+        if(this.possiblePreys.length == this.roles.find(e => e.role.name == RoleName.WERWOLF)!.amount + this.roles.find(e => e.role.name == RoleName.GIRL)!.amount) {
+            var id:string = maxCount(this.possiblePreys)
+            this.prey_index = this.players.findIndex(e => e.id == id)
+            this.possiblePreys = []
+            this.moveDone()
+        }
+    }
 
     private nextMoveDay: boolean = false
     private nextMove() {
@@ -354,6 +364,26 @@ export function removePlayer(gameid:string, ws:lws) {
         game.lastRole = game.getLastRole()
     }
     return true
+}
+
+function maxCount(array:any[]) {
+    if(array.length == 0)
+        return null;
+    var modeMap:any = {};
+    var maxEl = array[0], maxCount = 1;
+    for(var i = 0; i < array.length; i++) {
+        var el = array[i];
+        if(modeMap[el] == null)
+            modeMap[el] = 1;
+        else
+            modeMap[el]++;  
+        if(modeMap[el] > maxCount)
+        {
+            maxEl = el;
+            maxCount = modeMap[el];
+        }
+    }
+    return maxEl;
 }
 
 function createGameLink(id: string): string {

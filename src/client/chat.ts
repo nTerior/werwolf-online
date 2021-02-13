@@ -47,7 +47,7 @@ export function createChatWindow():HTMLElement {
     return div
 }
 
-async function sendMessage(message:string) {
+export async function sendMessage(message:string) {
     message = message.trim();
     (<HTMLInputElement>document.getElementById("chat-message-input")).value = ""
     if(message == "") return

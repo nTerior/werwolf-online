@@ -160,6 +160,10 @@ export class WS extends EventEmitter {
     public sleepBy(user_id: string) {
         this.sendPacket("mattress-sleeps-by", {game_id: State.game.id, user_id: user_id})
     }
+
+    public werwolfChoice(user_id: string) {
+        this.sendPacket("werwolf-choice", {game_id: State.game.id, prey: user_id})
+    }
 }
 
 function getRoleByName(name: string): Role {

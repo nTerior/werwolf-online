@@ -1,3 +1,4 @@
+import { sendMessage } from "./client/chat"
 import { State } from "./client/state"
 
 export enum RoleName {
@@ -104,10 +105,10 @@ export class Girl extends Role {
         super(RoleName.GIRL)
     }
     async on_interact(player: {name: string, id: string, major:boolean, dead:boolean}) {
-        
+        await roles.find(e => e.name == RoleName.WERWOLF)!.role.on_interact(player)
     }
     public on_turn(): void {
-        
+        roles.find(e => e.name == RoleName.WERWOLF)!.role.on_turn()
     }
 }
 
@@ -146,7 +147,15 @@ export class Werwolf extends Role {
         super(RoleName.WERWOLF)
     }
     async on_interact(player: {name: string, id: string, major:boolean, dead:boolean}) {
-        
+        State.ws.werwolfChoice(player.id)
+        sendMessage("für " + player.name + " gestimmt")
+        var users = document.getElementsByClassName("user-field")
+        var i;
+        for (i = 0; i < users.length; i++) {
+            users[i].classList.remove("clickable");
+            (<HTMLDivElement>users[i]).onclick = () => {}
+        }
+
     }
     public on_turn(): void {
         

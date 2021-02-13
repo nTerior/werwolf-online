@@ -26,9 +26,14 @@ export async function createGameScreen(): Promise<Screen> {
         State.game.selfplayer.secrets["loved"] = ""
         State.game.selfplayer.secrets["loved-role"] = ""
         State.game.selfplayer.secrets["sleeping-id"] = ""
+        State.game.selfplayer.secrets["werwolf_ids"] = []
         create()
     })
-
+    State.ws.on("werwolf-reveal", id => {
+        State.game.selfplayer.secrets["werwolf_ids"].push(id)
+        var elem = <HTMLDivElement>document.getElementById("player-name-" + id)
+        elem.textContent += " » Werwolf"
+    })
     State.ws.on("day", () => {
         nightDiv.style.display = "none";
         document.title = "Werwölfe | Tag"
@@ -167,7 +172,9 @@ async function createUser(i:number) {
     if(State.game.players[i].major) name.textContent += " (Bürgermeister)"
     if(State.game.players[i].id == State.game.selfplayer.secrets["loved"]) {
         name.textContent += " » Verliebt (" + State.game.selfplayer.secrets["loved-role"] + ")"
-    } 
+    }
+    if(State.game.selfplayer.secrets["werwolf_ids"].includes(State.game.players[i].id)) name.textContent += " » Werwolf"
+    
     if(State.game.selfplayer.secrets) {
         if(State.game.selfplayer.secrets["seer-" + State.game.players[i].id]) name.textContent += " » " + State.game.selfplayer.secrets["seer-" + State.game.players[i].id]
     }

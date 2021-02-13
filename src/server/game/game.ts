@@ -259,6 +259,22 @@ export class Game {
             console.log(player.role)
             player.ws.send(JSON.stringify(packet))
         });
+
+        this.players.forEach(player => {
+            this.players.forEach(p2 => {
+                if(player.id != p2.id) {
+                    if((player.role!.name == RoleName.WERWOLF || player.role!.name == RoleName.GIRL) && (p2.role!.name == RoleName.WERWOLF || p2.role!.name == RoleName.GIRL)) {
+                        var packet: WSPacket = {
+                            name: "werwolf-reveal",
+                            id: 238749,
+                            data: p2.id
+                        }
+                        player.ws.send(JSON.stringify(packet))
+                    }
+                }
+            })
+        })
+
     }
 
     private setRoles() {

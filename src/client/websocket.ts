@@ -59,6 +59,7 @@ export class WS extends EventEmitter {
         if(j.name == "gameover" && j.data) this.emit("game-won")
         if(j.name == "you-died") this.emit("you-died")
         if(j.name == "love-reveal") this.emit("love-reveal", j.data)
+        if(j.name == "werwolf-reveal") this.emit("werwolf-reveal", j.data)
 
         if(j.name == "chat-message") this.emit("chat-message", j.data)
     }

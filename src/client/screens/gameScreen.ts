@@ -1,5 +1,6 @@
 import { Role, RoleName, roles } from "../../role"
 import { createChatWindow } from "../chat"
+import { displayString } from "../display"
 import { Screen } from "../screen"
 import { State } from "../state"
 
@@ -7,14 +8,11 @@ const rx = 200
 const ry = rx
 const wh = 0
 
-var nightDiv = document.createElement("div")
 var users = document.createElement("div")
 var content = document.createElement("div")
 
 export async function createGameScreen(): Promise<Screen> {
     var div = document.createElement("div")
-    nightDiv.classList.add("background-darken")
-    div.appendChild(nightDiv)
     
     State.ws.on("role-reveal", r => {
         var role: Role = r
@@ -34,52 +32,44 @@ export async function createGameScreen(): Promise<Screen> {
         await updateUserTable(false)
     })
     State.ws.on("day", () => {
-        nightDiv.style.display = "none";
-        document.title = "Werwölfe | Tag"
+        if(!State.game.selfplayer.dead) {
+            document.title = "Werwölfe | Tag"
+            displayString("Tag", 1500)
+        }
     })
     State.ws.on("night", () => {
-        nightDiv.style.display = "unset";
-        document.title = "Werwölfe | Nacht"
+        if(!State.game.selfplayer.dead) {
+            document.title = "Werwölfe | Nacht"
+            displayString("Nacht", -1)
+        }
     })
     State.ws.on("turn", async () => {
-        nightDiv.style.display = "none";
         document.title = "Werwölfe | Du bist dran"
+        displayString("Du bist nun dran", 1500)
         await State.game.selfplayer.role?.on_turn()
     })
     State.ws.on("unturn", () => {
-        nightDiv.style.display = "unset";
-        document.title = "Werwölfe | Nacht";
-        (<HTMLButtonElement>document.getElementById("continue-button")).hidden = true
+        if(!State.game.selfplayer.dead) {
+            document.title = "Werwölfe | Nacht";
+            displayString("Nacht", -1);
+            (<HTMLButtonElement>document.getElementById("continue-button")).hidden = true
+        }
     })
     State.ws.on("player-update", async () => {
         await updateUserTable()
     })
     State.ws.on("you-died", () => {
+        State.game.selfplayer.dead = true
         document.title = "Werwölfe | Gestorben"
-        var text = document.createElement("div")
-        text.classList.add("game-end", "game-lost")
-        var t_text = document.createElement("div")
-        t_text.textContent = "Du bist gestorben"
-        text.appendChild(t_text)
-        div.append(text)
+        displayString("Du bist gestorben", -1, ["game-lost"])
     })
     State.ws.on("game-lost", async () => {
         document.title = "Werwölfe | Verloren"
-        var text = document.createElement("div")
-        text.classList.add("game-end", "game-lost")
-        var t_text = document.createElement("div")
-        t_text.textContent = "Du hast verloren"
-        text.appendChild(t_text)
-        div.append(text)
+        displayString("Du hast verloren!", -1, ["game-lost"])
     })
     State.ws.on("game-won", async () => {
         document.title = "Werwölfe | Gewonnen"
-        var text = document.createElement("div")
-        text.classList.add("game-end", "game-won")
-        var t_text = document.createElement("div")
-        t_text.textContent = "Du hast gewonnen 🏆"
-        text.appendChild(t_text)
-        div.append(text)
+        displayString("🏆 Du hast gewonnen 🏆", -1, ["game-won"])
     })
     State.ws.on("love-reveal", async (data) => {
         State.game.selfplayer.secrets["loved"] = data["id"]
@@ -169,13 +159,13 @@ async function createUser(i:number) {
     name.textContent = State.game.players[i].name
     if(State.game.players[i].major) name.textContent += " (Bürgermeister)"
     if(State.game.players[i].id == State.game.selfplayer.secrets["loved"]) {
-        name.textContent += " » " + State.game.selfplayer.secrets["loved-role"]
+        name.textContent += " » Verliebt (" + State.game.selfplayer.secrets["loved-role"] + ")"
 
         var heart = document.createElement("img")
         heart.classList.add("heart")
         heart.src = "/static/assets/heart.png"
 
-        c.appendChild(heart)
+        //c.appendChild(heart)
 
     }
     if(State.game.selfplayer.secrets["werwolf_ids"].includes(State.game.players[i].id) && State.game.players[i].id != State.game.selfplayer.secrets["loved"]) name.textContent += " » Werwolf"

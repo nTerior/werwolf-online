@@ -1,0 +1,45 @@
+.display {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    text-align: center;
+}
+
+.display-text {
+    margin-top: 30vh;
+    font-size: 10em;
+    color: dimgrey;
+}
+
+.display.display-active {
+    animation-name: display-in;
+    animation-duration: 0.5s;
+    animation-fill-mode: forwards;
+}
+
+.display.display-inactive {
+    animation-name: display-out;
+    animation-duration: 0.5s;
+    animation-fill-mode: forwards;
+}
+
+@keyframes display-in {
+    0% {
+        top: -100%;
+    }
+    100% {
+        top: 0px;
+    }
+}
+
+@keyframes display-out {
+    0% {
+        top: 0px;
+    }
+    100% {
+        top: 100%;
+    }
+}

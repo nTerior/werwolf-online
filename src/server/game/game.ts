@@ -216,7 +216,7 @@ export class Game {
         }
         if(this.currentRole.name == RoleName.VILLAGER) packet.name = "game-night"
         this.players.forEach(player => {
-            player.ws.send(JSON.stringify(packet))
+            if(this.currentRole.name == player.role!.name) player.ws.send(JSON.stringify(packet))
         })
     }
 

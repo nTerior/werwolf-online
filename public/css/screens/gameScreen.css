@@ -3,8 +3,6 @@
 }
 
 .heart {
-    left: -3.45em;
-    position: relative;
     width: 2em;
 }
 
@@ -32,15 +30,6 @@
     text-align: center;
 }
 
-.game-end {
-    position: fixed;
-    top: 0%;
-    width: 100%;
-    height: 1000%;
-    font-size: 5em;
-    background: rgba(0, 0, 0, 0.5);
-}
-
 .game-end div {
     margin-top: 30vh;
 }
@@ -51,16 +40,4 @@
 
 .game-lost {
     color: darkred;
-}
-
-.background-darken {
-    position: fixed;
-    top: -100%;
-    left: 0;
-    width: 10000%;
-    height: 10000%;
-    margin-top: 15em;
-    z-index: 1000;
-    background: rgba(0, 0, 0, 0.5);
-    transition: all 1s;
 }

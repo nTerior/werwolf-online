@@ -249,5 +249,11 @@ const wsPacketHandler: {[key:string]: (data:any, ws: lws, wsid: string) => Promi
             player.ws.send(JSON.stringify(packet))
         })
         return {ok: true}
+    },
+
+    "dayVote": async(data, ws, wsid) => {
+        var game = getGame(data["game_id"])!
+        game.dayVote(data["voted"])
+        return {ok: true}
     }
 }

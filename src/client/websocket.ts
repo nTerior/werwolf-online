@@ -164,6 +164,10 @@ export class WS extends EventEmitter {
     public werwolfChoice(user_id: string) {
         this.sendPacket("werwolf-choice", {game_id: State.game.id, prey: user_id})
     }
+
+    public dayVote(user_id: string) {
+        this.sendPacket("dayVote", {game_id: State.game.id, voted: user_id})
+    }
 }
 
 function getRoleByName(name: string): Role {

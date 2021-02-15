@@ -137,6 +137,16 @@ async function updateUserTable(updatePlayers: boolean = true) {
     }
 }
 
+function dayVote(player: {name: string, id: string, major:boolean, dead: boolean}) {
+    State.ws.dayVote(player.id)
+    var users = document.getElementsByClassName("user-field")
+    var i;
+    for (i = 0; i < users.length; i++) {
+        users[i].classList.remove("clickable");
+        (<HTMLDivElement>users[i]).onclick = () => {}
+    }
+}
+
 async function createUser(i:number) {
     var c = document.createElement('div');
     c.classList.add("user-field")
@@ -144,7 +154,7 @@ async function createUser(i:number) {
         c.classList.add("clickable")
         c.onclick = () => {
             if(document.title == "Werwölfe | Du bist dran") userInteraction(State.game.players[i])
-            else return // Todo day interaction
+            else dayVote(State.game.players[i]);
         }
     }
 

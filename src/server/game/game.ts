@@ -63,6 +63,7 @@ export class Game {
         if(player.undersleeper_id) this.killPlayerNight(player.undersleeper_id)
         this.roles.find(e => e.role.name == player.role!.name)!.amount--
     }
+
     private possiblePreys: string[] = []
     public werwolfChoice(prey_id:string) {
         this.possiblePreys.push(prey_id)
@@ -70,6 +71,42 @@ export class Game {
             var id:string = maxCount(this.possiblePreys)
             this.prey_index = this.players.findIndex(e => e.id == id)
             this.possiblePreys = []
+            this.moveDone()
+        }
+    }
+
+    private killPlayerDay(id: string) {
+        var player = this.getPlayer(id)
+        player.dead = true
+        if(player.inLove) {
+            player.inLove = false
+
+            var loved = this.players.find(e => e.inLove)!
+            loved.inLove = false
+            this.killPlayerNight(loved.id)
+        }
+        this.roles.find(e => e.role.name == player.role!.name)!.amount--
+    }
+
+    private dayPreys: string[] = []
+    public dayVote(voted_id: string) {
+        this.dayPreys.push(voted_id)
+
+        if(this.dayPreys.length == this.players.filter(e => !e.dead).length) {
+            var id:string = maxCount(this.dayPreys)
+            this.dayPreys = []
+            
+            this.killPlayerDay(id)
+            var dead_packet: WSPacket = {
+                name: "you-died",
+                id: 21125365864342,
+                data: {}
+            }
+            this.players.forEach(player => {
+                if(player.dead) player.ws.send(JSON.stringify(dead_packet))
+            })
+            this.sendPlayerUpdate()
+            this.sendGameOver(this.checkGameOver())
             this.moveDone()
         }
     }
@@ -202,6 +239,7 @@ export class Game {
             id: 126,
             data: {}
         }
+        this.night = true
         this.players.forEach(player => {
             if(player.role!.name != role.name || player.dead) return
             player.ws.send(JSON.stringify(packet))
@@ -216,8 +254,9 @@ export class Game {
         }
         if(this.currentRole.name == RoleName.VILLAGER) packet.name = "game-night"
         this.players.forEach(player => {
-            if(this.currentRole.name == player.role!.name) player.ws.send(JSON.stringify(packet))
+            if(this.currentRole.name == player.role!.name || !this.night) player.ws.send(JSON.stringify(packet))
         })
+        this.night = true
     }
 
     public start() {

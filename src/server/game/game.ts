@@ -167,7 +167,7 @@ export class Game {
         })
 
         if(loved_sum == 2 && total_sum == 2) return RoleName.AMOR
-        if(werwolf_sum >= villager_sum) return RoleName.WERWOLF
+        if(werwolf_sum == total_sum) return RoleName.WERWOLF
         if(werwolf_sum == 0) return true
         return false
     }

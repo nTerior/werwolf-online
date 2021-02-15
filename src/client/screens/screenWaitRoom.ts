@@ -17,7 +17,7 @@ async function gameStarter() {
 
 export async function createWaitRoom(): Promise<Screen> {
 
-    updatePlayerList()
+    await updatePlayerList()
 
     var div = document.createElement("div")
     div.id = "main-screen"
@@ -52,6 +52,9 @@ export async function createWaitRoom(): Promise<Screen> {
     }
     div.appendChild(gameLink)
 
+    await updatePlayButton()
+    await updateRoleSettings()
+
     return {
         element: div,
         title: "Werwölfe | Warteraum",
@@ -84,8 +87,6 @@ async function updatePlayerList() {
         player_list.appendChild(el)
     });
 
-    await updatePlayButton()
-    await updateRoleSettings()
 }
 
 async function updateRoleSettings() {

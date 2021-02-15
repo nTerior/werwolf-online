@@ -106,8 +106,11 @@ export class Game {
                 if(player.dead) player.ws.send(JSON.stringify(dead_packet))
             })
             this.sendPlayerUpdate()
-            this.sendGameOver(this.checkGameOver())
-            this.moveDone()
+
+            setTimeout(() => {
+                this.sendGameOver(this.checkGameOver())
+                this.moveDone()
+            }, 1000)
         }
     }
 

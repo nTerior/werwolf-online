@@ -145,6 +145,7 @@ function dayVote(player: {name: string, id: string, major:boolean, dead: boolean
         users[i].classList.remove("clickable");
         (<HTMLDivElement>users[i]).onclick = () => {}
     }
+    displayString("Du hast für " + player.name + " gestimmt", 1000)
 }
 
 async function createUser(i:number) {

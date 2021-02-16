@@ -64,7 +64,12 @@ export class Game {
 
     private killPlayerNight(id: string) {
         var player = this.getPlayer(id)
-        if(player.is_sleeping && player.undersleeper_id != player.id) return
+        if(player.is_sleeping) {
+            if(player.undersleeper_id) {
+                if(player.undersleeper_id != player.id) return
+            }
+        }
+        //if(player.is_sleeping && player.undersleeper_id != player.id) return
         player.dead = true
         if(player.inLove) {
             player.inLove = false
@@ -73,7 +78,10 @@ export class Game {
             loved.inLove = false
             this.killPlayerNight(loved.id)
         }
-        if(player.undersleeper_id) this.killPlayerNight(player.undersleeper_id)
+        
+        if(player.undersleeper_id) {
+            this.killPlayerNight(player.undersleeper_id)
+        }
         this.roles.find(e => e.role.name == player.role!.name)!.amount--
 
         if(player.role!.name == RoleName.HUNTER) {

@@ -125,8 +125,12 @@ export class Mattress extends Role {
     async on_interact(player: {name: string, id: string, major:boolean, dead:boolean}) {
         if(State.game.selfplayer.secrets["sleeping-id"] == player.id) return
         State.game.selfplayer.secrets["sleeping-id"] = player.id
-        State.ws.sleepBy(player.id)
-        State.ws.nextMove()
+        displayString("Du schläfst bei " + player.name, 1000)
+
+        setTimeout(() => {
+            State.ws.sleepBy(player.id)
+            State.ws.nextMove()
+        }, 1000)
     }
     public on_turn(): void {
         

@@ -19,7 +19,7 @@ var ws_connections: { id: string, ws: lws, name?: string, game?: Game }[] = []
 export function wsBroadcast(name: string, data: any) {
     ws_connections.forEach(w => {
         var res = { name, data }
-        console.log(res);
+        //console.log(res);
         w.ws.send(JSON.stringify(res))
     })
 }
@@ -57,7 +57,7 @@ export function wsServerConnect(ws: lws) {
             ready = true
         }
         var j: WSPacket = JSON.parse(ev.data.toString())
-        console.log(j);
+        //console.log(j);
         var res: WSPacket = {
             data: {},
             id: j.id,
@@ -76,7 +76,7 @@ export function wsServerConnect(ws: lws) {
             res.name = "error"
             res.data = "Packet unknown: " + j.name
         }
-        console.log(res);
+        //console.log(res);
         ws.send(JSON.stringify(res))
     }
 }

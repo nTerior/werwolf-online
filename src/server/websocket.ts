@@ -166,7 +166,7 @@ const wsPacketHandler: {[key:string]: (data:any, ws: lws, wsid: string) => Promi
         var self = game?.getPlayer(wsid)!
         var target = game?.getPlayer(data["user_id"])!
 
-        if(self.dead) return {ok: false}
+        if(self.dead && self.role!.name != RoleName.HUNTER) return {ok: false}
         if(target.dead) return {ok: false}
         if(self.role?.name == RoleName.VILLAGER && game!.night) return {ok: false}
         if(self.role?.name == RoleName.WERWOLF && target.role?.name == RoleName.WERWOLF) return {ok: false}
@@ -254,6 +254,15 @@ const wsPacketHandler: {[key:string]: (data:any, ws: lws, wsid: string) => Promi
     "dayVote": async(data, ws, wsid) => {
         var game = getGame(data["game_id"])!
         game.dayVote(data["voted"])
+        return {ok: true}
+    },
+
+    "hunter-day": async(data, ws, wsid) => {
+        getGame(data["game_id"])!.hunterDoneAfterDay(data["user_id"])
+        return {ok: true}
+    },
+    "hunter-night": async(data, ws, wsid) => {
+        getGame(data["game_id"])!.hunterDoneAfterNight(data["user_id"])
         return {ok: true}
     }
 }

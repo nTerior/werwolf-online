@@ -25,6 +25,7 @@ export async function createGameScreen(): Promise<Screen> {
         State.game.selfplayer.secrets["loved-role"] = ""
         State.game.selfplayer.secrets["sleeping-id"] = ""
         State.game.selfplayer.secrets["werwolf_ids"] = []
+        State.game.selfplayer.secrets["hunter_online"] = -1
         create()
     })
     State.ws.on("werwolf-reveal", async id => {
@@ -75,6 +76,19 @@ export async function createGameScreen(): Promise<Screen> {
         State.game.selfplayer.secrets["loved"] = data["id"]
         State.game.selfplayer.secrets["loved-role"] = data["role"]
         await updateUserTable(false)
+    })
+
+    State.ws.on("hunter-after-day", async => {
+        State.game.selfplayer.secrets["hunter_online"] = 0
+        displayString("Du kannst jmd töten")
+        document.title = "Werwölfe | Du bist dran"
+        updateUserTable()
+    })
+    State.ws.on("hunter-after-night", async => {
+        State.game.selfplayer.secrets["hunter_online"] = 1
+        displayString("Du kannst jmd töten")
+        document.title = "Werwölfe | Du bist dran"
+        updateUserTable()
     })
 
     div.appendChild(content)

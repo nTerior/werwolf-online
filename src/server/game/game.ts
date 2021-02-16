@@ -25,6 +25,8 @@ export class Game {
 
     public prey_index:number = -1
 
+    public running: boolean = true
+
     constructor(public id: string, public owner:string) {}
 
     private sendPlayerUpdate() {
@@ -60,8 +62,6 @@ export class Game {
         }
     }
 
-    private waitForHunter: boolean = false
-
     private killPlayerNight(id: string) {
         var player = this.getPlayer(id)
         if(player.is_sleeping && player.undersleeper_id != player.id) return
@@ -77,7 +77,8 @@ export class Game {
         this.roles.find(e => e.role.name == player.role!.name)!.amount--
 
         if(player.role!.name == RoleName.HUNTER) {
-            this.waitForHunter = true
+            this.hunterId = player.id
+            this.killedHunter = true
         }
     }
 
@@ -92,6 +93,10 @@ export class Game {
             this.killPlayerDay(loved.id)
         }
         this.roles.find(e => e.role.name == player.role!.name)!.amount--
+
+        if(player.role!.name == RoleName.HUNTER) {
+            this.killedHunter = true
+        }
     }
 
     private dayPreys: string[] = []
@@ -111,15 +116,64 @@ export class Game {
             this.players.forEach(player => {
                 if(player.dead) player.ws.send(JSON.stringify(dead_packet))
             })
-            this.sendPlayerUpdate()
 
-            setTimeout(() => {
-                this.sendGameOver(this.checkGameOver())
-                this.moveDone()
-            }, 1000)
+            if(!this.killedHunter) {
+                this.sendPlayerUpdate()
+                setTimeout(() => {
+                    this.sendGameOver(this.checkGameOver())
+                    this.moveDone()
+                }, 1000)
+            } else {
+                var player: Player = this.getPlayer(id)
+                var can_kill_packet: WSPacket = {
+                    name: "hunter-can-kill-day",
+                    id: 890,
+                    data: {}
+                }
+                player.ws.send(JSON.stringify(can_kill_packet))
+                this.killedHunter = false
+            }
         }
     }
 
+    public hunterDoneAfterDay(id: string) {
+        this.killPlayerDay(id)
+        
+        setTimeout(() => {
+            var dead_packet: WSPacket = {
+                name: "you-died",
+                id: 21125365864342,
+                data: {}
+            }
+            this.players.forEach(player => {
+                if(player.dead) player.ws.send(JSON.stringify(dead_packet))
+            })
+            this.sendPlayerUpdate()
+            this.sendGameOver(this.checkGameOver())
+            this.moveDone()
+        }, 1000)
+    }
+
+    public hunterDoneAfterNight(id: string) {
+        this.killPlayerDay(id)
+
+        var dead_packet: WSPacket = {
+            name: "you-died",
+            id: 21125365864342,
+            data: {}
+        }
+        this.players.forEach(player => {
+            if(player.dead) player.ws.send(JSON.stringify(dead_packet))
+        })
+        this.setDay()
+        this.sendPlayerUpdate()
+        this.currentRoleIndex = 0
+        this.nextMoveDay = false
+        this.sendGameOver(this.checkGameOver())
+    }
+
+    private killedHunter: boolean = false
+    private hunterId: string = ""
     private nextMoveDay: boolean = false
     private nextMove() {
         if(this.nextMoveDay) {
@@ -144,11 +198,22 @@ export class Game {
                 if(player.dead) player.ws.send(JSON.stringify(dead_packet))
             })
 
-            this.setDay()
-            this.sendPlayerUpdate()
-            this.currentRoleIndex = 0
-            this.nextMoveDay = false
-            this.sendGameOver(this.checkGameOver())
+            if(!this.killedHunter) {
+                this.setDay()
+                this.sendPlayerUpdate()
+                this.currentRoleIndex = 0
+                this.nextMoveDay = false
+                this.sendGameOver(this.checkGameOver())
+            } else {
+                var player: Player = this.getPlayer(this.hunterId)
+                var can_kill_packet: WSPacket = {
+                    name: "hunter-can-kill-night",
+                    id: 891,
+                    data: {}
+                }
+                player.ws.send(JSON.stringify(can_kill_packet))
+                this.killedHunter = false
+            }
             return
         }
         if(this.currentRole.name == RoleName.WERWOLF) {
@@ -202,20 +267,27 @@ export class Game {
     }
 
     private checkGameOver(): RoleName | boolean {
-        var villager_sum = 0
         var werwolf_sum = 0
         var loved_sum = 0
         var total_sum = 0
         this.players.forEach(p => {
-            if(p.role!.name != RoleName.WERWOLF && !p.dead) villager_sum++
             if(p.role!.name == RoleName.WERWOLF && !p.dead) werwolf_sum++
             if(p.inLove && !p.dead) loved_sum++
             if(!p.dead) total_sum++
         })
 
-        if(loved_sum == 2 && total_sum == 2) return RoleName.AMOR
-        if(werwolf_sum == total_sum) return RoleName.WERWOLF
-        if(werwolf_sum == 0) return true
+        if(loved_sum == 2 && total_sum == 2) {
+            this.running = false
+            return RoleName.AMOR
+        }
+        if(werwolf_sum == total_sum) {
+            this.running = false
+            return RoleName.WERWOLF
+        }
+        if(werwolf_sum == 0) {
+            this.running = false
+            return true
+        }
         return false
     }
 
@@ -238,6 +310,7 @@ export class Game {
     }
 
     public moveDone() {
+        if(!this.running) return
         this.roleUnturn()
         this.nextRole()
         this.nextMove()

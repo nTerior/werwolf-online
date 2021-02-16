@@ -62,6 +62,9 @@ export class WS extends EventEmitter {
         if(j.name == "werwolf-reveal") this.emit("werwolf-reveal", j.data)
 
         if(j.name == "chat-message") this.emit("chat-message", j.data)
+
+        if(j.name == "hunter-can-kill-day") this.emit("hunter-after-day")
+        if(j.name == "hunter-can-kill-night") this.emit("hunter-after-night")
     }
 
     private async recvPacket(id: number): Promise<WSPacket> {
@@ -167,6 +170,14 @@ export class WS extends EventEmitter {
 
     public dayVote(user_id: string) {
         this.sendPacket("dayVote", {game_id: State.game.id, voted: user_id})
+    }
+
+    public hunterDay(user_id: string) {
+        this.sendPacket("hunter-day", {game_id: State.game.id, user_id: user_id})
+    }
+    
+    public hunterNight(user_id: string) {
+        this.sendPacket("hunter-night", {game_id: State.game.id, user_id: user_id})
     }
 }
 

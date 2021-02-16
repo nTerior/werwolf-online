@@ -68,7 +68,12 @@ export class Hunter extends Role {
         super(RoleName.HUNTER)
     }
     async on_interact(player: {name: string, id: string, major:boolean, dead:boolean}) {
-        
+        if(State.game.selfplayer.secrets["hunter_online"] == -1) return
+
+        if(State.game.selfplayer.secrets["hunter_online"] == 0) State.ws.hunterDay(player.id)
+        else State.ws.hunterNight(player.id)
+
+        State.game.selfplayer.secrets["hunter_online"] = -1
     }
     public on_turn(): void {
         
@@ -156,7 +161,7 @@ export class Werwolf extends Role {
             users[i].classList.remove("clickable");
             (<HTMLDivElement>users[i]).onclick = () => {}
         }
-        displayString("Du hast für " + player.name + " gestimmt", 1000)
+        displayString("Du hast für das Töten von " + player.name + " gestimmt", 1000)
     }
     public on_turn(): void {
         

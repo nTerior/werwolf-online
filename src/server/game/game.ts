@@ -49,6 +49,19 @@ export class Game {
         if(!found) this.nextRole()
     }
 
+    private possiblePreys: string[] = []
+    public werwolfChoice(prey_id:string) {
+        this.possiblePreys.push(prey_id)
+        if(this.possiblePreys.length == this.roles.find(e => e.role.name == RoleName.WERWOLF)!.amount + this.roles.find(e => e.role.name == RoleName.GIRL)!.amount) {
+            var id:string = maxCount(this.possiblePreys)
+            this.prey_index = this.players.findIndex(e => e.id == id)
+            this.possiblePreys = []
+            this.moveDone()
+        }
+    }
+
+    private waitForHunter: boolean = false
+
     private killPlayerNight(id: string) {
         var player = this.getPlayer(id)
         if(player.is_sleeping && player.undersleeper_id != player.id) return
@@ -62,16 +75,9 @@ export class Game {
         }
         if(player.undersleeper_id) this.killPlayerNight(player.undersleeper_id)
         this.roles.find(e => e.role.name == player.role!.name)!.amount--
-    }
 
-    private possiblePreys: string[] = []
-    public werwolfChoice(prey_id:string) {
-        this.possiblePreys.push(prey_id)
-        if(this.possiblePreys.length == this.roles.find(e => e.role.name == RoleName.WERWOLF)!.amount + this.roles.find(e => e.role.name == RoleName.GIRL)!.amount) {
-            var id:string = maxCount(this.possiblePreys)
-            this.prey_index = this.players.findIndex(e => e.id == id)
-            this.possiblePreys = []
-            this.moveDone()
+        if(player.role!.name == RoleName.HUNTER) {
+            this.waitForHunter = true
         }
     }
 
@@ -83,7 +89,7 @@ export class Game {
 
             var loved = this.players.find(e => e.inLove)!
             loved.inLove = false
-            this.killPlayerNight(loved.id)
+            this.killPlayerDay(loved.id)
         }
         this.roles.find(e => e.role.name == player.role!.name)!.amount--
     }
@@ -120,6 +126,7 @@ export class Game {
 
             if(this.prey_index != -1) {
                 this.killPlayerNight(this.players[this.prey_index].id)
+                this.prey_index = -1
             }
 
             for(var i = 0; i < this.preys.length; i++) {

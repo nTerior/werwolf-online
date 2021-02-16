@@ -1,4 +1,5 @@
 import { sendMessage } from "./client/chat"
+import { displayString } from "./client/display"
 import { State } from "./client/state"
 
 export enum RoleName {
@@ -155,7 +156,7 @@ export class Werwolf extends Role {
             users[i].classList.remove("clickable");
             (<HTMLDivElement>users[i]).onclick = () => {}
         }
-
+        displayString("Du hast für " + player.name + " gestimmt", 1000)
     }
     public on_turn(): void {
         

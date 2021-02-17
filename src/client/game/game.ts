@@ -19,6 +19,6 @@ export class Game {
     }
 
     public getLink(): string {
-        return window.location.host + "?game=" + this.id
+        return window.location.host + window.location.pathname + "?game=" + this.id
     }
 }

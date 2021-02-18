@@ -18,6 +18,7 @@
   "homepage": "https://github.com/cephox/werwolf-online#readme",
   "dependencies": {
     "express": "^4.17.1",
+    "ts-loader": "^8.0.17",
     "webpack": "^5.23.0",
     "webpack-dev-middleware": "^4.1.0"
   },

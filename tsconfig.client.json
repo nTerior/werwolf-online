@@ -1,0 +1,19 @@
+{
+    "compilerOptions": {
+      "mapRoot": "./src/",
+      "module": "ESNext",
+      "target": "ESNext",
+      "strict": true,
+      "noImplicitAny": true,
+      //"outFile": "./build/build.js",
+      "outDir": "./build/",
+      "preserveConstEnums": true,
+      "removeComments": true,
+      "rootDir": "./src",
+      "sourceMap": true,
+      "sourceRoot": "./src",
+      "downlevelIteration": true,
+      "esModuleInterop": true,
+      "moduleResolution": "Node"
+    }
+  }

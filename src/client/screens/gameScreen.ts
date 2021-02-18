@@ -78,17 +78,17 @@ export async function createGameScreen(): Promise<Screen> {
         await updateUserTable(false)
     })
 
-    State.ws.on("hunter-after-day", async => {
+    State.ws.on("hunter-after-day", async () => {
         State.game.selfplayer.secrets["hunter_online"] = 0
         displayString("Du kannst jmd töten")
         document.title = "Werwölfe | Du bist dran"
-        updateUserTable()
+        await updateUserTable()
     })
-    State.ws.on("hunter-after-night", async => {
+    State.ws.on("hunter-after-night", async () => {
         State.game.selfplayer.secrets["hunter_online"] = 1
         displayString("Du kannst jmd töten")
         document.title = "Werwölfe | Du bist dran"
-        updateUserTable()
+        await updateUserTable()
     })
 
     div.appendChild(content)

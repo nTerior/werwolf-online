@@ -4,6 +4,8 @@ import { join } from "path"
 
 import Webpack from "webpack"
 import WebpackDevMiddleware from "webpack-dev-middleware"
+import { packetHandler } from "./websocket/handler"
+import { WebsocketServer } from "./websocket/server"
 
 const webpackConfig = require('../../webpack.config');
 const compiler = Webpack(webpackConfig)
@@ -12,7 +14,8 @@ const devMiddleware = WebpackDevMiddleware(compiler, {
 })
 
 var app = express()
-// todo: websocket
+var ws = new WebsocketServer(5354, packetHandler)
+ws.start()
 
 app.use("/static/script", estatic(join(__dirname, "../../public/dist")))
 app.use("/static/style", estatic(join(__dirname, "../../public/css")))
@@ -35,6 +38,6 @@ app.use((req, res) => {
   res.send("Diese Seite existiert nicht!")
 })
 
-app.listen(8080, () => {
+app.listen(5353, () => {
   console.log("\nStarted Server...\n");
 });

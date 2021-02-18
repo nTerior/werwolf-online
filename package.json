@@ -1,0 +1,19 @@
+{
+  "name": "werwolf-online",
+  "version": "2.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cephox/werwolf-online.git"
+  },
+  "author": "ce_phox",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/cephox/werwolf-online/issues"
+  },
+  "homepage": "https://github.com/cephox/werwolf-online#readme"
+}

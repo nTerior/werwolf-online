@@ -32,9 +32,9 @@ app.use("/js", devMiddleware)
 
 app.use((req, res) => {
   res.status(404)
-  res.send("This page does not exists!")
+  res.send("Diese Seite existiert nicht!")
 })
 
 app.listen(8080, () => {
-  console.log("Listening!");
+  console.log("\nStarted Server...\n");
 });

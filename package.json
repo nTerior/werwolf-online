@@ -1,10 +1,9 @@
 {
-  "name": "webapp",
+  "name": "werwolf-online",
   "version": "1.0.0",
   "description": "",
   "main": "src/server/index.ts",
   "scripts": {
-    "test": "echo \"All tests passed!\" && exit 0",
     "watch": "nodemon"
   },
   "author": "ce_phox",

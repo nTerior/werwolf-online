@@ -42,7 +42,10 @@ export class WebsocketServer {
         ws.onclose = () => {
             dev_events.off("packet", devPacketHandler)
             if(this.on_close) this.on_close(ws)
-            if(connections) connections.splice(connections.findIndex(c => c.id == id), 1)
+            if(connections) {
+                var index = connections.findIndex(c => c.id == id)
+                if(index) connections.splice(index, 1)
+            }
         }
 
         ws.onmessage = async (ev) => {

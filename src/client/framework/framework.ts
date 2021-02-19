@@ -7,3 +7,7 @@ export function append(element: HTMLElement) {
 export function remove(element: HTMLElement) {
     get_root().removeChild(element)
 }
+
+export function addBreak(div: HTMLElement) {
+    div.appendChild(document.createElement("br"))
+}

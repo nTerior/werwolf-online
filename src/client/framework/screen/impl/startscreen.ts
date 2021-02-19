@@ -16,7 +16,6 @@ export function generateStartScreen(): Screen {
     var copyright = document.createElement("div")
     copyright.id = "copyright"
     copyright.textContent = "by Paul Stier"
-    copyright.onclick = () => div.innerHTML += eval("window." + btoa("eval(\"window.\"+btoa(\"\"))"))
     div.appendChild(copyright)
 
     return {

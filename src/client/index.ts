@@ -7,7 +7,6 @@ import { State } from "./state"
 import { WebsocketClient } from "./websocket"
 
 async function init() {
-    Logger.log([], "Do NOT go there: " + window.location.host + "/error")
     await initWebsocket()
     devInit()
     setGlobalBackground("background_day.png")

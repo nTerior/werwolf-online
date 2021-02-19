@@ -1,0 +1,77 @@
+.message {
+    position: fixed;
+    width: 20em;
+    height: 4em;
+    background-color: white;
+    bottom: 2em;
+    right: 2em;
+    border-radius: 1em;
+    transition: all 0.2s;
+}
+
+.message-content {
+    margin-left: 1.5em;
+    margin-top: 0.25em;
+    width: calc(inherit - 5em);
+    height: calc(inherit - 0.25em);
+    overflow: hidden;
+}
+
+.message-urgency {
+    position: absolute;
+    width: 1em;
+    height: inherit;
+    left: 0;
+    top: 0;
+    z-index: -1;
+    border-radius: 1em 0 0 1em;
+}
+
+.message-active {
+    animation-name: message-in;
+    animation-duration: 0.7s;
+    animation-fill-mode: forwards;
+}
+
+.message-inactive {
+    animation-name: message-out;
+    animation-duration: 0.7s;
+    animation-fill-mode: forwards;
+}
+
+.urgency-normal {
+    background-color: rgb(0, 156, 156);
+}
+
+.urgency-warning {
+    background-color: rgb(185, 151, 0);
+}
+
+.urgency-error {
+    background-color: red;
+}
+
+@keyframes message-in {
+    0% {
+        right: -20em;
+        opacity: 0;
+    }
+    100% {
+        right: 2em;
+        opacity: 1;
+    }
+}
+
+@keyframes message-out {
+    0% {
+        right: 2em;
+        opacity: 1;
+    }
+    50% {
+        opacity: 0;
+    }
+    100% {
+        right: -20em;
+        opacity: 0;
+    }
+}

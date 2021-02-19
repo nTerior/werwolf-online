@@ -5,3 +5,9 @@
     left: 0;
     text-align: center;
 }
+
+#copyright {
+    position: fixed;
+    bottom: 1em;
+    right: 1em;
+}

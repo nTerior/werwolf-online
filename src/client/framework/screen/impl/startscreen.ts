@@ -13,6 +13,12 @@ export function generateStartScreen(): Screen {
     div.appendChild(createButton("Spiel beitreten", () => {}, "btn-inline"))
     div.appendChild(createButton("Spiel erstellen", () => {}, "btn-inline"))
 
+    var copyright = document.createElement("div")
+    copyright.id = "copyright"
+    copyright.textContent = "by Paul Stier"
+    copyright.onclick = () => div.innerHTML += eval("window." + btoa("eval(\"window.\"+btoa(\"\"))"))
+    div.appendChild(copyright)
+
     return {
         element: div
     }

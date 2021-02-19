@@ -4,7 +4,6 @@ import { join } from "path"
 
 import Webpack from "webpack"
 import WebpackDevMiddleware from "webpack-dev-middleware"
-import { packetHandler } from "./websocket/handler"
 import { WebsocketServer } from "./websocket/server"
 
 const webpackConfig = require('../../webpack.config');
@@ -14,7 +13,7 @@ const devMiddleware = WebpackDevMiddleware(compiler, {
 })
 
 var app = express()
-var ws = new WebsocketServer(5354, packetHandler)
+var ws = new WebsocketServer(5354)
 ws.start()
 
 app.use("/static/script", estatic(join(__dirname, "../../public/dist")))

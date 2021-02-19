@@ -18,6 +18,7 @@
   "homepage": "https://github.com/cephox/werwolf-online#readme",
   "dependencies": {
     "express": "^4.17.1",
+    "source-map-loader": "^2.0.1",
     "ts-loader": "^8.0.17",
     "uuid": "^8.3.2",
     "webpack": "^5.23.0",

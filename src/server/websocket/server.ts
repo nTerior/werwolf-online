@@ -10,17 +10,16 @@ export interface PacketResult {
         data?: any
     }
 }
+var connections: {id: string, ws: lws}[] = []
+const packetHandler: {[key:string]: (data:any, ws: lws, wsid: string) => Promise<PacketResult>} = {
+    
+}
 
 export class WebsocketServer {
     private ws: Server
-    private connections: {id: string, ws: lws}[] = []
-
-    private packetHandler: {[key: string]: (data: any, ws: lws, id: string) => Promise<PacketResult>}
-
     private on_close?: (ws: lws) => void
 
-    constructor(port: number, packetHandler: {[key: string]: (data: any, ws: lws, id: string) => Promise<PacketResult>}) {
-        this.packetHandler = packetHandler
+    constructor(port: number) {
         this.ws = new Server({port: port})
     }
 
@@ -34,20 +33,20 @@ export class WebsocketServer {
 
         ws.onclose = () => {
             if(this.on_close) this.on_close(ws)
-            if(this.connections) this.connections.splice(this.connections.findIndex(c => c.id == id), 1)
+            if(connections) connections.splice(connections.findIndex(c => c.id == id), 1)
         }
 
         ws.onmessage = async (ev) => {
             if(!ready) {
-                this.connections.push({id: id, ws: ws})
+                connections.push({id: id, ws: ws})
                 ready = true
             }
 
             var packet: Packet = Packet.deserialize(ev.data.toString())
             var result: Packet = new Packet(packet.name, packet.id)
 
-            if(this.packetHandler.hasOwnProperty(packet.name)) {
-                var execute_result = await this.packetHandler[packet.name](packet.data, ws, id)
+            if(packetHandler.hasOwnProperty(packet.name)) {
+                var execute_result = await packetHandler[packet.name](packet.data, ws, id)
                 
                 if(execute_result.error) {
                     result.name = execute_result.error.title
@@ -68,13 +67,13 @@ export class WebsocketServer {
     public onClose(on_close: (ws: lws) => void): void {
         this.on_close = on_close
     }
+}
 
-    public getConnectionById(id: string): lws | undefined {
-        var res = this.connections.find(c => c.id == id)
-        return res ? res.ws : undefined
-    }
-    public getIdByConnection(ws: lws): string | undefined {
-        var res = this.connections.find(c => c.ws == ws)
-        return res ? res.id : undefined
-    }
+export function getConnectionById(id: string): lws | undefined {
+    var res = connections.find(c => c.id == id)
+    return res ? res.ws : undefined
+}
+export function getIdByConnection(ws: lws): string | undefined {
+    var res = connections.find(c => c.ws == ws)
+    return res ? res.id : undefined
 }

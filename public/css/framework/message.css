@@ -5,7 +5,7 @@
     background-color: white;
     bottom: 2em;
     right: 2em;
-    border-radius: 1em;
+    border-radius: 1em 2px 2px 1em;
     transition: all 0.2s;
     cursor: pointer;
 }

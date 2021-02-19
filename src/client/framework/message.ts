@@ -41,7 +41,9 @@ function removeMessage(message: MessageBuild) {
     })
 
     setTimeout(() => {
-        get_root().removeChild(message.element)
+        try {
+            get_root().removeChild(message.element)
+        } catch {}
     }, 1000)
 }
 

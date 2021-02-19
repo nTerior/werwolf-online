@@ -17,6 +17,9 @@ const devPacket = new Packet("dev-packet", {css_reload: true})
 
 var connections: {id: string, ws: lws, game?: Game}[] = []
 const packetHandler: {[key:string]: (data:any, ws: lws, wsid: string) => Promise<PacketResult>} = {
+    "create-game": async (data, ws, wsid) => {
+        return {result: new Game(wsid).id}
+    },
     "quit-game": async (data, ws, wsid) => {
         getGame(data)?.removePlayer(wsid)
         return {}

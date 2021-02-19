@@ -20,6 +20,10 @@ export class Game {
 
     public removePlayer(id: string) {
         var player: Player = this.players.splice(this.players.findIndex(e => e.id == id), 1)[0]
+        if(this.players.length == 0) {
+            this.delete()
+            return
+        }
         if(player.loves_id) {
             var loves = this.getPlayer(player.loves_id)!
             loves.loves_id = ""

@@ -11,3 +11,8 @@ export function remove(element: HTMLElement) {
 export function addBreak(div: HTMLElement) {
     div.appendChild(document.createElement("br"))
 }
+
+export function setGlobalBackground(img: string) {
+    document.body.style.background = "url(\"/static/assets/" + img + "\") no-repeat center center fixed"
+    document.body.style.backgroundSize = "cover"
+}

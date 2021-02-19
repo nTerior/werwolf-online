@@ -4,7 +4,10 @@ import { join } from "path"
 
 import Webpack from "webpack"
 import WebpackDevMiddleware from "webpack-dev-middleware"
+import { devModeInit } from "./dev"
 import { WebsocketServer } from "./websocket/server"
+
+devModeInit()
 
 const webpackConfig = require('../../webpack.config');
 const compiler = Webpack(webpackConfig)

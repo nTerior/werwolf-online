@@ -3,7 +3,7 @@ export class Logger {
         err: "color: black; background-color: red",
         warn: "color: black; background-color: yellow",
         websocket: "color: #00EEEE",
-        dev_mode: "color: #FF00FF"
+        dev: "color: #FF00FF"
     }
 
     static log(tags: string[], text: string, attachments: any = undefined) {

@@ -1,8 +1,10 @@
+import { devInit } from "./dev"
 import { State } from "./state"
 import { WebsocketClient } from "./websocket"
 
 async function init() {
     await initWebsocket()
+    devInit()
 }
 
 async function initWebsocket() {

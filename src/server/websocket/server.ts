@@ -2,6 +2,7 @@ import { Server } from "ws"
 import * as lws from "ws"
 import { v4 } from "uuid"
 import { Packet } from "../../packet"
+import { dev_events } from "../dev"
 
 export interface PacketResult {
     result?: any,
@@ -10,6 +11,9 @@ export interface PacketResult {
         data?: any
     }
 }
+
+const devPacket = new Packet("dev-packet", {css_reload: true})
+
 var connections: {id: string, ws: lws}[] = []
 const packetHandler: {[key:string]: (data:any, ws: lws, wsid: string) => Promise<PacketResult>} = {
     
@@ -31,7 +35,12 @@ export class WebsocketServer {
         var id = v4()
         var ready = false
 
+        const devPacketHandler = (data: any) => {
+            ws.send(devPacket.serialize())
+        }
+        dev_events.on("packet", devPacketHandler)
         ws.onclose = () => {
+            dev_events.off("packet", devPacketHandler)
             if(this.on_close) this.on_close(ws)
             if(connections) connections.splice(connections.findIndex(c => c.id == id), 1)
         }

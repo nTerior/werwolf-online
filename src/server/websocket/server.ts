@@ -3,6 +3,7 @@ import * as lws from "ws"
 import { v4 } from "uuid"
 import { Packet } from "../../packet"
 import { dev_events } from "../dev"
+import { Game, getGame } from "../game/game"
 
 export interface PacketResult {
     result?: any,
@@ -14,9 +15,12 @@ export interface PacketResult {
 
 const devPacket = new Packet("dev-packet", {css_reload: true})
 
-var connections: {id: string, ws: lws}[] = []
+var connections: {id: string, ws: lws, game?: Game}[] = []
 const packetHandler: {[key:string]: (data:any, ws: lws, wsid: string) => Promise<PacketResult>} = {
-    
+    "quit-game": async (data, ws, wsid) => {
+        getGame(data)?.removePlayer(wsid)
+        return {}
+    }
 }
 
 export class WebsocketServer {
@@ -39,11 +43,15 @@ export class WebsocketServer {
             ws.send(devPacket.serialize())
         }
         dev_events.on("packet", devPacketHandler)
-        ws.onclose = () => {
+        ws.onclose = async () => {
             dev_events.off("packet", devPacketHandler)
             if(this.on_close) this.on_close(ws)
             if(connections) {
                 var index = connections.findIndex(c => c.id == id)
+                if(index == -1) return
+                if(connections[index].game) {
+                    await packetHandler["quit-game"](connections[index].game!.id, ws, id)
+                }
                 if(index) connections.splice(index, 1)
             }
         }

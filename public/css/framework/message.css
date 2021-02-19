@@ -22,7 +22,7 @@
     position: absolute;
     width: 1em;
     height: inherit;
-    left: 0;
+    left: -0.1em;
     top: 0;
     z-index: -1;
     border-radius: 1em 0 0 1em;

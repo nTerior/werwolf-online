@@ -49,6 +49,11 @@ function buildMessage(message: Message): MessageBuild {
     var div = document.createElement("div")
     div.classList.add("message", "message-active")
     
+    div.onclick = () => {
+        var v = message_stack.find(e => e.element === div)
+        if (v) removeMessage(v)
+    }
+
     var color = document.createElement("div")
     color.classList.add("message-urgency", message.urgency)
     div.appendChild(color)

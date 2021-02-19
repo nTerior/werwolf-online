@@ -36,8 +36,7 @@ app.use("/js", devMiddleware)
 
 
 app.use((req, res) => {
-  res.status(404)
-  res.send("Diese Seite existiert nicht!")
+  res.sendFile(join(__dirname, "../../public/index.html"))
 })
 
 app.listen(5353, () => {

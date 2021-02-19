@@ -80,7 +80,8 @@ export class WebsocketServer {
             }
 
             var packet: Packet = Packet.deserialize(ev.data.toString())
-            var result: Packet = new Packet(packet.name, packet.id)
+            var result: Packet = new Packet(packet.name)
+            result.id = packet.id
 
             if(packetHandler.hasOwnProperty(packet.name)) {
                 var execute_result = await packetHandler[packet.name](packet.data, ws, id)

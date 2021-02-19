@@ -1,5 +1,6 @@
 import EventEmitter from "events";
 import { Packet } from "../packet";
+import { Message } from "./framework/message";
 
 export class WebsocketClient extends EventEmitter {
     private ws: WebSocket
@@ -24,7 +25,8 @@ export class WebsocketClient extends EventEmitter {
 
     private onmessage(data: string) {
         var packet: Packet = Packet.deserialize(data)
-        this.emit("packet-" + packet.name, packet.data)
+        console.log(packet)
+        this.emit("packet-" + packet.name, packet)
         this.emit("packet-id-" + packet.id, packet)
     }
 
@@ -45,6 +47,7 @@ export class WebsocketClient extends EventEmitter {
 
     async sendAndRecvPacket(packet: Packet): Promise<Packet> {
         this.sendPacket(packet)
+        console.log(packet)
         return await this.recvExplicitPacket(packet.id)
     }
 }

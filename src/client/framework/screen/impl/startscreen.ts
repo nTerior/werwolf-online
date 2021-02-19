@@ -1,3 +1,5 @@
+import { Packet } from "../../../../packet"
+import { State } from "../../../state"
 import { createButton } from "../../button"
 import { addBreak } from "../../framework"
 import { createInputField } from "../../input"
@@ -17,7 +19,7 @@ export function generateStartScreen(): Screen {
 
     addBreak(div)
     if(get_game_id()) div.appendChild(createButton("Spiel beitreten", () => joinGameButton(), "btn-inline"))
-    div.appendChild(createButton("Spiel erstellen", () => createGameButton(), "btn-inline"))
+    div.appendChild(createButton("Spiel erstellen", async () => await createGameButton(), "btn-inline"))
 
     var copyright = document.createElement("div")
     copyright.id = "copyright"
@@ -45,6 +47,17 @@ function joinGameButton() {
     if(!checkUsername()) return
 }
 
-function createGameButton() {
+async function createGameButton() {
     if(!checkUsername()) return
+    await createGame()
+}
+
+
+async function createGame() {
+    var id: string = (await State.ws.sendAndRecvPacket(new Packet("create-game"))).data
+    new Message("Du hast das Spiel mit der ID \"" + id + "\" erstellt").display()
+}
+
+function joinGame() {
+
 }

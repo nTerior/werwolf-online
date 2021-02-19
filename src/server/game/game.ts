@@ -34,6 +34,11 @@ export class Game {
         this.owner_id = this.players[0].id
     }
 
+    public checkName(name: string) {
+        var player = this.players.find(e => e.name.toLowerCase() == name.toLowerCase())
+        return player ? false : true
+    }
+
     public getPlayer(id: string): Player | undefined {
         return this.players.find(p => p.id == id)
     }

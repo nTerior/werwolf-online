@@ -18,7 +18,21 @@ const devPacket = new Packet("dev-packet", {css_reload: true})
 var connections: {id: string, ws: lws, game?: Game}[] = []
 const packetHandler: {[key:string]: (data:any, ws: lws, wsid: string) => Promise<PacketResult>} = {
     "create-game": async (data, ws, wsid) => {
-        return {result: new Game(wsid).id}
+        var game = new Game(wsid)
+        console.log("Game \"" + game.id + "\" was created by " + wsid)
+        return {result: game.id}
+    },
+    "join-game": async (data, ws, wsid) => {
+        var name = data.name
+        var game_id = data.game_id
+        var game = getGame(game_id)
+
+        if(!game) return {error: {title: "Spiel nicht gefunden", data: "Das Spiel mit der ID \"" + game_id + "\" wurde nicht gefunden"}}
+        if(!game.checkName(name)) return {error: {title: "Dieser Name ist bereits vergeben", data: "\"" + name + "\" ist bereits vergeben"}}
+        
+        connections.find(e => e.ws == ws)!.game = game
+        game.addPlayer(name, wsid, ws)
+        return {result: "success"}
     },
     "quit-game": async (data, ws, wsid) => {
         getGame(data)?.removePlayer(wsid)

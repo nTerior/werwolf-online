@@ -38,11 +38,12 @@ async function createUserList(): Promise<HTMLDivElement> {
         new Message(player.name + " ist dem Spiel beigetreten").display()
         div.appendChild(createUser(player.name, player.id))
     })
-    State.ws.setOnPacket("player-left", packet => {
+    State.ws.setOnPacket("player-left", async packet => {
         div.removeChild(document.getElementById("user-element-" + packet.data.id)!)
         var index = State.game.players.findIndex(e => e.id == packet.data.id)
         new Message(State.game.players[index].name + " hat das Spiel verlassen").display()
         State.game.players.splice(index, 1)
+        State.game.self_is_owner = (await State.ws.sendAndRecvPacket(new Packet("is_owner", State.game.id))).data
     })
     return div
 }

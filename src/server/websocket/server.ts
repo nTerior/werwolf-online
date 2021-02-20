@@ -49,6 +49,9 @@ const packetHandler: {[key:string]: (data:any, ws: lws, wsid: string) => Promise
         })
 
         return {result: mani_list}
+    },
+    "is_owner": async(data, ws, wsid) => {
+        return {result: getGame(data)!.owner_id == wsid}
     }
 }
 

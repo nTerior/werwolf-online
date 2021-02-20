@@ -69,6 +69,7 @@ async function joinGame(name: string, game_id: string) {
     if(result == "success") {
         new Message("Du bist dem Spiel \"" + game_id + "\" beigetreten").display()
         State.game = new Game(game_id)
+        State.game.self_is_owner = (await State.ws.sendAndRecvPacket(new Packet("is_owner", State.game.id))).data
         nextScreen(await generateWaitRoomScreen())
     } else {
         new Message(result, 5000, Urgency.ERROR).display()

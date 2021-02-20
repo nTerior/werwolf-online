@@ -1,4 +1,5 @@
 import { Packet } from "../../../../packet"
+import { Game } from "../../../game/game"
 import { State } from "../../../state"
 import { createButton } from "../../button"
 import { addBreak } from "../../framework"
@@ -44,26 +45,29 @@ function checkUsername(): string | undefined {
 }
 
 async function joinGameButton() {
-    if(!checkUsername()) return
-    joinGame(checkUsername()!, get_game_id()!)
+    var v = checkUsername()
+    if(!v) return
+    joinGame(v, get_game_id()!)
 }
 
 async function createGameButton() {
-    if(!checkUsername()) return
-    await createGame()
+    var v = checkUsername()
+    if(!v) return
+    await createGame(v)
 }
 
 
-async function createGame() {
+async function createGame(name: string) {
     var id: string = (await State.ws.sendAndRecvPacket(new Packet("create-game"))).data
     new Message("Du hast das Spiel ID \"" + id + "\" erstellt").display()
-    await joinGame(checkUsername()!, id)
+    await joinGame(name, id)
 }
 
 async function joinGame(name: string, game_id: string) {
     var result: string = (await State.ws.sendAndRecvPacket(new Packet("join-game", {name: name, game_id: game_id}))).data
     if(result == "success") {
         new Message("Du bist dem Spiel \"" + game_id + "\" beigetreten").display()
+        State.game = new Game(game_id)
     } else {
         new Message(result, 5000, Urgency.ERROR).display()
     }

@@ -7,6 +7,10 @@ export function devInit() {
     State.ws.setOnPacket("dev-packet", (data) => {
         if (data.css_reload) devReloadCss()
     })
+    //@ts-expect-error
+    window.dev = {
+        State
+    }
 }
 
 

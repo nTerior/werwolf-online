@@ -1,6 +1,5 @@
 import EventEmitter from "events";
 import { Packet } from "../packet";
-import { Message } from "./framework/message";
 
 export class WebsocketClient extends EventEmitter {
     private ws: WebSocket

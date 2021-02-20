@@ -7,8 +7,8 @@
 }
 
 .screen p {
-    width: 50%;
     margin: 0 25vw;
+    max-inline-size: 50%;
 }
 
 #copyright {

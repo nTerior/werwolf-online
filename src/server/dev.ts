@@ -17,4 +17,5 @@ function createWatch(subpath="") {
 export function devModeInit() {
     createWatch("")
     createWatch("framework")
+    createWatch("screens")
 }

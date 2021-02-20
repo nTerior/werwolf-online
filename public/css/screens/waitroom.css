@@ -1,0 +1,19 @@
+.user-list {
+    margin-top: 1em;
+    width: 50%;
+}
+
+.user-element {
+    display: inline-block;
+    margin: 0 0.5em;
+}
+
+.user-element img {
+    width: 5em;
+    pointer-events: none;
+}
+
+.user-name {
+    position: relative;
+    top: -0.25em;
+}

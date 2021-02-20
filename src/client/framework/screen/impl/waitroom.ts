@@ -1,6 +1,7 @@
 import { Packet } from "../../../../packet"
 import { Player } from "../../../game/player"
 import { State } from "../../../state"
+import { Message } from "../../message"
 import { createHeader, createText } from "../../text"
 import { Screen } from "../screen"
 
@@ -34,11 +35,14 @@ async function createUserList(): Promise<HTMLDivElement> {
     State.ws.setOnPacket("player-joined", packet => {
         var player: Player = new Player(packet.data.name, packet.data.id)
         State.game.players.push(player)
+        new Message(player.name + " ist dem Spiel beigetreten").display()
         div.appendChild(createUser(player.name, player.id))
     })
     State.ws.setOnPacket("player-left", packet => {
         div.removeChild(document.getElementById("user-element-" + packet.data.id)!)
-        State.game.players.splice(State.game.players.findIndex(e => e.id == packet.data.id), 1)
+        var index = State.game.players.findIndex(e => e.id == packet.data.id)
+        new Message(State.game.players[index].name + " hat das Spiel verlassen").display()
+        State.game.players.splice(index, 1)
     })
     return div
 }

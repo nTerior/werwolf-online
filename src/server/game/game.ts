@@ -7,6 +7,7 @@ export class Game {
     public id: string
     public players: Player[] = []
     public owner_id: string
+    public running: boolean = false
 
     constructor(owner_id: string) {
         this.id = generateGameId()
@@ -15,11 +16,13 @@ export class Game {
     }
 
     public addPlayer(name: string, id: string, ws: lws) {
+        console.log(name + " joined " + this.id)
         this.players.push(new Player(name, id, ws, this))
     }
 
     public removePlayer(id: string) {
         var player: Player = this.players.splice(this.players.findIndex(e => e.id == id), 1)[0]
+        console.log(player.name + " left " + this.id)
         if(this.players.length == 0) {
             this.delete()
             return
@@ -48,6 +51,7 @@ export class Game {
     }
 
     public delete(): void {
+        console.log("Game deleted: " + this.id)
         games.splice(games.findIndex(e => e === this), 1)
     }
 }

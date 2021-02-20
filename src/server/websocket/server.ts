@@ -29,6 +29,7 @@ const packetHandler: {[key:string]: (data:any, ws: lws, wsid: string) => Promise
 
         if(!game) return {error: {title: "Spiel nicht gefunden", data: "Das Spiel mit der ID \"" + game_id + "\" wurde nicht gefunden"}}
         if(!game.checkName(name)) return {error: {title: "Dieser Name ist bereits vergeben", data: "\"" + name + "\" ist bereits vergeben"}}
+        if(game.running) return {error: {title: "Das Spiel läuft bereits", data: "Das Spiel läuft bereits"}}
         
         connections.find(e => e.ws == ws)!.game = game
         game.addPlayer(name, wsid, ws)

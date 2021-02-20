@@ -27,6 +27,7 @@ export class Player {
     }
 
     public killNight(ignore_love: boolean = false) {
+        console.log("Player " + this.name + " killed in night in game " + this.game.id)
         if(this.sleeping_by) return
         this.dead = true
         
@@ -38,9 +39,10 @@ export class Player {
     }
 
     public killDay(ignore_love: boolean = false) {
+        console.log("Player " + this.name + " killed on day in game " + this.game.id)
         this.dead = true
         if(ignore_love) return
         if(!this.loves_id) return
-        this.game.getPlayer(this.loves_id)?.killNight(true)
+        this.game.getPlayer(this.loves_id)?.killDay(true)
     }
 }

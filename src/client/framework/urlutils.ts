@@ -1,4 +1,4 @@
 export function get_game_id(): string | undefined {
-    var i = ""
-    return (i = window.location.pathname.replace("/" ,"")) != "" ? i : undefined
+    var i = window.location.href.substring(window.location.href.lastIndexOf('/') + 1)
+    return i != "" && i != "werwolf" ? i : undefined
 }

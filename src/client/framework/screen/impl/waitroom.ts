@@ -1,3 +1,4 @@
+import { Packet } from "../../../../packet"
 import { Player } from "../../../game/player"
 import { State } from "../../../state"
 import { createHeader, createText } from "../../text"
@@ -18,12 +19,18 @@ export async function generateWaitRoomScreen(): Promise<Screen> {
 }
 
 async function createUserList(): Promise<HTMLDivElement> {
+
+    var list: {name: string, id: string}[] = (await State.ws.sendAndRecvPacket(new Packet("get-player-list", State.game.id))).data
+    list.forEach(e => {
+        State.game.players.push(new Player(e.name, e.id))
+    })
+
     var div = document.createElement("div")
     div.classList.add("user-list")
     State.game.players.forEach(player => {
         div.appendChild(createUser(player.name, player.id))
     })
-    
+
     State.ws.setOnPacket("player-joined", packet => {
         var player: Player = new Player(packet.data.name, packet.data.id)
         State.game.players.push(player)

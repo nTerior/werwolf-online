@@ -38,6 +38,17 @@ const packetHandler: {[key:string]: (data:any, ws: lws, wsid: string) => Promise
     "quit-game": async (data, ws, wsid) => {
         getGame(data)?.removePlayer(wsid)
         return {}
+    },
+    "get-player-list": async(data, ws, wsid) => {
+        var player_list = getGame(data)!.players
+        var mani_list: {name: string, id: string}[] = []
+
+        player_list.forEach(player => {
+            if(player.id == wsid) mani_list.push({name: player.name + " (Du)", id: player.id})
+            else mani_list.push({name: player.name, id: player.id})
+        })
+
+        return {result: mani_list}
     }
 }
 

@@ -4,8 +4,8 @@ import { State } from "./state"
 export function devInit() {
     if (window.location.hash != "#dev") return
     Logger.log(["dev"], "Entering dev mode ...")
-    State.ws.setOnPacket("dev-packet", (data) => {
-        if (data.css_reload) devReloadCss()
+    State.ws.setOnPacket("dev-packet", (packet) => {
+        if (packet.data.css_reload) devReloadCss()
     })
     //@ts-expect-error
     window.dev = {

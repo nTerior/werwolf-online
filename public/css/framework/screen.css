@@ -6,8 +6,43 @@
     text-align: center;
 }
 
+.screen p {
+    width: 50%;
+    margin: 0 25vw;
+}
+
 #copyright {
     position: fixed;
     bottom: 1em;
     right: 1em;
+}
+
+.screen-active {
+    animation-name: screen-in;
+    animation-duration: 1s;
+    animation-fill-mode: forwards;
+}
+
+.screen-inactive {
+    animation-name: screen-out;
+    animation-duration: 1s;
+    animation-fill-mode: forwards;
+}
+
+@keyframes screen-in {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
+@keyframes screen-out {
+    0% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0;
+    }
 }

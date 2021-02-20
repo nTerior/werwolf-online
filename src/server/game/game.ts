@@ -1,5 +1,6 @@
 import { Player } from "./player"
 import * as lws from "ws"
+import { Packet } from "../../packet"
 
 var games: Game[] = []
 
@@ -17,11 +18,23 @@ export class Game {
 
     public addPlayer(name: string, id: string, ws: lws) {
         console.log(name + " joined " + this.id)
-        this.players.push(new Player(name, id, ws, this))
+        var newPlayer = new Player(name, id, ws, this)
+        this.players.forEach(player => {
+            player.ws.send(new Packet("player-joined", {
+                name: newPlayer.name,
+                id: newPlayer.id
+            }).serialize())
+        })
+        this.players.push(newPlayer)
     }
 
     public removePlayer(id: string) {
         var player: Player = this.players.splice(this.players.findIndex(e => e.id == id), 1)[0]
+        this.players.forEach(p => {
+            p.ws.send(new Packet("player-left", {
+                id: player.id
+            }).serialize())
+        })
         console.log(player.name + " left " + this.id)
         if(this.players.length == 0) {
             this.delete()

@@ -7,7 +7,8 @@ import { createInputField } from "../../input"
 import { Message, Urgency } from "../../message"
 import { createHeader } from "../../text"
 import { get_game_id } from "../../urlutils"
-import { Screen } from "../screen"
+import { nextScreen, Screen } from "../screen"
+import { generateWaitRoomScreen } from "./waitroom"
 
 export function generateStartScreen(): Screen {
     var div = document.createElement("div")
@@ -24,7 +25,7 @@ export function generateStartScreen(): Screen {
 
     var copyright = document.createElement("div")
     copyright.id = "copyright"
-    copyright.textContent = "by Paul Stier"
+    copyright.textContent = "Code by Paul Stier, Images by Siri Bürkle"
     div.appendChild(copyright)
 
     return {
@@ -68,6 +69,7 @@ async function joinGame(name: string, game_id: string) {
     if(result == "success") {
         new Message("Du bist dem Spiel \"" + game_id + "\" beigetreten").display()
         State.game = new Game(game_id)
+        nextScreen(await generateWaitRoomScreen())
     } else {
         new Message(result, 5000, Urgency.ERROR).display()
     }

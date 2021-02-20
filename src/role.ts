@@ -1,4 +1,4 @@
-enum RoleName {
+export enum RoleName {
     WEREWOLF = "Werwolf",
     GRIL = "Mädchen",
     WITCH = "Hexe",

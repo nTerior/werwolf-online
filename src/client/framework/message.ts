@@ -50,11 +50,6 @@ function removeMessage(message: MessageBuild) {
 function buildMessage(message: Message): MessageBuild {
     var div = document.createElement("div")
     div.classList.add("message", "message-active")
-    
-    div.onclick = () => {
-        var v = message_stack.find(e => e.element === div)
-        if (v) removeMessage(v)
-    }
 
     var color = document.createElement("div")
     color.classList.add("message-urgency", message.urgency)
@@ -64,6 +59,17 @@ function buildMessage(message: Message): MessageBuild {
     text.classList.add("message-content")
     text.textContent = message.text
     div.appendChild(text)
+
+    var x = document.createElement("div")
+    x.classList.add("message-close-x")
+    x.textContent = "✕"
+
+    x.onclick = () => {
+        var v = message_stack.find(e => e.element === div)
+        if (v) removeMessage(v)
+    }
+
+    div.appendChild(x)
 
     return {
         message: message,

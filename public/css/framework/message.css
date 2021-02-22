@@ -7,7 +7,6 @@
     right: 2em;
     border-radius: 1em 2px 2px 1em;
     transition: all 0.2s;
-    cursor: pointer;
 }
 
 .message-content {
@@ -26,6 +25,14 @@
     top: 0;
     z-index: -1;
     border-radius: 1em 0 0 1em;
+}
+
+.message-close-x {
+    position: absolute;
+    right: 0;
+    top: 0;
+    margin: .5em .5em 0 0;
+    cursor: pointer;
 }
 
 .message-active {

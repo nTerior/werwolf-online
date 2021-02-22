@@ -6,9 +6,7 @@ export enum RoleName {
     AMOR = "Amor",
     MATTRESS = "Matratze",
     VILLAGER = "Dorfbewohner",
-    HUNTER = "Jäger",
-
-    NONE = "None"
+    HUNTER = "Jäger"
 }
 
 export abstract class Role {
@@ -18,14 +16,4 @@ export abstract class Role {
     }
     public abstract on_interact(): void
     public abstract on_turn(): void
-}
-
-export class RoleNone extends Role {
-    constructor() {super(RoleName.NONE)}
-    public on_interact(): void {
-        throw new Error("Role was still there")
-    }
-    public on_turn(): void {
-        throw new Error("Role was still there")
-    }
 }

@@ -1,10 +1,10 @@
-import { Role, RoleNone } from "../../role"
+import { Role } from "../../role"
 
 export class Player {
     public name: string
     public id: string
     
-    public role: Role = new RoleNone()
+    public role?: Role
     
     public dead: boolean = false
     public inLove: boolean = false

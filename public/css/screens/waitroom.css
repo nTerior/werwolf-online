@@ -17,3 +17,46 @@
     position: relative;
     top: -0.25em;
 }
+
+#game-settings {
+    position: absolute;
+    text-align: right;
+    left: 50vw;
+    font-size: large;
+    top: 30vh;
+}
+
+.game-settings-role {
+    margin-top: 0.5em;
+}
+
+.game-settings-role-value::-webkit-outer-spin-button,
+.game-settings-role-value::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+}
+
+.game-settings-role-value {
+    -moz-appearance: textfield;
+    width: 2em;
+    height: 1.75em;
+    margin-left: 0.5em;
+
+}
+
+.link-input {
+    margin-top: 1em;
+    border: 0.2em solid orange;
+    padding: .25em;
+    color: white;
+    text-decoration: underline;
+    width: 22em;
+    cursor: pointer;
+}
+
+.link-input:hover {
+    border: 0.2em solid rgb(187, 121, 0);
+}
+
+.link-input:focus {
+    border: 0.2em solid orange;
+}

@@ -2,6 +2,8 @@ import { Logger } from "./logger"
 import { State } from "./state"
 
 export function devInit() {
+    //@ts-expect-error
+    if(window.location.hash == "#siri") window.location = "https://youtu.be/dQw4w9WgXcQ"
     if (window.location.hash != "#dev") return
     Logger.log(["dev"], "Entering dev mode ...")
     State.ws.setOnPacket("dev-packet", (packet) => {

@@ -1,5 +1,5 @@
 import * as lws from "ws"
-import { Role, RoleNone } from "../../role"
+import { Role } from "../../role"
 import { Game } from "./game"
 
 export class Player {
@@ -7,7 +7,7 @@ export class Player {
     public id: string
     public ws: lws
     
-    public role: Role = new RoleNone()
+    public role?: Role
     
     public dead: boolean = false
     public inLove: boolean = false

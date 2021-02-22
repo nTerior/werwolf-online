@@ -14,10 +14,12 @@ export function generateStartScreen(): Screen {
     var div = document.createElement("div")
 
     div.appendChild(createHeader("h1", "Werwölfe"))
-    div.appendChild(createInputField("Name", "", async () => {
+    var name = createInputField("Name", "", async () => {
         if(get_game_id()) await joinGameButton()
         else await createGameButton()
-    }, "name-field", []))
+    }, "name-field", [])
+    setTimeout(() => name.focus(), 100)
+    div.appendChild(name)
 
     addBreak(div)
     if(get_game_id()) div.appendChild(createButton("Spiel beitreten", async () => await joinGameButton(), "btn-inline"))

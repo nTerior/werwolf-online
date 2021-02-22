@@ -16,3 +16,9 @@ export function setGlobalBackground(img: string) {
     document.body.style.background = "url(\"/static/assets/" + img + "\") no-repeat center center fixed"
     document.body.style.backgroundSize = "cover"
 }
+
+export function disableContextMenu() {
+    document.addEventListener("contextmenu", e => {
+        e.preventDefault()
+    })
+}

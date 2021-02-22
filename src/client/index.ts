@@ -1,14 +1,14 @@
 import { devInit } from "./dev"
-import { setGlobalBackground } from "./framework/framework"
+import { disableContextMenu, setGlobalBackground } from "./framework/framework"
 import { generateStartScreen } from "./framework/screen/impl/startscreen"
 import { nextScreen } from "./framework/screen/screen"
-import { Logger } from "./logger"
 import { State } from "./state"
 import { WebsocketClient } from "./websocket"
 
 async function init() {
     await initWebsocket()
     devInit()
+    disableContextMenu()
     setGlobalBackground("background_day.png")
     nextScreen(generateStartScreen())
 }

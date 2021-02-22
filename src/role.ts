@@ -1,6 +1,6 @@
 export enum RoleName {
     WEREWOLF = "Werwolf",
-    GRIL = "Mädchen",
+    GIRL = "Mädchen",
     WITCH = "Hexe",
     SEER = "Sehering",
     AMOR = "Amor",

@@ -1,8 +1,9 @@
 import { Packet } from "../../../../packet"
 import { RoleName } from "../../../../role"
+import { Settings } from "../../../../settings"
 import { Player } from "../../../game/player"
 import { State } from "../../../state"
-import { createInputField } from "../../input"
+import { createCheckbox, createInputField } from "../../input"
 import { Message } from "../../message"
 import { createHeader, createText } from "../../text"
 import { Screen } from "../screen"
@@ -46,8 +47,11 @@ async function createUserList(): Promise<HTMLDivElement> {
         var index = State.game.players.findIndex(e => e.id == packet.data.id)
         new Message(State.game.players[index].name + " hat das Spiel verlassen").display()
         State.game.players.splice(index, 1)
+
+        var tmp = State.game.self_is_owner
+
         State.game.self_is_owner = (await State.ws.sendAndRecvPacket(new Packet("is_owner", State.game.id))).data
-        if(State.game.self_is_owner) new Message("Du bist nun der Host", 7000).display()
+        if(State.game.self_is_owner && !tmp) new Message("Du bist nun der Host", 7000).display()
         updateRoleInputs()
     })
     return div
@@ -108,6 +112,8 @@ function createSettings() {
         role_name.appendChild(role_value)
         div.appendChild(role_name)
     }
+
+    div.appendChild(createCheckbox("Rollen nach Tod veröffentlichen", false, () => {}, "game-settings-death-reveal", "checkbox-settings"))
     
     var link_div = document.createElement("div")
     var input = createInputField("", State.game.getInviteLink(), () => {}, "", ["*"], "link-input")
@@ -123,5 +129,25 @@ function createSettings() {
     link_div.appendChild(input)
     div.appendChild(link_div)
 
+    var startBnt = document.createElement("button")
+    startBnt.textContent = "Spiel starten"
+    startBnt.onclick = () => startGame()
+
+    div.appendChild(startBnt)
     return div
+}
+
+function startGame() {
+    buildSettings()
+}
+
+function buildSettings() {
+    var settings: Settings = new Settings()
+    for(var role in RoleName) {
+        var el = (<HTMLInputElement>document.getElementById("role-value-" + role))
+        //@ts-expect-error
+        settings.set("role_settings", parseInt(el.value), RoleName[role])
+    }
+    settings.set("reveal_role_death", (<HTMLInputElement>document.getElementById("game-settings-death-reveal")).checked)
+    console.log(settings)
 }

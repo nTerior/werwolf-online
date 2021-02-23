@@ -12,3 +12,22 @@ export function createInputField(placeholder: string, default_text: string, on_k
     }
     return input
 }
+
+export function createCheckbox(text: string, checked: boolean, onchange: () => void, id: string, ...classes: string[]): HTMLDivElement {
+    var div = document.createElement("div")
+    
+    var label = document.createElement("label")
+    label.setAttribute("for", id)
+    label.textContent = text
+    div.appendChild(label)
+
+    var checkbox = document.createElement("input")
+    checkbox.type = "checkbox"
+    checkbox.checked = checked
+    checkbox.id = id
+    checkbox.name = id
+    classes.forEach(c => checkbox.classList.add(c))
+    div.appendChild(checkbox)
+    
+    return div
+}

@@ -3,6 +3,7 @@ import { RoleName } from "../../../../role"
 import { Settings } from "../../../../settings"
 import { Player } from "../../../game/player"
 import { State } from "../../../state"
+import { createButton } from "../../button"
 import { createCheckbox, createInputField } from "../../input"
 import { Message } from "../../message"
 import { createHeader, createText } from "../../text"
@@ -129,11 +130,7 @@ function createSettings() {
     link_div.appendChild(input)
     div.appendChild(link_div)
 
-    var startBnt = document.createElement("button")
-    startBnt.textContent = "Spiel starten"
-    startBnt.onclick = () => startGame()
-
-    div.appendChild(startBnt)
+    div.appendChild(createButton("Spiel starten", () => startGame()))
     return div
 }
 

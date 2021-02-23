@@ -39,7 +39,7 @@ function checkUsername(): string | undefined {
     var name = (<HTMLInputElement>document.getElementById("name-field")).value
     if(name) {
         if(/^[A-z0-9 ]*$/.test(name.trim())) return name.trim().replace(/\s\s+/g, ' ')
-        else new Message("Dein Name darf nur A-z, 0-9 und Leerzeichen enthalten!", -1, Urgency.ERROR).display()
+        else new Message("Dein Name darf nur A-z, 0-9 und Leerzeichen enthalten!", 5000, Urgency.ERROR).display()
     } else {
         new Message("Du musst deinen Namen angeben!", 5000, Urgency.ERROR).display()
     }

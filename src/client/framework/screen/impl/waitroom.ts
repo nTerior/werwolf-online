@@ -130,7 +130,7 @@ function createSettings() {
     link_div.appendChild(input)
     div.appendChild(link_div)
 
-    div.appendChild(createButton("Spiel starten", () => startGame()))
+    div.appendChild(createButton("Spiel starten", () => startGame(), "start-game-btn"))
     return div
 }
 

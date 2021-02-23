@@ -119,6 +119,7 @@ function createSettings() {
     var link_div = document.createElement("div")
     var input = createInputField("", State.game.getInviteLink(), () => {}, "", ["*"], "link-input")
     input.onclick = () => {
+        input.value = State.game.getInviteLink()
         input.select()
         input.setSelectionRange(0, 9999)
         document.execCommand("copy")

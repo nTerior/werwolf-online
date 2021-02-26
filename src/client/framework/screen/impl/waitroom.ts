@@ -58,7 +58,7 @@ async function createUserList(): Promise<HTMLDivElement> {
         var tmp = State.game.self_is_owner
 
         State.game.self_is_owner = (await State.ws.sendAndRecvPacket(new Packet("is_owner", State.game.id))).data
-        if(State.game.self_is_owner && !tmp) new Message("Du bist nun der Host", 7000).display()
+        if(State.game.self_is_owner && !tmp) new Message("Du bist nun der Host", -1).display()
         updateRoleInputs()
     })
     return div

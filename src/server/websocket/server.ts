@@ -51,7 +51,14 @@ const packetHandler: {[key:string]: (data:any, ws: lws, wsid: string) => Promise
         return {result: mani_list}
     },
     "is_owner": async(data, ws, wsid) => {
-        return {result: getGame(data)!.owner_id == wsid}
+        return {result: getGame(data)!.is_owner(wsid)}
+    },
+    "start-game": async(data, ws, wsid) => {
+        var game: Game = getGame(data["game_id"])!
+        if(!game.is_owner(wsid)) return {error: {title: "Not an owner", data: "Du bist nicht der Host des Spiels!"}}
+        game.settings = data["settings"]
+        game.start()
+        return {ok: true}
     }
 }
 

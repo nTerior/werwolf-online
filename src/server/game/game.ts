@@ -1,6 +1,7 @@
 import { Player } from "./player"
 import * as lws from "ws"
 import { Packet } from "../../packet"
+import { Settings } from "../../settings"
 
 var games: Game[] = []
 
@@ -9,6 +10,7 @@ export class Game {
     public players: Player[] = []
     public owner_id: string
     public running: boolean = false
+    public settings?: Settings
 
     constructor(owner_id: string) {
         this.id = generateGameId()
@@ -66,6 +68,18 @@ export class Game {
     public delete(): void {
         console.log("Game deleted: " + this.id)
         games.splice(games.findIndex(e => e === this), 1)
+    }
+
+    public is_owner(id: string): boolean {
+        return this.owner_id == id
+    }
+
+    public start(): void {
+        console.log("Game started: " + this.id)
+        this.running = true
+        this.players.forEach(p => {
+            p.ws.send(new Packet("game-started").serialize())
+        })
     }
 }
 

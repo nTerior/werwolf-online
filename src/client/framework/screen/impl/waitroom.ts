@@ -5,9 +5,10 @@ import { Player } from "../../../game/player"
 import { State } from "../../../state"
 import { createButton } from "../../button"
 import { createCheckbox, createInputField } from "../../input"
-import { Message } from "../../message"
+import { Message, Urgency } from "../../message"
 import { createHeader, createText } from "../../text"
-import { Screen } from "../screen"
+import { nextScreen, Screen } from "../screen"
+import { generateGameScreen } from "./gamescreen"
 
 export async function generateWaitRoomScreen(): Promise<Screen> {
     var div = document.createElement("div")
@@ -17,10 +18,15 @@ export async function generateWaitRoomScreen(): Promise<Screen> {
 
     div.appendChild(await createUserList())
     div.appendChild(createSettings())
+    
+    State.ws.setOnPacket("game-started", () => nextScreen(generateGameScreen()))
 
     return {
         element: div,
-        title: "Warteraum"
+        title: "Warteraum",
+        on_pop: () => {
+            State.ws.removeAllListeners()
+        }
     }
 }
 
@@ -132,7 +138,7 @@ function createSettings() {
     link_div.appendChild(input)
     div.appendChild(link_div)
 
-    var startbtn = createButton("Spiel starten", () => startGame(), "start-game-btn")
+    var startbtn = createButton("Spiel starten", async () => await startGame(), "start-game-btn")
     startbtn.hidden = !admin
     startbtn.id = "start-game"
     div.appendChild(startbtn)
@@ -140,9 +146,33 @@ function createSettings() {
     return div
 }
 
-function startGame() {
+async function startGame() {
     var gamesettings: Settings = buildSettings()
-    
+
+    var sum = sumRoles(gamesettings)
+    if(State.game.players.length > sum) {
+        new Message("Es müssen noch " + (State.game.players.length - sum) + " Rollen vergeben werden!", 5000, Urgency.ERROR).display()
+        return
+    } else if(State.game.players.length < sum) {
+        new Message("Es müssen noch " + (sum - State.game.players.length) + " Spieler mitspielen!", 5000, Urgency.ERROR).display()
+        return
+    }
+
+    var result: Packet = await State.ws.sendAndRecvPacket(new Packet("start-game", {settings: gamesettings, game_id: State.game.id}))
+    if(result.data) new Message(result.data.toString(), 5000, Urgency.ERROR).display()
+}
+
+function sumRoles(settings: Settings) {
+    var amount = 0
+    amount += settings.settings.role_settings.Amor!
+    amount += settings.settings.role_settings.Dorfbewohner!
+    amount += settings.settings.role_settings.Hexe!
+    amount += settings.settings.role_settings.Jäger!
+    amount += settings.settings.role_settings.Matratze!
+    amount += settings.settings.role_settings.Mädchen!
+    amount += settings.settings.role_settings.Sehering!
+    amount += settings.settings.role_settings.Werwolf!
+    return amount
 }
 
 function buildSettings(): Settings {

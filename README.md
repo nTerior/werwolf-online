@@ -1,4 +1,4 @@
-<div style="text-align:center"><img src="./public/assets/icon.svg" /></div>
+<p align="center"><img src="./public/assets/icon.svg" /></p>
 
 # werwolf-online
 A simple online werwolves game

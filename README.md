@@ -1,4 +1,4 @@
-![Social Image](./public/assets/social.svg)
+<div style="text-align:center"><img src="./public/assets/icon.svg" /></div>
 
 # werwolf-online
 A simple online werwolves game

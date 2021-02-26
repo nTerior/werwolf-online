@@ -1,3 +1,5 @@
+![Social Image](./public/assets/social.svg)
+
 # werwolf-online
 A simple online werwolves game
 

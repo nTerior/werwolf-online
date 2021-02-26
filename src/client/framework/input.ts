@@ -13,7 +13,7 @@ export function createInputField(placeholder: string, default_text: string, on_k
     return input
 }
 
-export function createCheckbox(text: string, checked: boolean, onchange: () => void, id: string, ...classes: string[]): HTMLDivElement {
+export function createCheckbox(text: string, checked: boolean, onchange: () => void, id: string, enabled: boolean, ...classes: string[]): HTMLDivElement {
     var div = document.createElement("div")
     
     var label = document.createElement("label")
@@ -26,6 +26,7 @@ export function createCheckbox(text: string, checked: boolean, onchange: () => v
     checkbox.checked = checked
     checkbox.id = id
     checkbox.name = id
+    checkbox.disabled = !enabled
     classes.forEach(c => checkbox.classList.add(c))
     div.appendChild(checkbox)
     

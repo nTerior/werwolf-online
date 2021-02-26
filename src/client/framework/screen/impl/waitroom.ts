@@ -82,11 +82,12 @@ function updateRoleInputs() {
         var el = (<HTMLInputElement>document.getElementById("role-value-" + role))
         el.disabled = !admin
     }
+    (<HTMLInputElement>document.getElementById("game-settings-death-reveal")).disabled = !admin;
+    (<HTMLButtonElement>document.getElementById("start-game")).hidden = !admin;
 }
 
 function createSettings() {
     var admin = State.game.self_is_owner
-    
     var div = document.createElement("div")
     div.id = "game-settings"
 
@@ -114,7 +115,7 @@ function createSettings() {
         div.appendChild(role_name)
     }
 
-    div.appendChild(createCheckbox("Rollen nach Tod veröffentlichen", false, () => {}, "game-settings-death-reveal", "checkbox-settings"))
+    div.appendChild(createCheckbox("Rollen nach Tod veröffentlichen", false, () => {}, "game-settings-death-reveal", admin, "checkbox-settings"));
     
     var link_div = document.createElement("div")
     var input = createInputField("", State.game.getInviteLink(), () => {}, "", ["*"], "link-input")
@@ -131,15 +132,20 @@ function createSettings() {
     link_div.appendChild(input)
     div.appendChild(link_div)
 
-    div.appendChild(createButton("Spiel starten", () => startGame(), "start-game-btn"))
+    var startbtn = createButton("Spiel starten", () => startGame(), "start-game-btn")
+    startbtn.hidden = !admin
+    startbtn.id = "start-game"
+    div.appendChild(startbtn)
+
     return div
 }
 
 function startGame() {
-    buildSettings()
+    var gamesettings: Settings = buildSettings()
+    
 }
 
-function buildSettings() {
+function buildSettings(): Settings {
     var settings: Settings = new Settings()
     for(var role in RoleName) {
         var el = (<HTMLInputElement>document.getElementById("role-value-" + role))
@@ -147,5 +153,5 @@ function buildSettings() {
         settings.set("role_settings", parseInt(el.value), RoleName[role])
     }
     settings.set("reveal_role_death", (<HTMLInputElement>document.getElementById("game-settings-death-reveal")).checked)
-    console.log(settings)
+    return settings
 }

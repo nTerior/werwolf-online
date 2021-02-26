@@ -1,6 +1,8 @@
 # werwolf-online
 A simple online werwolves game
 
+(currently in developement)
+
 ## Installation
 
 ### Requirements

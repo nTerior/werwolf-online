@@ -8,7 +8,7 @@ import { createImage } from "../../image"
 import { createInputField } from "../../input"
 import { Message, Urgency } from "../../message"
 import { displayRolePopup } from "../../popup"
-import { createHeader } from "../../text"
+import { createHeader, createText } from "../../text"
 import { get_game_id } from "../../urlutils"
 import { nextScreen, Screen } from "../screen"
 import { generateWaitRoomScreen } from "./waitroom"
@@ -43,6 +43,9 @@ export function generateStartScreen(): Screen {
 function createRoleList(): HTMLDivElement {
     var div = document.createElement("div")
     div.classList.add("roles")
+    
+    div.appendChild(createHeader("h4", "Folgende Rollen sind verfügbar:"))
+    div.appendChild(createText("Klicke auf eine Rolle, um mehr über sie zu erfahren.", "role-description-text"))
 
     for(var r in RoleName) {
         var role = document.createElement("div")

@@ -6,7 +6,7 @@
     text-align: center;
 }
 
-.screen p {
+.screen p:not(.role-description-text) {
     margin: 0 25vw;
     max-inline-size: 50%;
 }

@@ -9,11 +9,11 @@ export enum RoleName {
     HUNTER = "Jäger"
 }
 
-export abstract class Role {
+export class Role {
     public name: RoleName
     constructor(name: RoleName) {
         this.name = name
     }
-    public abstract on_interact(): void
-    public abstract on_turn(): void
+    //public abstract on_interact(): void
+    //public abstract on_turn(): void
 }

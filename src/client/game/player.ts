@@ -1,4 +1,4 @@
-import { Role } from "../../role"
+import { Role, RoleName } from "../../role"
 
 export class Player {
     public name: string
@@ -18,4 +18,19 @@ export class Player {
         this.name = name
         this.id = id
     }
+
+    private getImageSource() {
+        return "/static/assets/characters/" + getEnumKeyByEnumValue(RoleName, this.role!.name)?.toLowerCase() + (this.inLove ? "_love" : "") + (this.dead ? "_dead" : "") + ".png"
+    }
+
+    public getImage(): HTMLImageElement {
+        var img = document.createElement("img")
+        img.src = this.getImageSource()
+        return img
+    }
+}
+
+function getEnumKeyByEnumValue<T extends {[index:string]:string}>(myEnum:T, enumValue:string):keyof T|null {
+    let keys = Object.keys(myEnum).filter(x => myEnum[x] == enumValue);
+    return keys.length > 0 ? keys[0] : null;
 }

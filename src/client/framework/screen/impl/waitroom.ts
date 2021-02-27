@@ -70,7 +70,7 @@ function createUser(username: string, id: string): HTMLDivElement {
     div.id = "user-element-" + id
 
     var img = document.createElement("img")
-    img.src = "/static/assets/user.png"
+    img.src = "/static/assets/characters/villager.png"
     img.alt = "user.png"
     div.appendChild(img)
 

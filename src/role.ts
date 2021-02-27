@@ -2,7 +2,7 @@ export enum RoleName {
     WEREWOLF = "Werwolf",
     GIRL = "Mädchen",
     WITCH = "Hexe",
-    SEER = "Sehering",
+    SEER = "Seherin",
     AMOR = "Amor",
     MATTRESS = "Matratze",
     VILLAGER = "Dorfbewohner",

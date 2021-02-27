@@ -11,12 +11,6 @@
     max-inline-size: 50%;
 }
 
-#copyright {
-    position: fixed;
-    bottom: 1em;
-    right: 1em;
-}
-
 .screen-active {
     animation-name: screen-in;
     animation-duration: 1s;

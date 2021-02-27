@@ -16,3 +16,7 @@ body {
     background-color: rgb(124, 79, 27);
     overflow: auto;
 }
+
+img {
+    pointer-events: none;
+}

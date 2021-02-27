@@ -1,0 +1,26 @@
+.roles {
+    width: 50%;
+    margin-top: 5em;
+    margin-left: 25vw;
+}
+
+.role-div {
+    width: 10em;
+    display: inline-block;
+    cursor: pointer;
+}
+
+.role-img {
+    width: 100%;
+}
+
+.role-name {
+    position: relative;
+    color: white;
+    top: -0.3em;
+}
+
+#copyright {
+    position: absolute;
+    left: 1em;
+}

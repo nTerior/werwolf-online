@@ -1,4 +1,5 @@
 import { Packet } from "../../../../packet"
+import { RoleName } from "../../../../role"
 import { Game } from "../../../game/game"
 import { State } from "../../../state"
 import { createButton } from "../../button"
@@ -25,6 +26,8 @@ export function generateStartScreen(): Screen {
     if(get_game_id()) div.appendChild(createButton("Spiel beitreten", async () => await joinGameButton(), "btn-inline"))
     div.appendChild(createButton("Spiel erstellen", async () => await createGameButton(), "btn-inline"))
 
+    div.appendChild(createRoleList())
+
     var copyright = document.createElement("div")
     copyright.id = "copyright"
     copyright.textContent = "Code by Paul Stier, Images by Siri Bürkle"
@@ -33,6 +36,31 @@ export function generateStartScreen(): Screen {
     return {
         element: div
     }
+}
+
+function createRoleList(): HTMLDivElement {
+    var div = document.createElement("div")
+    div.classList.add("roles")
+
+    for(var r in RoleName) {
+        var role = document.createElement("div")
+        role.classList.add("role-div")
+
+        var img = document.createElement("img")
+        img.classList.add("role-img")
+        img.src = "/static/assets/characters/" + r.toLowerCase() + ".png"
+        role.appendChild(img)
+
+        var name = document.createElement("div")
+        name.classList.add("role-name")
+        //@ts-expect-error
+        name.textContent = RoleName[r]
+        role.appendChild(name)
+
+        div.appendChild(role)
+    }
+
+    return div
 }
 
 function checkUsername(): string | undefined {

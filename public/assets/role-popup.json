@@ -1,0 +1,10 @@
+{
+    "werewolf": "Die Werwölfe wählen jede Nacht ein Opfer aus, welches sterben soll. Damit sich diese absprechen können, gibt es einen eigenen Chat. Aber Achtung: Ein Mädchen könnte sich eingeschlichen haben und gibt sich als Werwolf aus. Die Werwölfe können deshalb auch für andere Werwölfe stimmen. Sie gewinnen, wenn es keine \"Dorfbewohner\" mehr gibt",
+    "girl": "Das Mädchen wacht zusammen mit den Werwölfen auf und gibt sich als ein solcher aus. Dazu kann es alles, was die Werwölfe auch können, stimmt also auch mit ab und kann ebenfalls den Chat nutzen. Allerdings spielt es für die Dorfbewohner.",
+    "witch": "Die Hexe kann 2 Tränke benutzen: einen Heil- und einen Gifttrank. Diese kann sie jeweils nur einmal im Spiel einsetzen. Sie wacht nach den Werwölfen auf und ihr wird das Opfer gezeigt. Dann entscheidet sie, ob sie das Opfer sterben lässt, oder es heilt. Zusätzlich kann sie einmal im Spiel einen anderen Mitspieler umbringen. Sie spielt für die Dorfbewohner.",
+    "seer": "Die Seherin wacht einmal in der Nacht auf und kann die Rolle eines Mitspielers erfahren. Dieses Wissen kann sie am Tag auch nutzen. Sie spielt für die Dorfbewohner",
+    "amor": "Amor wacht ein einziges Mal auf und verliebt zwei Spieler ineinander. Wenn einer dieser Spieler stirbt, stirbt der andere an Liebeskummer. Die beiden Verliebten gewinnen, wenn sie die letzten Überlebenden sind. Amor spielt für die Dorfbewohner",
+    "mattress": "Die Matratze wacht einmal in der Nacht auf und sucht sich einen Spieler aus, bei dem sie die Nacht verbringt. Sollte sie selbst in der Nacht das Opfer sein, stirbt sie nicht. Ist allerdings der Spieler, bei dem sie schläft das Opfer, stirbt sie auch. Sie spielt für die Dorfbewohner",
+    "villager": "Der Dorfbewohner schläft die ganze Nacht friedlich. Am Tag muss er seine detektiven Kenntnisse beweisen und die Werwölfe enttarnen. Er gewinnt, wenn es keine Werwölfe mehr gibt.",
+    "hunter": "Der Jäger kann wenn er stirbt, einen Spieler mit in den Tod reißen. Es ist egal, ob er wärend der Nacht oder am Tag stirbt. Er spielt für die Dorfbewohner"
+}

@@ -1,4 +1,5 @@
 import { RoleName } from "../../role";
+import { State } from "../state";
 import { createButton } from "./button";
 import { get_root } from "./framework";
 import { createImage } from "./image";
@@ -19,7 +20,7 @@ export function displayRolePopup(name: RoleName) {
 
     var description = document.createElement("div")
     description.classList.add("role-popup-description")
-    description.textContent = "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet."
+    description.textContent = State.role_popup_text[name.toLowerCase()]
     div.appendChild(description)
 
     div.appendChild(createHeader("h3", "Folgende Bilder werden verwendet:"))

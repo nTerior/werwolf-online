@@ -4,8 +4,10 @@ import { Game } from "../../../game/game"
 import { State } from "../../../state"
 import { createButton } from "../../button"
 import { addBreak } from "../../framework"
+import { createImage } from "../../image"
 import { createInputField } from "../../input"
 import { Message, Urgency } from "../../message"
+import { displayRolePopup } from "../../popup"
 import { createHeader } from "../../text"
 import { get_game_id } from "../../urlutils"
 import { nextScreen, Screen } from "../screen"
@@ -45,11 +47,16 @@ function createRoleList(): HTMLDivElement {
     for(var r in RoleName) {
         var role = document.createElement("div")
         role.classList.add("role-div")
+        role.id = "role-div-" + r
 
-        var img = document.createElement("img")
-        img.classList.add("role-img")
-        img.src = "/static/assets/characters/" + r.toLowerCase() + ".png"
-        role.appendChild(img)
+        role.onclick = (ev) => {
+            var id = (<HTMLDivElement>ev.target).id.split("-")[2]
+            if(id == undefined) return
+            //@ts-expect-error
+            displayRolePopup(id)
+        }
+
+        role.appendChild(createImage("/static/assets/characters/" + r.toLowerCase() + ".png", "role-img"))
 
         var name = document.createElement("div")
         name.classList.add("role-name")

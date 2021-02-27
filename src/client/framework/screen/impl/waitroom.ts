@@ -170,7 +170,7 @@ function sumRoles(settings: Settings) {
     amount += settings.settings.role_settings.Jäger!
     amount += settings.settings.role_settings.Matratze!
     amount += settings.settings.role_settings.Mädchen!
-    amount += settings.settings.role_settings.Sehering!
+    amount += settings.settings.role_settings.Seherin!
     amount += settings.settings.role_settings.Werwolf!
     return amount
 }

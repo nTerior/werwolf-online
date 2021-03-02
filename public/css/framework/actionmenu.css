@@ -1,0 +1,65 @@
+.actionmenu {
+    position: fixed;
+    margin-left: 25%;
+    padding: 0 1em;
+    bottom: 1em;
+    background-color: white;
+    width: 50%;
+    border-radius: 0.5em 0.5em 0 0;
+}
+
+.actionmenu-title {
+    position: relative;
+    top: -0.5em;
+}
+
+.actionmenu-description {
+    position: relative;
+    top: -1.5em;
+}
+
+.actionmenu-actions {
+    position: relative;
+    top: -1.5em;
+    text-align: center;
+}
+
+.actionmenu-cancel {
+    position: relative;
+    top: -1em;
+    margin-left: calc(50% - 2.5em);
+}
+
+.actionmenu-action {
+    margin: 0.25em 0.25em;
+}
+
+.actionmenu-active {
+    animation-name: actionmenu-in;
+    animation-duration: 0.7s;
+    animation-fill-mode: forwards;
+}
+
+.actionmenu-inactive {
+    animation-name: actionmenu-out;
+    animation-duration: 0.7s;
+    animation-fill-mode: forwards;
+}
+
+@keyframes actionmenu-in {
+    0% {
+        bottom: -15em;
+    }
+    100% {
+        bottom: 1em;
+    }
+}
+
+@keyframes actionmenu-out {
+    0% {
+        bottom: 1em;
+    }
+    100% {
+        bottom: -15em;
+    }
+}

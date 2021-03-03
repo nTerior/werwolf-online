@@ -9,7 +9,7 @@ export function displayRolePopup(name: RoleName) {
     console.log(name)
 
     var bck = document.createElement("div")
-    bck.classList.add("role-popup-background")
+    bck.classList.add("role-popup-background", "popup-active")
     var div = document.createElement("div")
     div.classList.add("role-popup")
 
@@ -52,7 +52,11 @@ export function displayRolePopup(name: RoleName) {
     images.appendChild(img_love_dead)
     div.appendChild(images)
 
-    div.appendChild(createButton("OK", () => get_root().removeChild(bck), "popup-ok-btn"))
+    div.appendChild(createButton("OK", () => {
+        bck.classList.remove("popup-active")
+        bck.classList.add("popup-inactive")
+        setTimeout(() => get_root().removeChild(bck), 200)
+    }, "popup-ok-btn"))
 
     bck.appendChild(div)
     get_root().appendChild(bck)

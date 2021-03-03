@@ -20,6 +20,7 @@
     margin-left: 25%;
     text-align: center;
     background-color: white;
+    border-radius: 1em;
 }
 
 .role-popup-description {
@@ -70,4 +71,34 @@
 #copyright {
     position: absolute;
     left: 1em;
+}
+
+.popup-active {
+    animation-name: popup-in;
+    animation-duration: 0.3s;
+    animation-fill-mode: forwards;
+}
+
+.popup-inactive {
+    animation-name: popup-out;
+    animation-duration: 0.3s;
+    animation-fill-mode: forwards;
+}
+
+@keyframes popup-in {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
+@keyframes popup-out {
+    0% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0;
+    }
 }

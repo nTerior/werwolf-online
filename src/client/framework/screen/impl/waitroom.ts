@@ -1,6 +1,7 @@
 import { Packet } from "../../../../packet"
 import { getNewRoleByRoleName, RoleName } from "../../../../role"
 import { Settings } from "../../../../settings"
+import { getEnumKeyByEnumValue } from "../../../../utils"
 import { Player } from "../../../game/player"
 import { State } from "../../../state"
 import { createButton } from "../../button"
@@ -9,11 +10,6 @@ import { Message, Urgency } from "../../message"
 import { createHeader, createText } from "../../text"
 import { nextScreen, Screen } from "../screen"
 import { generateGameScreen } from "./gamescreen"
-
-function getEnumKeyByEnumValue<T extends {[index:string]:string}>(myEnum:T, enumValue:string):keyof T|null {
-    let keys = Object.keys(myEnum).filter(x => myEnum[x] == enumValue);
-    return keys.length > 0 ? keys[0] : null;
-}
 
 
 export async function generateWaitRoomScreen(): Promise<Screen> {

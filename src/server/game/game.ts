@@ -3,6 +3,7 @@ import * as lws from "ws"
 import { Packet } from "../../packet"
 import { Settings } from "../../settings"
 import { getNewRoleByRoleName, RoleName } from "../../role"
+import { getEnumKeyByEnumValue } from "../../utils"
 
 var games: Game[] = []
 
@@ -115,9 +116,4 @@ function generateGameId() {
 
 export function getGame(id: string): Game | undefined {
     return games.find(e => e.id == id)
-}
-
-function getEnumKeyByEnumValue<T extends {[index:string]:string}>(myEnum:T, enumValue:string):keyof T|null {
-    let keys = Object.keys(myEnum).filter(x => myEnum[x] == enumValue);
-    return keys.length > 0 ? keys[0] : null;
 }

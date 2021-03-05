@@ -1,14 +1,18 @@
 import { Packet } from "../../../../packet";
+import { RoleName } from "../../../../role";
+import { getEnumKeyByEnumValue } from "../../../../utils";
 import { Player } from "../../../game/player";
 import { State } from "../../../state";
 import { Message } from "../../message";
-import { createDivText, createText } from "../../text";
+import { createDivText, createHeader, createText } from "../../text";
 import { Screen } from "../screen";
 
 export function generateGameScreen(): Screen {
     new Message("Das Spiel startet nun").display()
     var div = document.createElement("div")
 
+    div.appendChild(createHeader("h2", "Du bist ein(e) " + State.game.getSelfPlayer().role?.name))
+    div.appendChild(createText(State.role_info_text[getEnumKeyByEnumValue(RoleName, State.game.getSelfPlayer().role!.name)?.toLowerCase()!]))
     div.appendChild(createUserList())
 
     return {
@@ -46,11 +50,21 @@ function createUser(p: Player): HTMLDivElement {
     var div = document.createElement("div")
     div.classList.add("game-player")
     div.id = "game-player-" + p.id
-    div.appendChild(p.getImage())
-    div.appendChild(createDivText(p.name))
+    
+    var img = p.getImage()
+    img.classList.add("game-player-image")
+    div.appendChild(img)
+
+    var name = createDivText(p.name)
+    name.classList.add("game-player-name")
+    if(p.is_self) {
+        name.classList.add("self-user-name")
+    }
+    div.appendChild(name)
     return div
 }
 
-function updateUser(id: string) {
-
+function updatePlayer(id: string) {
+    var div = document.getElementById("game-player-" + id)!;
+    (<HTMLImageElement>(div.getElementsByClassName("game-player-image")[0])).src = State.game.players.find(e => e.id == id)!.getImage().src
 }

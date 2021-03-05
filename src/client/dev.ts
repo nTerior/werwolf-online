@@ -25,5 +25,5 @@ export function devReloadCss() {
         var link = links[x];
         link.href = link.href.split("?")[0] + "?id=" + new Date().getMilliseconds();
     }
-
+    
 }

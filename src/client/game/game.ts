@@ -9,6 +9,10 @@ export class Game {
         this.id = id
     }
 
+    public getSelfPlayer(): Player {
+        return this.players.find(e => e.is_self)!
+    }
+
     public getInviteLink(): string {
         return window.location.protocol + "//" + (window.location.host + window.location.pathname + "/" + this.id).replace("//", "/")
     }

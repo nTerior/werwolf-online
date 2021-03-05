@@ -25,7 +25,9 @@ export async function generateWaitRoomScreen(): Promise<Screen> {
         element: div,
         title: "Warteraum",
         on_pop: () => {
-            State.ws.removeAllListeners()
+            State.ws.removeAllListeners("player-joined")
+            State.ws.removeAllListeners("player-left")
+            State.ws.removeAllListeners("game-started")
         }
     }
 }

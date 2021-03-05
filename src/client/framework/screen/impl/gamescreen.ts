@@ -1,11 +1,23 @@
 import { Packet } from "../../../../packet";
+import { Player } from "../../../game/player";
 import { State } from "../../../state";
 import { Message } from "../../message";
+import { createDivText, createText } from "../../text";
 import { Screen } from "../screen";
 
 export function generateGameScreen(): Screen {
     new Message("Das Spiel startet nun").display()
     var div = document.createElement("div")
+
+    div.appendChild(createUserList())
+
+    return {
+        element: div,
+        title: "Im Spiel"
+    }
+}
+
+function createUserList(): HTMLDivElement {
 
     State.ws.setOnPacket("player-left", async packet => {
         var index = State.game.players.findIndex(e => e.id == packet.data.id)
@@ -18,8 +30,25 @@ export function generateGameScreen(): Screen {
         if(State.game.self_is_owner && !tmp) new Message("Du bist nun der Host", -1).display()
     })
 
-    return {
-        element: div,
-        title: "Im Spiel"
-    }
+    var div = document.createElement("div")
+    div.classList.add("game-user-list")
+
+    State.game.players.forEach(p => {
+        div.appendChild(createUser(p))
+    })
+
+    return div
+}
+
+function createUser(p: Player): HTMLDivElement {
+    var div = document.createElement("div")
+    div.classList.add("game-player")
+    div.id = "game-player-" + p.id
+    div.appendChild(p.getImage())
+    div.appendChild(createDivText(p.name))
+    return div
+}
+
+function updateUser(id: string) {
+
 }

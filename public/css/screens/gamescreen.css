@@ -1,0 +1,13 @@
+.game-user-list {
+    position: static;
+    width: 50%;
+    margin-right: 25%;
+}
+
+.game-player {
+    display: inline-block;
+}
+
+.game-player img {
+    width: 7em;
+}

@@ -11,3 +11,10 @@ export function createText(text: string, ...classes: string[]): HTMLHeadingEleme
     header.textContent = text
     return header
 }
+
+export function createDivText(text: string, ...classes: string[]): HTMLHeadingElement {
+    var header = document.createElement("div")
+    classes.forEach(c => header.classList.add(c))
+    header.textContent = text
+    return header
+}

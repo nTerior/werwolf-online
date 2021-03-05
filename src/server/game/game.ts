@@ -2,6 +2,7 @@ import { Player } from "./player"
 import * as lws from "ws"
 import { Packet } from "../../packet"
 import { Settings } from "../../settings"
+import { getNewRoleByRoleName, RoleName } from "../../role"
 
 var games: Game[] = []
 
@@ -77,8 +78,27 @@ export class Game {
     public start(): void {
         console.log("Game started: " + this.id)
         this.running = true
+
+        // Shuffling the players
+        this.players = this.players.sort((a, b) => 0.5 - Math.random())
+        this.players = this.players.sort((a, b) => 0.5 - Math.random())
+        this.players = this.players.sort((a, b) => 0.5 - Math.random())
+
+        // Setting the roles
+        var currentPlayerIndex = 0;
+        for(var role in this.settings!.settings.role_settings) {
+            //@ts-expect-error
+            var count = this.settings!.settings.role_settings[role]
+            
+            for(var i = 0; i < count; i++) {
+                //@ts-expect-error
+                this.players[currentPlayerIndex].role = getNewRoleByRoleName(getEnumKeyByEnumValue(RoleName, role))
+                currentPlayerIndex++
+            }
+        }
+
         this.players.forEach(p => {
-            p.ws.send(new Packet("game-started").serialize())
+            p.ws.send(new Packet("game-started", {role: p.role?.name}).serialize())
         })
     }
 }
@@ -95,4 +115,9 @@ function generateGameId() {
 
 export function getGame(id: string): Game | undefined {
     return games.find(e => e.id == id)
+}
+
+function getEnumKeyByEnumValue<T extends {[index:string]:string}>(myEnum:T, enumValue:string):keyof T|null {
+    let keys = Object.keys(myEnum).filter(x => myEnum[x] == enumValue);
+    return keys.length > 0 ? keys[0] : null;
 }

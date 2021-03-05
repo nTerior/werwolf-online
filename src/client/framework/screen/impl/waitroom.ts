@@ -1,5 +1,5 @@
 import { Packet } from "../../../../packet"
-import { RoleName } from "../../../../role"
+import { getNewRoleByRoleName, RoleName } from "../../../../role"
 import { Settings } from "../../../../settings"
 import { Player } from "../../../game/player"
 import { State } from "../../../state"
@@ -10,6 +10,12 @@ import { createHeader, createText } from "../../text"
 import { nextScreen, Screen } from "../screen"
 import { generateGameScreen } from "./gamescreen"
 
+function getEnumKeyByEnumValue<T extends {[index:string]:string}>(myEnum:T, enumValue:string):keyof T|null {
+    let keys = Object.keys(myEnum).filter(x => myEnum[x] == enumValue);
+    return keys.length > 0 ? keys[0] : null;
+}
+
+
 export async function generateWaitRoomScreen(): Promise<Screen> {
     var div = document.createElement("div")
 
@@ -19,7 +25,11 @@ export async function generateWaitRoomScreen(): Promise<Screen> {
     div.appendChild(await createUserList())
     div.appendChild(createSettings())
     
-    State.ws.setOnPacket("game-started", () => nextScreen(generateGameScreen()))
+    State.ws.setOnPacket("game-started", (packet) => {
+        //@ts-expect-error
+        State.game.players[State.game.players.findIndex(e => e.is_self)].role = getNewRoleByRoleName(getEnumKeyByEnumValue(RoleName, packet.data["role"]))
+        nextScreen(generateGameScreen())
+    })
 
     return {
         element: div,

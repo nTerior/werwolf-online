@@ -34,22 +34,22 @@ export async function generateWaitRoomScreen(): Promise<Screen> {
 
 async function createUserList(): Promise<HTMLDivElement> {
 
-    var list: {name: string, id: string}[] = (await State.ws.sendAndRecvPacket(new Packet("get-player-list", State.game.id))).data
+    var list: {name: string, id: string, is_self: boolean}[] = (await State.ws.sendAndRecvPacket(new Packet("get-player-list", State.game.id))).data
     list.forEach(e => {
-        State.game.players.push(new Player(e.name, e.id))
+        State.game.players.push(new Player(e.name, e.id, e.is_self))
     })
 
     var div = document.createElement("div")
     div.classList.add("user-list")
     State.game.players.forEach(player => {
-        div.appendChild(createUser(player.name, player.id))
+        div.appendChild(createUser(player))
     })
 
     State.ws.setOnPacket("player-joined", packet => {
-        var player: Player = new Player(packet.data.name, packet.data.id)
+        var player: Player = new Player(packet.data.name, packet.data.id, false)
         State.game.players.push(player)
         new Message(player.name + " ist dem Spiel beigetreten").display()
-        div.appendChild(createUser(player.name, player.id))
+        div.appendChild(createUser(player))
     })
     State.ws.setOnPacket("player-left", async packet => {
         div.removeChild(document.getElementById("user-element-" + packet.data.id)!)
@@ -66,19 +66,22 @@ async function createUserList(): Promise<HTMLDivElement> {
     return div
 }
 
-function createUser(username: string, id: string): HTMLDivElement {
+function createUser(player: Player): HTMLDivElement {
     var div = document.createElement("div")
     div.classList.add("user-element")
-    div.id = "user-element-" + id
+    div.id = "user-element-" + player.id
 
     var img = document.createElement("img")
     img.src = "/static/assets/characters/villager.png"
-    img.alt = "user.png"
+    img.alt = "Bild fehl!"
     div.appendChild(img)
 
     var name = document.createElement("div")
     name.classList.add("user-name")
-    name.textContent = username
+    if(player.is_self) {
+        name.classList.add("self-user-name")
+    }
+    name.textContent = player.name
     div.appendChild(name)
 
     return div

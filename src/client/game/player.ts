@@ -14,9 +14,12 @@ export class Player {
     public undersleeper_id: string = ""
     public sleeping_by: string = ""
 
-    constructor(name: string, id: string) {
+    public is_self: boolean
+
+    constructor(name: string, id: string, is_self: boolean) {
         this.name = name
         this.id = id
+        this.is_self = is_self
     }
 
     private getImageSource() {

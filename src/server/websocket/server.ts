@@ -41,11 +41,11 @@ const packetHandler: {[key:string]: (data:any, ws: lws, wsid: string) => Promise
     },
     "get-player-list": async(data, ws, wsid) => {
         var player_list = getGame(data)!.players
-        var mani_list: {name: string, id: string}[] = []
+        var mani_list: {name: string, id: string, is_self: boolean}[] = []
 
         player_list.forEach(player => {
-            if(player.id == wsid) mani_list.push({name: player.name + " (Du)", id: player.id})
-            else mani_list.push({name: player.name, id: player.id})
+            if(player.id == wsid) mani_list.push({name: player.name + " (Du)", id: player.id, is_self: true})
+            else mani_list.push({name: player.name, id: player.id, is_self: false})
         })
 
         return {result: mani_list}

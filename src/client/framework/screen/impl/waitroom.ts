@@ -84,7 +84,7 @@ function createUser(player: Player): HTMLDivElement {
 
     var img = document.createElement("img")
     img.src = "/static/assets/characters/villager.png"
-    img.alt = "Bild fehl!"
+    img.alt = "Bild fehlt!"
     div.appendChild(img)
 
     var name = document.createElement("div")

@@ -23,8 +23,8 @@ export class Player {
     }
 
     private getImageSource() {
-        if(this.role) return "/static/assets/characters/" + getEnumKeyByEnumValue(RoleName, this.role!.name)?.toLowerCase() + (this.inLove ? "_love" : "") + (this.dead ? "_dead" : "") + ".png"
-        return "/static/assets/characters/" + getEnumKeyByEnumValue(RoleName, RoleName.VILLAGER)?.toLowerCase() + (this.inLove ? "_love" : "") + (this.dead ? "_dead" : "") + ".png"
+        if(this.role) return "/static/assets/cards/" + getEnumKeyByEnumValue(RoleName, this.role!.name)?.toLowerCase() + (this.inLove ? "_love" : "") + (this.dead ? "_dead" : "") + ".png"
+        return "/static/assets/cards/" + getEnumKeyByEnumValue(RoleName, RoleName.VILLAGER)?.toLowerCase() + (this.inLove ? "_love" : "") + (this.dead ? "_dead" : "") + ".png"
     }
 
     public getImage(): HTMLImageElement {

@@ -50,6 +50,10 @@ async function createUserList(): Promise<HTMLDivElement> {
 
     var div = document.createElement("div")
     div.classList.add("user-list")
+
+    var count = createHeader("h3", "Spieler: " + State.game.players.length)
+    div.appendChild(count)
+    
     State.game.players.forEach(player => {
         div.appendChild(createUser(player))
     })
@@ -59,6 +63,9 @@ async function createUserList(): Promise<HTMLDivElement> {
         State.game.players.push(player)
         new Message(player.name + " ist dem Spiel beigetreten").display()
         div.appendChild(createUser(player))
+
+        count.textContent = "Spieler: " + State.game.players.length
+
     })
     State.ws.setOnPacket("player-left", async packet => {
         div.removeChild(document.getElementById("user-element-" + packet.data.id)!)
@@ -71,6 +78,8 @@ async function createUserList(): Promise<HTMLDivElement> {
         State.game.self_is_owner = (await State.ws.sendAndRecvPacket(new Packet("is_owner", State.game.id))).data
         if(State.game.self_is_owner && !tmp) new Message("Du bist nun der Host", -1).display()
         updateRoleInputs()
+
+        count.textContent = "Spieler: " + State.game.players.length
     })
     return div
 }

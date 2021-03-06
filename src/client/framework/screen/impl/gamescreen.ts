@@ -25,6 +25,7 @@ export function generateGameScreen(): Screen {
 function createRoleCounts(): HTMLDivElement {
     var div = document.createElement("div")
     div.classList.add("ingame-settings-info", "game-info-inline")
+    div.appendChild(createHeader("h3", "Folgende Rollen sind im Spiel:"))
 
     for(var role in State.game.settings?.settings.role_settings) {
         //@ts-expect-error

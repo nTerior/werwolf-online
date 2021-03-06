@@ -67,24 +67,25 @@ function createUserList(): HTMLDivElement {
 
     State.ws.setOnPacket("player-left", async packet => {
         var index = State.game.players.findIndex(e => e.id == packet.data.id)
-        new Message(State.game.players[index].name + " hat das Spiel verlassen").display()
-        State.game.players.splice(index, 1)
-
+        
         div.removeChild(document.getElementById("game-player-" + packet.data.id)!)
-
+        
         var tmp = State.game.self_is_owner
-
+        
         State.game.self_is_owner = (await State.ws.sendAndRecvPacket(new Packet("is_owner", State.game.id))).data
         if(State.game.self_is_owner && !tmp) new Message("Du bist nun der Host", -1).display()
-
+        
         count.textContent = "Spieler: " + State.game.players.length
-                
+        
         if(packet.data.role) {
             //@ts-expect-error
             State.game.role_counts[packet.data.role]--
             //@ts-expect-error
             updateRoleCount(getEnumKeyByEnumValue(RoleName, packet.data.role))
         }
+        
+        new Message(State.game.players[index].name + (packet.data.role ? " (ein(e) " + packet.data.role + ")" : "") + " hat das Spiel verlassen").display()
+        State.game.players.splice(index, 1)
     })
 
     State.game.players.forEach(p => {

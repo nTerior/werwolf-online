@@ -13,8 +13,7 @@
 .message-content {
     margin-left: 1.5em;
     margin-top: 0.25em;
-    width: calc(inherit - 5em);
-    height: calc(inherit - 0.25em);
+    width: 17em;
     overflow: hidden;
 }
 

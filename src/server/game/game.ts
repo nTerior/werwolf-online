@@ -34,11 +34,14 @@ export class Game {
 
     public removePlayer(id: string) {
         var player: Player = this.players.splice(this.players.findIndex(e => e.id == id), 1)[0]
+        var packet: Packet = new Packet("player-left", {
+            id: player.id,
+        })
+        if(this.settings?.settings.reveal_role_death) {
+            packet.data["role"] = player.role?.name
+        }
         this.players.forEach(p => {
-            p.ws.send(new Packet("player-left", {
-                id: player.id,
-                role: player.role?.name
-            }).serialize())
+            p.ws.send(packet.serialize())
         })
         console.log(player.name + " left " + this.id)
         if(this.players.length == 0) {

@@ -65,7 +65,6 @@ async function createUserList(): Promise<HTMLDivElement> {
         div.appendChild(createUser(player))
 
         count.textContent = "Spieler: " + State.game.players.length
-
     })
     State.ws.setOnPacket("player-left", async packet => {
         div.removeChild(document.getElementById("user-element-" + packet.data.id)!)

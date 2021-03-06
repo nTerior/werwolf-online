@@ -34,6 +34,12 @@ export class Game {
 
     public removePlayer(id: string) {
         var player: Player = this.players.splice(this.players.findIndex(e => e.id == id), 1)[0]
+        
+        if(this.players.length == 0) {
+            this.delete()
+            return
+        }
+        
         this.owner_id = this.players[0].id
         var packet: Packet = new Packet("player-left", {
             id: player.id,
@@ -46,10 +52,6 @@ export class Game {
             p.ws.send(packet.serialize())
         })
         console.log(player.name + " left " + this.id)
-        if(this.players.length == 0) {
-            this.delete()
-            return
-        }
         if(player.loves_id) {
             var loves = this.getPlayer(player.loves_id)!
             loves.loves_id = ""

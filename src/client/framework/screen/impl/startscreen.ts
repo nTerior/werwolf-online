@@ -101,15 +101,15 @@ async function createGameButton() {
 async function createGame(name: string) {
     var id: string = (await State.ws.sendAndRecvPacket(new Packet("create-game"))).data
     new Message("Du hast das Spiel ID \"" + id + "\" erstellt").display()
-    await joinGame(name, id)
+    await joinGame(name, id, true)
 }
 
-async function joinGame(name: string, game_id: string) {
+async function joinGame(name: string, game_id: string, self_created: boolean = false) {
     var result: string = (await State.ws.sendAndRecvPacket(new Packet("join-game", {name: name, game_id: game_id}))).data
     if(result == "success") {
         new Message("Du bist dem Spiel \"" + game_id + "\" beigetreten").display()
         State.game = new Game(game_id)
-        State.game.self_is_owner = (await State.ws.sendAndRecvPacket(new Packet("is_owner", State.game.id))).data
+        State.game.self_is_owner = self_created
         nextScreen(await generateWaitRoomScreen())
     } else {
         new Message(result, 5000, Urgency.ERROR).display()

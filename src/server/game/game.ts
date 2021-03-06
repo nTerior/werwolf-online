@@ -34,6 +34,7 @@ export class Game {
 
     public removePlayer(id: string) {
         var player: Player = this.players.splice(this.players.findIndex(e => e.id == id), 1)[0]
+        this.owner_id = this.players[0].id
         var packet: Packet = new Packet("player-left", {
             id: player.id,
         })
@@ -41,6 +42,7 @@ export class Game {
             packet.data["role"] = player.role?.name
         }
         this.players.forEach(p => {
+            packet.data["is_new_host"] = this.is_owner(p.id)
             p.ws.send(packet.serialize())
         })
         console.log(player.name + " left " + this.id)
@@ -55,7 +57,6 @@ export class Game {
         }
         if(player.undersleeper_id) this.getPlayer(player.undersleeper_id)!.sleeping_by = ""
         if(player.sleeping_by) this.getPlayer(player.sleeping_by)!.undersleeper_id = ""
-        this.owner_id = this.players[0].id
     }
 
     public checkName(name: string) {

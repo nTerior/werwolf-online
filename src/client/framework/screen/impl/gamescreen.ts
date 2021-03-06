@@ -70,10 +70,6 @@ function createUserList(): HTMLDivElement {
         
         div.removeChild(document.getElementById("game-player-" + packet.data.id)!)
         
-        var tmp = State.game.self_is_owner
-        
-        State.game.self_is_owner = (await State.ws.sendAndRecvPacket(new Packet("is_owner", State.game.id))).data
-        if(State.game.self_is_owner && !tmp) new Message("Du bist nun der Host", -1).display()
         
         count.textContent = "Spieler: " + State.game.players.length
         
@@ -85,6 +81,11 @@ function createUserList(): HTMLDivElement {
         }
         
         new Message(State.game.players[index].name + (packet.data.role ? " (ein(e) " + packet.data.role + ")" : "") + " hat das Spiel verlassen").display()
+        
+        var tmp = State.game.self_is_owner
+        State.game.self_is_owner = packet.data.is_new_host
+        if(State.game.self_is_owner && !tmp) new Message("Du bist nun der Host", -1).display()
+        
         State.game.players.splice(index, 1)
     })
 

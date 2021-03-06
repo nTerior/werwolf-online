@@ -44,7 +44,7 @@ function createRoleList(): HTMLDivElement {
     var div = document.createElement("div")
     div.classList.add("roles")
     
-    div.appendChild(createHeader("h4", "Folgende Rollen sind verfügbar:"))
+    div.appendChild(createHeader("h3", "Folgende Rollen sind verfügbar:"))
     div.appendChild(createText("Klicke auf eine Rolle, um mehr über sie zu erfahren.", "role-description-text"))
 
     for(var r in RoleName) {

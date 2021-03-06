@@ -25,6 +25,12 @@ export async function generateWaitRoomScreen(): Promise<Screen> {
         //@ts-expect-error
         State.game.players[State.game.players.findIndex(e => e.is_self)].role = getNewRoleByRoleName(getEnumKeyByEnumValue(RoleName, packet.data["role"]))
         State.game.settings = packet.data["settings"]
+
+        for(var v in State.game.settings?.settings.role_settings) {
+            //@ts-expect-error
+            State.game.role_counts[v] = State.game.settings?.settings.role_settings[v]
+        }
+
         console.log(State.game.settings)
         nextScreen(generateGameScreen())
         new Message("Du bist ein(e) " + packet.data["role"] + ".").display()

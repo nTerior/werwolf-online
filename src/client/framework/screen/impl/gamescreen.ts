@@ -14,7 +14,7 @@ export function generateGameScreen(): Screen {
     div.appendChild(createHeader("h2", "Du bist ein(e) " + State.game.getSelfPlayer().role?.name))
     div.appendChild(createText(State.role_info_text[getEnumKeyByEnumValue(RoleName, State.game.getSelfPlayer().role!.name)?.toLowerCase()!]))
     div.appendChild(createUserList())
-    div.appendChild(createGameSettings())
+    div.appendChild(createRoleCounts())
 
     return {
         element: div,
@@ -22,7 +22,7 @@ export function generateGameScreen(): Screen {
     }
 }
 
-function createGameSettings(): HTMLDivElement {
+function createRoleCounts(): HTMLDivElement {
     var div = document.createElement("div")
     div.classList.add("ingame-settings-info", "game-info-inline")
 
@@ -51,6 +51,11 @@ function createGameSettings(): HTMLDivElement {
     return div
 }
 
+function updateRoleCount(role: RoleName) {
+    //@ts-expect-error
+    (<HTMLParagraphElement>document.getElementById("ingame-settings-info-role-" + role)).textContent = RoleName[role] + ": " + State.game.role_counts[RoleName[role]] + " / " + State.game.settings?.settings.role_settings[RoleName[role]]
+}
+
 function createUserList(): HTMLDivElement {
 
     var div = document.createElement("div")
@@ -72,6 +77,13 @@ function createUserList(): HTMLDivElement {
         if(State.game.self_is_owner && !tmp) new Message("Du bist nun der Host", -1).display()
 
         count.textContent = "Spieler: " + State.game.players.length
+                
+        if(packet.data.role) {
+            //@ts-expect-error
+            State.game.role_counts[packet.data.role]--
+            //@ts-expect-error
+            updateRoleCount(getEnumKeyByEnumValue(RoleName, packet.data.role))
+        }
     })
 
     State.game.players.forEach(p => {

@@ -36,7 +36,8 @@ export class Game {
         var player: Player = this.players.splice(this.players.findIndex(e => e.id == id), 1)[0]
         this.players.forEach(p => {
             p.ws.send(new Packet("player-left", {
-                id: player.id
+                id: player.id,
+                role: player.role?.name
             }).serialize())
         })
         console.log(player.name + " left " + this.id)

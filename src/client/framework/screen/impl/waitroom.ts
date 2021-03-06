@@ -31,7 +31,6 @@ export async function generateWaitRoomScreen(): Promise<Screen> {
             State.game.role_counts[v] = State.game.settings?.settings.role_settings[v]
         }
 
-        console.log(State.game.settings)
         nextScreen(generateGameScreen())
         new Message("Du bist ein(e) " + packet.data["role"] + ".").display()
     })

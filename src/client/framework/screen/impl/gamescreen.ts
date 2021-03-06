@@ -14,6 +14,7 @@ export function generateGameScreen(): Screen {
     div.appendChild(createHeader("h2", "Du bist ein(e) " + State.game.getSelfPlayer().role?.name))
     div.appendChild(createText(State.role_info_text[getEnumKeyByEnumValue(RoleName, State.game.getSelfPlayer().role!.name)?.toLowerCase()!]))
     div.appendChild(createUserList())
+    div.appendChild(createGameSettings())
 
     return {
         element: div,
@@ -21,10 +22,39 @@ export function generateGameScreen(): Screen {
     }
 }
 
+function createGameSettings(): HTMLDivElement {
+    var div = document.createElement("div")
+    div.classList.add("ingame-settings-info", "game-info-inline")
+
+    for(var role in State.game.settings?.settings.role_settings) {
+        //@ts-expect-error
+        if (State.game.settings?.settings.role_settings[role] == 0) continue
+        
+        var role_info = document.createElement("div")
+        role_info.classList.add("ingame-settings-info-role")
+        
+        var text
+        if(!State.game.settings?.settings.reveal_role_death) {
+            //@ts-expect-error
+            text = createText(role + ": ? / " + State.game.settings?.settings.role_settings[role])
+        } else {
+            //@ts-expect-error
+            text = createText(role + ": " + State.game.settings?.settings.role_settings[role] + " / " + State.game.settings?.settings.role_settings[role])
+        }
+        
+        text.id = "ingame-settings-info-role-" + getEnumKeyByEnumValue(RoleName, role)
+        role_info.appendChild(text)
+
+        div.appendChild(role_info)
+    }
+
+    return div
+}
+
 function createUserList(): HTMLDivElement {
 
     var div = document.createElement("div")
-    div.classList.add("game-user-list")
+    div.classList.add("game-user-list", "game-info-inline")
 
     State.ws.setOnPacket("player-left", async packet => {
         var index = State.game.players.findIndex(e => e.id == packet.data.id)

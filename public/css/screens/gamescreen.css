@@ -1,7 +1,7 @@
 .game-user-list {
-    position: static;
-    width: 50%;
-    margin-right: 25%;
+    position: absolute;
+    width: 60%;
+    left: 0;
 }
 
 .game-player {
@@ -10,4 +10,16 @@
 
 .game-player img {
     width: 7em;
+}
+
+.ingame-settings-info {
+    position: absolute;
+    text-align: right;
+    left: 40vw;
+    font-size: large;
+    top: 30vh;
+}
+
+.game-info-inline {
+    display: inline-block;
 }

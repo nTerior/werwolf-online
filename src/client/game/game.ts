@@ -1,9 +1,11 @@
+import { Settings } from "../../settings"
 import { Player } from "./player"
 
 export class Game {
     public id: string
     public players: Player[] = []
     public self_is_owner: boolean = false
+    public settings?: Settings
     
     constructor(id: string) {
         this.id = id

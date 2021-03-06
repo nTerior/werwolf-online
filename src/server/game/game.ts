@@ -99,7 +99,7 @@ export class Game {
         }
 
         this.players.forEach(p => {
-            p.ws.send(new Packet("game-started", {role: p.role?.name}).serialize())
+            p.ws.send(new Packet("game-started", {role: p.role?.name, settings: this.settings}).serialize())
         })
     }
 }

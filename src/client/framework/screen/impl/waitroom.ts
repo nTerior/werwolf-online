@@ -24,6 +24,8 @@ export async function generateWaitRoomScreen(): Promise<Screen> {
     State.ws.setOnPacket("game-started", (packet) => {
         //@ts-expect-error
         State.game.players[State.game.players.findIndex(e => e.is_self)].role = getNewRoleByRoleName(getEnumKeyByEnumValue(RoleName, packet.data["role"]))
+        State.game.settings = packet.data["settings"]
+        console.log(State.game.settings)
         nextScreen(generateGameScreen())
         new Message("Du bist ein(e) " + packet.data["role"] + ".").display()
     })
@@ -133,7 +135,7 @@ function createSettings() {
         div.appendChild(role_name)
     }
 
-    div.appendChild(createCheckbox("Rollen nach Tod veröffentlichen", false, () => {}, "game-settings-death-reveal", admin, "checkbox-settings"));
+    div.appendChild(createCheckbox("Rollen nach Tod veröffentlichen", true, () => {}, "game-settings-death-reveal", admin, "checkbox-settings"));
     
     var link_div = document.createElement("div")
     var input = createInputField("", State.game.getInviteLink(), () => {}, "", ["*"], "link-input")

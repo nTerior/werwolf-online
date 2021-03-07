@@ -2,7 +2,7 @@ import { Player } from "./player"
 import * as lws from "ws"
 import { Packet } from "../../packet"
 import { Settings } from "../../settings"
-import { getNewRoleByRoleName, RoleName } from "../../role"
+import { getNewRoleByRoleName, Role, RoleName } from "../../role"
 import { getEnumKeyByEnumValue } from "../../utils"
 
 var games: Game[] = []
@@ -105,8 +105,16 @@ export class Game {
             }
         }
 
+        var werwolf_ids: string[] = []
+        this.players.forEach(p => {
+            if(p.role?.name == RoleName.WEREWOLF || p.role?.name == RoleName.GIRL) werwolf_ids.push(p.id)
+        })
+
         this.players.forEach(p => {
             p.ws.send(new Packet("game-started", {role: p.role?.name, settings: this.settings}).serialize())
+            if(p.role?.name == RoleName.WEREWOLF || p.role?.name == RoleName.GIRL) {
+                p.ws.send(new Packet("werewolf-reveal", {ids: werwolf_ids}).serialize())
+            }
         })
     }
 }

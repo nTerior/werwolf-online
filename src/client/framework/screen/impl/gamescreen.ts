@@ -1,5 +1,5 @@
 import { Packet } from "../../../../packet";
-import { RoleName } from "../../../../role";
+import { getNewRoleByRoleName, RoleName, Werewolf } from "../../../../role";
 import { getEnumKeyByEnumValue } from "../../../../utils";
 import { Player } from "../../../game/player";
 import { State } from "../../../state";
@@ -58,6 +58,14 @@ function updateRoleCount(role: RoleName) {
 }
 
 function createUserList(): HTMLDivElement {
+
+    State.ws.setOnPacket("werewolf-reveal", packet => {
+        packet.data.ids.forEach((id: string) => {
+            if(id == State.game.getSelfPlayer().id) return
+            State.game.players.find(e => e.id == id)!.role = new Werewolf()
+            updatePlayer(id)
+        });
+    })
 
     var div = document.createElement("div")
     div.classList.add("game-user-list", "game-info-inline")

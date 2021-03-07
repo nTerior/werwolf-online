@@ -124,6 +124,8 @@ function createSettings() {
     var div = document.createElement("div")
     div.id = "game-settings"
 
+    div.appendChild(createHeader("h3", "Einstellungen:"))
+
     for(var role in RoleName) {
         var role_name = document.createElement("div")
         role_name.classList.add("game-settings-role")

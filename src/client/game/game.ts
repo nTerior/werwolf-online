@@ -18,6 +18,6 @@ export class Game {
     }
 
     public getInviteLink(): string {
-        return window.location.protocol + "//" + (window.location.host + window.location.pathname + "/" + this.id).replace("//", "/")
+        return window.location.protocol + "//" + window.location.host + "/" + this.id
     }
 }

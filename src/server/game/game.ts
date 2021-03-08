@@ -14,10 +14,22 @@ export class Game {
     public running: boolean = false
     public settings?: Settings
 
-    constructor(owner_id: string) {
-        this.id = generateGameId()
-        this.owner_id = owner_id
-        games.push(this)
+    constructor(owner_id: string, move: boolean = false) {
+        if(!move) {
+            this.id = generateGameId()
+            this.owner_id = owner_id
+            games.push(this)
+        } else {
+            if(getGame("move")) {
+                this.id = generateGameId()
+                this.owner_id = owner_id
+                games.push(this)
+            } else {
+                this.id = "move"
+                this.owner_id = owner_id
+                games.push(this)
+            }
+        }
     }
 
     public addPlayer(name: string, id: string, ws: lws) {

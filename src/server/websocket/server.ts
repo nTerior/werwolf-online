@@ -18,7 +18,7 @@ const devPacket = new Packet("dev-packet", {css_reload: true})
 var connections: {id: string, ws: lws, game?: Game}[] = []
 const packetHandler: {[key:string]: (data:any, ws: lws, wsid: string) => Promise<PacketResult>} = {
     "create-game": async (data, ws, wsid) => {
-        var game = new Game(wsid)
+        var game = new Game(wsid, data == "move")
         console.log("Game \"" + game.id + "\" was created by " + wsid)
         return {result: game.id}
     },

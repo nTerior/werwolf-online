@@ -59,6 +59,11 @@ const packetHandler: {[key:string]: (data:any, ws: lws, wsid: string) => Promise
         game.settings = data["settings"]
         game.start()
         return {ok: true}
+    },
+    "player-perform-turn": async(data, ws, wsid) => {
+        var game: Game = getGame(data["game_id"])!
+        game.events.emit("player-perform-turn", wsid, data["target_id"], data["sub_command"])
+        return {}
     }
 }
 

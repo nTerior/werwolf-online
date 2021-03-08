@@ -28,6 +28,9 @@ function initGameLogicListeners() {
     State.ws.setOnPacket("your-turn", packet => {
         new Message("Du bist nun dran!").display()
     })
+    State.ws.setOnPacket("turn-end", packet => {
+        new Message("Dein Zug ist zu Ende").display()
+    })
 }
 
 function createRoleCounts(): HTMLDivElement {
@@ -116,7 +119,7 @@ function createUser(p: Player): HTMLDivElement {
     var div = document.createElement("div")
     div.classList.add("game-player")
     div.id = "game-player-" + p.id
-    
+
     var img = p.getImage()
     img.classList.add("game-player-image")
     div.appendChild(img)

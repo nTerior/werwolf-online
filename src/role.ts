@@ -49,6 +49,13 @@ export abstract class Role {
             }
         })
     }
+    public sendUnTurn(game: Game) {
+        game.players.forEach(p => {
+            if(p.role?.name == this.name) {
+                p.ws.send(new Packet("turn-end").serialize())
+            }
+        })
+    }
 }
 
 export class Werewolf extends Role {

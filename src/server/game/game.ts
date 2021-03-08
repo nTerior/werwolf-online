@@ -4,6 +4,7 @@ import { Packet } from "../../packet"
 import { Settings } from "../../settings"
 import { getNewRoleByRoleName, Role, RoleName, Werewolf } from "../../role"
 import { delay, getEnumKeyByEnumValue } from "../../utils"
+import { EventEmitter } from "ws"
 
 var games: Game[] = []
 
@@ -14,10 +15,13 @@ export class Game {
     public running: boolean = false
     public settings?: Settings
 
+    public events: EventEmitter
+
     constructor(owner_id: string) {
         this.id = generateGameId()
         this.owner_id = owner_id
         games.push(this)
+        this.events = new EventEmitter()
     }
 
     private async startGameRunnable() {
@@ -40,16 +44,65 @@ export class Game {
        
        await(this.gameRunnable())
     }
-    
-    private async roleTurnAndWait(...names: RoleName[]): Promise<boolean> {
+
+    private async roleTurnAndWait(...names: RoleName[]) {
+        
+        var tmp: boolean = false
+        names.forEach(n => {
+            if(this.settings?.settings.role_settings[n] != 0) tmp = true
+        })
+        if(!tmp) return
+
         names.forEach(n => {
             getNewRoleByRoleName((<RoleName>getEnumKeyByEnumValue(RoleName, n)))!.sendTurn(this)
         })
-        // todo: send everyone in that role: your turn!
-        // add wait for every role to finish their turn, sending data of their interactions, etc
-        // send everybody in this role: turn has been finished
+
+        await this.waitForTurnResponses(names)
+        
+        names.forEach(n => {
+            getNewRoleByRoleName((<RoleName>getEnumKeyByEnumValue(RoleName, n)))!.sendUnTurn(this)
+        })
+
         await delay(500)
-        return true
+    }
+    
+    private async waitForTurnResponses(roles: RoleName[]): Promise<void> {
+        var players: Player[] = []
+
+        var roles_sum: number = 0
+        roles.forEach(r => {
+            roles_sum += this.settings?.settings.role_settings[r]!
+        })
+        console.log(roles_sum)
+
+        return new Promise(res => {
+            this.events.on("player-perform-turn", (player_id, target_id, sub_command) => {
+                var player: Player = this.getPlayer(player_id)!
+
+                if(!roles.includes(player.role!.name)) return
+                if(players.includes(player)) return
+
+                // ==============================================
+                
+                // ROLE SPECIFIC STUFF
+                // e.g. witches heal, etc.
+
+                // ==============================================
+
+                players.push(player)
+                if(players.length == roles_sum) {
+                    
+                    // ==============================================
+                
+                    // OTHER ROLE SPECIFIC STUFF
+                    // e.g. Werwolfes kill, etc.
+
+                    // ==============================================
+                 
+                    res()
+                }
+            })
+        })
     }
 
     public addPlayer(name: string, id: string, ws: lws) {
@@ -76,6 +129,11 @@ export class Game {
         var packet: Packet = new Packet("player-left", {
             id: player.id,
         })
+
+        if(this.settings && player.role) {
+            this.settings.settings.role_settings[player.role.name]!--
+        }
+        
         if(this.settings?.settings.reveal_role_death) {
             packet.data["role"] = player.role?.name
         }

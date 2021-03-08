@@ -2,8 +2,8 @@ import { Player } from "./player"
 import * as lws from "ws"
 import { Packet } from "../../packet"
 import { Settings } from "../../settings"
-import { getNewRoleByRoleName, Role, RoleName } from "../../role"
-import { getEnumKeyByEnumValue } from "../../utils"
+import { getNewRoleByRoleName, Role, RoleName, Werewolf } from "../../role"
+import { delay, getEnumKeyByEnumValue } from "../../utils"
 
 var games: Game[] = []
 
@@ -18,6 +18,38 @@ export class Game {
         this.id = generateGameId()
         this.owner_id = owner_id
         games.push(this)
+    }
+
+    private async startGameRunnable() {
+        await this.roleTurnAndWait(RoleName.AMOR)
+        await this.gameRunnable()
+    }
+
+    private async gameRunnable() {
+        await this.roleTurnAndWait(RoleName.MATTRESS)
+        await this.roleTurnAndWait(RoleName.WEREWOLF, RoleName.GIRL)
+        await this.roleTurnAndWait(RoleName.WITCH)
+        await this.roleTurnAndWait(RoleName.SEER)
+        
+        /*
+        TODOS:
+        winCheck: true => break look
+        day
+        winCheck: true => break look
+        */
+       
+       await(this.gameRunnable())
+    }
+    
+    private async roleTurnAndWait(...names: RoleName[]): Promise<boolean> {
+        names.forEach(n => {
+            getNewRoleByRoleName((<RoleName>getEnumKeyByEnumValue(RoleName, n)))!.sendTurn(this)
+        })
+        // todo: send everyone in that role: your turn!
+        // add wait for every role to finish their turn, sending data of their interactions, etc
+        // send everybody in this role: turn has been finished
+        await delay(500)
+        return true
     }
 
     public addPlayer(name: string, id: string, ws: lws) {
@@ -116,6 +148,10 @@ export class Game {
                 p.ws.send(new Packet("werewolf-reveal", {ids: werwolf_ids}).serialize())
             }
         })
+
+        setTimeout(async () => {
+            await this.startGameRunnable()
+        }, 2000)
     }
 }
 

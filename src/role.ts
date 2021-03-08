@@ -1,3 +1,6 @@
+import { Packet } from "./packet"
+import { Game } from "./server/game/game"
+
 export enum RoleName {
     WEREWOLF = "Werwolf",
     GIRL = "Mädchen",
@@ -38,6 +41,14 @@ export abstract class Role {
     }
     public abstract on_interact(): void
     public abstract on_turn(): void
+
+    public sendTurn(game: Game) {
+        game.players.forEach(p => {
+            if(p.role?.name == this.name) {
+                p.ws.send(new Packet("your-turn").serialize())
+            }
+        })
+    }
 }
 
 export class Werewolf extends Role {

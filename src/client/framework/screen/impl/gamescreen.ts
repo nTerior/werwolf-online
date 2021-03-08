@@ -16,10 +16,18 @@ export function generateGameScreen(): Screen {
     div.appendChild(createUserList())
     div.appendChild(createRoleCounts())
 
+    initGameLogicListeners()
+
     return {
         element: div,
         title: "Im Spiel"
     }
+}
+
+function initGameLogicListeners() {
+    State.ws.setOnPacket("your-turn", packet => {
+        new Message("Du bist nun dran!").display()
+    })
 }
 
 function createRoleCounts(): HTMLDivElement {

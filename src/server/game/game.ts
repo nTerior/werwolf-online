@@ -155,13 +155,15 @@ export class Game {
     }
 }
 
-function generateGameId() {
+function generateGameId(): string {
     const possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
     var result = ""
     for(var i = 0; i < 20; i++) {
         var item = possible[Math.floor(Math.random() * possible.length)];
         result += item
     }
+    
+    if(games.map(e => e.id).includes(result)) return generateGameId()
     return result
 }
 

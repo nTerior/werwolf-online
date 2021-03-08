@@ -99,7 +99,7 @@ async function createGameButton() {
 
 
 async function createGame(name: string) {
-    var id: string = (await State.ws.sendAndRecvPacket(new Packet("create-game", get_game_id()))).data
+    var id: string = (await State.ws.sendAndRecvPacket(new Packet("create-game"))).data
     new Message("Du hast das Spiel ID \"" + id + "\" erstellt").display()
     await joinGame(name, id, true)
 }

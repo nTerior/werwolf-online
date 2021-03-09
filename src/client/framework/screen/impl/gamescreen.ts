@@ -5,7 +5,7 @@ import { Player } from "../../../game/player";
 import { State } from "../../../state";
 import { Message } from "../../message";
 import { createDivText, createHeader, createText } from "../../text";
-import { Screen } from "../screen";
+import { Screen, setTitle } from "../screen";
 
 export function generateGameScreen(): Screen {
     new Message("Das Spiel startet nun").display()
@@ -27,9 +27,11 @@ export function generateGameScreen(): Screen {
 function initGameLogicListeners() {
     State.ws.setOnPacket("your-turn", packet => {
         new Message("Du bist nun dran!").display()
+        setTitle("Dein Zug")
     })
     State.ws.setOnPacket("turn-end", packet => {
         new Message("Dein Zug ist zu Ende").display()
+        setTimeout("Im Spiel")
     })
 }
 

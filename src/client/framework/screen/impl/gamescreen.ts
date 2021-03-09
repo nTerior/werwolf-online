@@ -1,5 +1,4 @@
-import { Packet } from "../../../../packet";
-import { getNewRoleByRoleName, RoleName, Werewolf } from "../../../../role";
+import { RoleName, Werewolf } from "../../../../role";
 import { getEnumKeyByEnumValue } from "../../../../utils";
 import { Player } from "../../../game/player";
 import { State } from "../../../state";

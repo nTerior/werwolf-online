@@ -2,7 +2,7 @@ import { Player } from "./player"
 import * as lws from "ws"
 import { Packet } from "../../packet"
 import { Settings } from "../../settings"
-import { getNewRoleByRoleName, Role, RoleName, Werewolf } from "../../role"
+import { getNewRoleByRoleName, RoleName } from "../../role"
 import { delay, getEnumKeyByEnumValue } from "../../utils"
 import { EventEmitter } from "ws"
 

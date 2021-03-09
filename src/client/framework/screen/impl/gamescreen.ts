@@ -1,13 +1,16 @@
+import { Packet } from "../../../../packet";
 import { RoleName, Werewolf } from "../../../../role";
 import { getEnumKeyByEnumValue } from "../../../../utils";
 import { Player } from "../../../game/player";
 import { State } from "../../../state";
+import { displayString } from "../../display";
 import { Message } from "../../message";
 import { createDivText, createHeader, createText } from "../../text";
 import { Screen, setTitle } from "../screen";
 
 export function generateGameScreen(): Screen {
     new Message("Das Spiel startet nun").display()
+    displayString("Nacht", -1)
     var div = document.createElement("div")
 
     div.appendChild(createHeader("h2", "Du bist ein(e) " + State.game.getSelfPlayer().role?.name))
@@ -26,10 +29,12 @@ export function generateGameScreen(): Screen {
 function initGameLogicListeners() {
     State.ws.setOnPacket("your-turn", packet => {
         new Message("Du bist nun dran!").display()
+        displayString("Du bist dran", 2000)
         setTitle("Dein Zug")
     })
     State.ws.setOnPacket("turn-end", packet => {
         new Message("Dein Zug ist zu Ende").display()
+        displayString("Nacht", -1)
         setTimeout("Im Spiel")
     })
 }
@@ -121,7 +126,7 @@ function createUser(p: Player): HTMLDivElement {
     div.classList.add("game-player")
     div.id = "game-player-" + p.id
     div.onclick = ev => {
-        
+        State.ws.sendPacket(new Packet("player-perform-turn", {game_id: State.game.id, target_id: 0}))
     }
 
     var img = p.getImage()

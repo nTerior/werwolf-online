@@ -120,6 +120,9 @@ function createUser(p: Player): HTMLDivElement {
     var div = document.createElement("div")
     div.classList.add("game-player")
     div.id = "game-player-" + p.id
+    div.onclick = ev => {
+        
+    }
 
     var img = p.getImage()
     img.classList.add("game-player-image")

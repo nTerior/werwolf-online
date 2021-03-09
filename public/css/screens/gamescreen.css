@@ -6,6 +6,7 @@
 
 .game-player {
     display: inline-block;
+    cursor: pointer;
 }
 
 .game-player img {

@@ -73,7 +73,6 @@ export class Game {
         roles.forEach(r => {
             roles_sum += this.settings?.settings.role_settings[r]!
         })
-        console.log(roles_sum)
 
         return new Promise(res => {
             this.events.on("player-perform-turn", (player_id, target_id, sub_command) => {

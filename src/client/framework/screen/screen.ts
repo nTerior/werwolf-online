@@ -21,10 +21,15 @@ export function nextScreen(screen: Screen) {
     pushScreen(screen)
 }
 
+export function setTitle(title?: string) {
+    if(title != undefined) document.title = main_title + " | " + title
+    else document.title = main_title
+}
+
 export function pushScreen(screen: Screen) {
     var build = buildScreen(screen)
     if(screen.on_push) screen.on_push()
-    if(screen.title) document.title = main_title + " | " + screen.title
+    if(screen.title) setTimeout(screen.title)
     else document.title = main_title
     screen_stack.push(build)
     append(build.element)
@@ -43,9 +48,9 @@ export function popScreen() {
     var next = screen_stack.pop()
     if(next) {
         screen_stack.push(next)
-        if(next.screen.title) document.title = main_title + " | " + next.screen.title
+        if(next.screen.title) setTitle(next.screen.title)
     } else {
-        document.title = main_title
+        setTitle()
     }
 }
 

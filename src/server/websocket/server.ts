@@ -4,6 +4,7 @@ import { v4 } from "uuid"
 import { Packet } from "../../packet"
 import { dev_events } from "../dev"
 import { Game, getGame } from "../game/game"
+import { getNewRoleByRoleName, RoleName } from "../../role"
 
 export interface PacketResult {
     result?: any,
@@ -63,6 +64,14 @@ const packetHandler: {[key:string]: (data:any, ws: lws, wsid: string) => Promise
     "player-perform-turn": async(data, ws, wsid) => {
         var game: Game = getGame(data["game_id"])!
         game.events.emit("player-perform-turn", wsid, data["target_id"], data["sub_command"])
+        return {}
+    },
+    "chat-msg-sent": async(data, ws, wsid) => {
+        var game: Game = getGame(data["game_id"])!
+        var player = game.getPlayer(wsid)!
+        if(![RoleName.WEREWOLF, RoleName.GIRL].includes(player.role!.name)) return {}
+        getNewRoleByRoleName(RoleName.WEREWOLF)!.sendAll(game, new Packet("recv-chat-message", {author: data["author"], content: data["content"]}))
+        getNewRoleByRoleName(RoleName.GIRL)!.sendAll(game, new Packet("recv-chat-message", {author: data["author"], content: data["content"]}))
         return {}
     }
 }

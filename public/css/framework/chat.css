@@ -1,0 +1,53 @@
+.chat {
+    position: fixed;
+    top: 1em;
+    right: 0;
+    text-align: left;
+    width: auto;
+    background-color: rgba(0, 0, 0, 0.5);
+    padding: 1em;
+    border-radius: 1.5em 0 0 1.5em;
+    z-index: 500;
+}
+
+.chat-bottom-field {
+    text-align: center;
+}
+
+.chat-input-field {
+    width: inherit;
+    color: white;
+}
+
+.chat-send-btn {
+    width: 5em;
+    margin-left: 1em;
+    margin-top: 1em;
+}
+
+.chat-content {
+    overflow-y: scroll;
+    scrollbar-width: 0;
+    height: 20em;
+}
+
+.chat-message {
+    padding: 0.2em 0;
+    margin-right: 1em;
+    background-color: cadetblue;
+    border-radius: 0 1.5em 1.5em 1.5em;
+    color: black;
+    margin-bottom: 1em;
+    width: inherit;
+}
+
+.chat-message-content {
+    margin: 0.5em 0 0.5em 0.5em;
+    width: 18vw;
+}
+
+.chat-message-timestamp {
+    width: inherit;
+    text-align: right;
+    margin-right: 1em;
+}

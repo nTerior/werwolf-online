@@ -1,8 +1,8 @@
-import { Packet } from "../../../../packet";
 import { RoleName, Werewolf } from "../../../../role";
 import { getEnumKeyByEnumValue } from "../../../../utils";
 import { Player } from "../../../game/player";
 import { State } from "../../../state";
+import { createChat } from "../../chat";
 import { displayString } from "../../display";
 import { setGlobalBackground } from "../../framework";
 import { Message } from "../../message";
@@ -19,6 +19,10 @@ export function generateGameScreen(): Screen {
     div.appendChild(createText(State.role_info_text[getEnumKeyByEnumValue(RoleName, State.game.getSelfPlayer().role!.name)?.toLowerCase()!]))
     div.appendChild(createUserList())
     div.appendChild(createRoleCounts())
+
+    if([RoleName.WEREWOLF, RoleName.GIRL].includes(State.game.getSelfPlayer().role!.name)) {
+        div.appendChild(createChat())
+    }
 
     initGameLogicListeners()
 

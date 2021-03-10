@@ -36,6 +36,25 @@ export function getNewRoleByRoleName(name: RoleName) {
         case RoleName.HUNTER:
             return new Hunter()
     }
+    
+    switch (name) {
+        case RoleName.WEREWOLF:
+            return new Werewolf()
+        case RoleName.GIRL:
+            return new Girl()
+        case RoleName.WITCH:
+            return new Witch()
+        case RoleName.SEER:
+            return new Seer()
+        case RoleName.AMOR:
+            return new Amor()
+        case RoleName.MATTRESS:
+            return new Mattress()
+        case RoleName.VILLAGER:
+            return new Villager()
+        case RoleName.HUNTER:
+            return new Hunter()
+    }
 }
 
 export abstract class Role {

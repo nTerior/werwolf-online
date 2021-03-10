@@ -12,7 +12,7 @@ async function init() {
     await initWebsocket()
     devInit()
     disableContextMenu()
-    setGlobalBackground("background_day.png")
+    setGlobalBackground("day")
     nextScreen(generateStartScreen())
 }
 

@@ -8,6 +8,7 @@
     border-radius: 1em 2px 2px 1em;
     transition: all 0.2s;
     z-index: 1000;
+    color: black;
 }
 
 .message-content {

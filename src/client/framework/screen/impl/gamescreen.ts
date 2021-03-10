@@ -4,11 +4,13 @@ import { getEnumKeyByEnumValue } from "../../../../utils";
 import { Player } from "../../../game/player";
 import { State } from "../../../state";
 import { displayString } from "../../display";
+import { setGlobalBackground } from "../../framework";
 import { Message } from "../../message";
 import { createDivText, createHeader, createText } from "../../text";
 import { Screen, setTitle } from "../screen";
 
 export function generateGameScreen(): Screen {
+    setGlobalBackground("night")
     new Message("Das Spiel startet nun").display()
     displayString("Nacht", -1)
     var div = document.createElement("div")

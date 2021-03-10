@@ -106,6 +106,12 @@ export class Game {
                     // e.g. Werwolfes kill, etc.
 
                     // ==============================================
+
+                    switch(player.role?.name) {
+                        case RoleName.WEREWOLF:
+                            // todo: get player with most votes + KILL HIm
+                            break
+                    }
                  
                     res()
                 }

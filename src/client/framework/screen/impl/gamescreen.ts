@@ -31,11 +31,15 @@ function initGameLogicListeners() {
         new Message("Du bist nun dran!").display()
         displayString("Du bist dran", 2000)
         setTitle("Dein Zug")
+        State.game.getSelfPlayer().role?.on_turn()
     })
     State.ws.setOnPacket("turn-end", packet => {
         new Message("Dein Zug ist zu Ende").display()
         displayString("Nacht", -1)
         setTimeout("Im Spiel")
+    })
+    State.ws.setOnPacket("recv-status-message", packet => {
+        new Message(packet.data).display()
     })
 }
 
@@ -126,7 +130,7 @@ function createUser(p: Player): HTMLDivElement {
     div.classList.add("game-player")
     div.id = "game-player-" + p.id
     div.onclick = ev => {
-        State.ws.sendPacket(new Packet("player-perform-turn", {game_id: State.game.id, target_id: 0}))
+        State.game.getSelfPlayer().role?.on_interact(p)
     }
 
     var img = p.getImage()

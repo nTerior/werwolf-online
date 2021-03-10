@@ -66,6 +66,8 @@ export class Game {
         await delay(500)
     }
     
+    private werewolf_target_list: string[] = []
+
     private async waitForTurnResponses(roles: RoleName[]): Promise<void> {
         var players: Player[] = []
 
@@ -87,6 +89,13 @@ export class Game {
                 // e.g. witches heal, etc.
 
                 // ==============================================
+
+                switch(player.role?.name) {
+                    case RoleName.WEREWOLF:
+                        this.werewolf_target_list.push(target_id)
+                        player.role.sendAll(this, new Packet("recv-status-message", player.name + " hat für " + this.getPlayer(target_id)!.name + " als Opfer gestimmt."))
+                        break
+                }
 
                 players.push(player)
                 if(players.length == roles_sum) {

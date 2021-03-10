@@ -15,6 +15,11 @@ interface ActionMenuBuild {
 const actionmenu_stack: ActionMenuBuild[] = []
 
 function pushActionMenu(menu: ActionMenu) {
+    var tmp = actionmenu_stack.pop()
+    if(tmp) {
+        actionmenu_stack.push(tmp)
+        removeActionMenu(tmp.action)
+    }
     var build = buildActionMenu(menu)
     actionmenu_stack.push(build)
     get_root().appendChild(build.element)
@@ -36,12 +41,14 @@ function buildActionMenu(menu: ActionMenu): ActionMenuBuild {
 
     var actions = document.createElement("div")
     actions.classList.add("actionmenu-actions")
-    for(var action of menu.actions) {
+    menu.actions.forEach(action => {
         actions.appendChild(createButton(action.name, () => {
+            
             action.onclick()
             removeActionMenu(menu)
+
         }, "actionmenu-action"))
-    }
+    })
     div.appendChild(actions)
 
     if(menu.cancellable) div.appendChild(createButton("Abbrechen", () => removeActionMenu(menu), "actionmenu-cancel"))

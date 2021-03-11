@@ -8,7 +8,7 @@ export function createInputField(placeholder: string, default_text: string, on_k
         if(ev.key == "Enter") {
             on_key_enter()
         }
-        if(forbidden_keys.includes(ev.key)) return false
+        if(forbidden_keys.includes(ev.key) || forbidden_keys.includes("*")) return false
     }
     return input
 }

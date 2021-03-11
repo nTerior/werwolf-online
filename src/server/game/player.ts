@@ -36,13 +36,17 @@ export class Player {
         if(ignore_love) return
         if(!this.loves_id) return
         this.game.getPlayer(this.loves_id)?.killNight(true)
-    }
 
+        this.game.settings!.settings.role_settings[this.role!.name]!--
+    }
+    
     public killDay(ignore_love: boolean = false) {
         console.log("Player " + this.name + " killed on day in game " + this.game.id)
         this.dead = true
         if(ignore_love) return
         if(!this.loves_id) return
         this.game.getPlayer(this.loves_id)?.killDay(true)
+        
+        this.game.settings!.settings.role_settings[this.role!.name]!--
     }
 }

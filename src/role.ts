@@ -67,21 +67,21 @@ export abstract class Role {
 
     public sendTurn(game: Game) {
         game.players.forEach(p => {
-            if(p.role?.name == this.name) {
+            if(p.role?.name == this.name && !p.dead) {
                 p.ws.send(new Packet("your-turn").serialize())
             }
         })
     }
     public sendUnTurn(game: Game) {
         game.players.forEach(p => {
-            if(p.role?.name == this.name) {
+            if(p.role?.name == this.name && !p.dead) {
                 p.ws.send(new Packet("turn-end").serialize())
             }
         })
     }
     public sendAll(game: Game, packet: Packet) {
         game.players.forEach(p => {
-            if(p.role?.name == this.name) {
+            if(p.role?.name == this.name && !p.dead) {
                 p.ws.send(packet.serialize())
             }
         })

@@ -67,6 +67,7 @@ export class Game {
     }
     
     private werewolf_target_list: string[] = []
+    private werewolf_prey: string = ""
 
     private async waitForTurnResponses(roles: RoleName[]): Promise<void> {
         var players: Player[] = []
@@ -109,7 +110,7 @@ export class Game {
 
                     switch(player.role?.name) {
                         case RoleName.WEREWOLF:
-                            // todo: get player with most votes + KILL HIm
+                            this.werewolf_prey = maxCount(this.werewolf_target_list)
                             break
                     }
                  
@@ -241,4 +242,24 @@ function generateGameId(): string {
 
 export function getGame(id: string): Game | undefined {
     return games.find(e => e.id == id)
+}
+
+function maxCount(array:any[]) {
+    if(array.length == 0)
+        return null;
+    var modeMap:any = {};
+    var maxEl = array[0], maxCount = 1;
+    for(var i = 0; i < array.length; i++) {
+        var el = array[i];
+        if(modeMap[el] == null)
+            modeMap[el] = 1;
+        else
+            modeMap[el]++;  
+        if(modeMap[el] > maxCount)
+        {
+            maxEl = el;
+            maxCount = modeMap[el];
+        }
+    }
+    return maxEl;
 }

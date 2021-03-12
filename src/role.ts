@@ -1,5 +1,6 @@
-import { ActionMenu } from "./client/framework/actionmenu"
+import { ActionMenu, Action } from "./client/framework/actionmenu"
 import { Message } from "./client/framework/message"
+import { updatePlayer } from "./client/framework/screen/impl/gamescreen"
 import { Player } from "./client/game/player"
 import { State } from "./client/state"
 import { Packet } from "./packet"
@@ -148,6 +149,29 @@ export class Amor extends Role {
         super(RoleName.AMOR)
     }
     public on_interact(p: Player): void {
+
+        var actions: Action[] = []
+        State.game.players.forEach(players => {
+            if(p == players) return
+            actions.push({
+                name: players.name,
+                onclick: () => {
+                    p.inLove = true
+                    p.loves_id = players.loves_id
+                    players.inLove = true
+                    players.loves_id = p.loves_id
+                    updatePlayer(p.id)
+                    updatePlayer(players.id)
+
+                    new Message("Du hast " + p.name + " mit " + players.name + " verliebt", -1).display()
+
+                    State.ws.sendPacket(new Packet("player-perform-turn", {game_id: State.game.id, target_id: p.id, sub_command: players.id}))
+                }
+            })
+        })
+
+        new ActionMenu("Verliebte auswählen", "Wen möchtest du mit " + p.name + " verlieben?", false, ...actions).show()
+
     }
     public on_turn(): void {
     }

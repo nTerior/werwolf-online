@@ -104,6 +104,16 @@ export class Game {
                         getNewRoleByRoleName(RoleName.GIRL).sendAll(this, new Packet("recv-status-message", player.name + " hat für " + this.getPlayer(target_id)!.name + " als Opfer gestimmt."))
                         getNewRoleByRoleName(RoleName.WEREWOLF).sendAll(this, new Packet("recv-status-message", player.name + " hat für " + this.getPlayer(target_id)!.name + " als Opfer gestimmt."))
                         break
+                    case RoleName.AMOR:
+                        var p1: Player = this.getPlayer(target_id)!
+                        var p2: Player = this.getPlayer(sub_command)!
+                        p1.loves_id = p2.id
+                        p2.loves_id = p1.id
+                        p1.inLove = true
+                        p2.inLove = true
+                        p1.ws.send(new Packet("love-reveal", p2.id).serialize())
+                        p2.ws.send(new Packet("love-reveal", p1.id).serialize())
+                        break
                 }
 
                 var roles_sum: number = 0

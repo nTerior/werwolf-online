@@ -68,6 +68,18 @@ function initGameLogicListeners() {
     State.ws.setOnPacket("recv-status-message", packet => {
         new Message(packet.data).display()
     })
+    State.ws.setOnPacket("love-reveal", packet => {
+        var self = State.game.getSelfPlayer()
+        var other = State.game.players.find(e => e.id == packet.data)!
+        self.inLove = true
+        self.loves_id = packet.data
+        other.inLove = true
+        other.loves_id = State.game.getSelfPlayer().id
+        updatePlayer(self.id)
+        updatePlayer(other.id)
+
+        new Message("Du bist nun in " + other.name + " verliebt", -1).display()
+    })
 }
 
 function createRoleCounts(): HTMLDivElement {
@@ -172,7 +184,7 @@ function createUser(p: Player): HTMLDivElement {
     return div
 }
 
-function updatePlayer(id: string) {
+export function updatePlayer(id: string) {
     var div = document.getElementById("game-player-" + id)!
     if(State.game.players.find(e => e.id == id)!.dead) {
         div.classList.remove("clickable");

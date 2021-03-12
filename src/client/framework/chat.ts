@@ -4,8 +4,12 @@ import { createButton } from "./button"
 import { createInputField } from "./input"
 import { createDivText, createHeader } from "./text"
 
-var chat_div = document.createElement("div")
-var chat_content = document.createElement("div")
+try {
+    if(document != undefined) {
+        var chat_div = document.createElement("div")
+        var chat_content = document.createElement("div")
+    }
+} catch (ReferenceError) { }
 
 export function createChat(): HTMLDivElement {
     chat_div.classList.add("chat")

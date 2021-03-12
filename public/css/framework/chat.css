@@ -34,7 +34,6 @@
     overflow-x: hidden;
     scrollbar-width: 0;
     height: 20em;
-    scroll-behavior: smooth;
 }
 
 .chat-message {

@@ -42,7 +42,9 @@ function createChatField(): HTMLDivElement {
 function createChatMessage(author: string, content: string, timestamp: string): HTMLDivElement {
     var div = document.createElement("div")
     div.classList.add("chat-message")
-    if(author == State.game.getSelfPlayer().name) div.classList.add("own-chat-message")
+
+    var name: string = State.game.getSelfPlayer().name
+    if(author == name.substring(0, name.length - 5)) div.classList.add("own-chat-message")
 
     div.appendChild(createHeader("h4", author, "chat-message-author", "chat-message-content"))
     div.appendChild(createDivText(content, "chat-message-text", "chat-message-content"))
@@ -58,6 +60,7 @@ export function addChatMessage(author: string, content: string) {
 
 function sendMessage(text_field: HTMLInputElement) {
     if(text_field.value.trim() == "") return
-    State.ws.sendPacket(new Packet("chat-msg-sent", {game_id: State.game.id, author: State.game.getSelfPlayer().name, content: text_field.value}))
+    var name: string = State.game.getSelfPlayer().name
+    State.ws.sendPacket(new Packet("chat-msg-sent", {game_id: State.game.id, author: name.substring(0, name.length - 5), content: text_field.value}))
     text_field.value = ""
 }

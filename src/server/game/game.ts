@@ -90,6 +90,7 @@ export class Game {
 
                 if(!roles.includes(player.role!.name)) return
                 if(players.includes(player)) return
+                if(player.dead) return
 
                 // ==============================================
                 
@@ -111,8 +112,8 @@ export class Game {
                         p2.loves_id = p1.id
                         p1.inLove = true
                         p2.inLove = true
-                        p1.ws.send(new Packet("love-reveal", p2.id).serialize())
-                        p2.ws.send(new Packet("love-reveal", p1.id).serialize())
+                        p1.ws.send(new Packet("love-reveal", { id: p2.id, role: p2.role?.name }).serialize())
+                        p2.ws.send(new Packet("love-reveal", { id: p1.id, role: p1.role?.name }).serialize())
                         break
                 }
 

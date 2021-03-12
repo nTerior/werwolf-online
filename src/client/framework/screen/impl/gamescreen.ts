@@ -70,15 +70,17 @@ function initGameLogicListeners() {
     })
     State.ws.setOnPacket("love-reveal", packet => {
         var self = State.game.getSelfPlayer()
-        var other = State.game.players.find(e => e.id == packet.data)!
+        var other = State.game.players.find(e => e.id == packet.data.id)!
         self.inLove = true
-        self.loves_id = packet.data
+        self.loves_id = other.id
         other.inLove = true
-        other.loves_id = State.game.getSelfPlayer().id
+        other.loves_id = self.id
+        other.role = getNewRoleByRoleName(packet.data.role)
         updatePlayer(self.id)
         updatePlayer(other.id)
 
-        new Message("Du bist nun in " + other.name + " verliebt", -1).display()
+        new Message("Du bist nun in " + other.name + " (ein(e) " + packet.data.role + ") verliebt", -1).display()
+        new Message("Dein neues Ziel ist nun, dass du und " + other.name + " die letzten Überlebenden seid")
     })
 }
 

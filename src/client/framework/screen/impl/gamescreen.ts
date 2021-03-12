@@ -43,6 +43,10 @@ function initGameLogicListeners() {
             var r: Role = getNewRoleByRoleName(packet.data.role)!
             State.game.players.find(e => e.id == packet.data.id)!.role = r
             new Message(State.game.players.find(e => e.id == packet.data.id)!.name + " (ein(e) " + r.name + ") ist gestorben").display()
+            //@ts-expect-error
+            State.game.role_counts[packet.data.role]--
+            //@ts-expect-error
+            updateRoleCount(getEnumKeyByEnumValue(RoleName, packet.data.role))
         } else 
             new Message(State.game.players.find(e => e.id == packet.data.id)!.name + " ist gestorben").display()
         updatePlayer(packet.data.id)
@@ -121,7 +125,6 @@ function createUserList(): HTMLDivElement {
         var index = State.game.players.findIndex(e => e.id == packet.data.id)
         
         div.removeChild(document.getElementById("game-player-" + packet.data.id)!)
-        
         
         count.textContent = "Spieler: " + State.game.players.length
         

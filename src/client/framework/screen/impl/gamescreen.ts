@@ -153,7 +153,7 @@ function createUserList(): HTMLDivElement {
 
 function createUser(p: Player): HTMLDivElement {
     var div = document.createElement("div")
-    div.classList.add("game-player")
+    div.classList.add("game-player", "clickable")
     div.id = "game-player-" + p.id
     div.onclick = ev => {
         State.game.getSelfPlayer().role?.on_interact(p)
@@ -173,6 +173,10 @@ function createUser(p: Player): HTMLDivElement {
 }
 
 function updatePlayer(id: string) {
-    var div = document.getElementById("game-player-" + id)!;
+    var div = document.getElementById("game-player-" + id)!
+    if(State.game.players.find(e => e.id == id)!.dead) {
+        div.classList.remove("clickable");
+        div.onclick = ev => {}
+    }
     (<HTMLImageElement>(div.getElementsByClassName("game-player-image")[0])).src = State.game.players.find(e => e.id == id)!.getImage().src
 }

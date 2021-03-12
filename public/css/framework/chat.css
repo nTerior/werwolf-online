@@ -8,6 +8,10 @@
     padding: 1em;
     border-radius: 1.5em 0 0 1.5em;
     z-index: 500;
+
+    animation-name: chat-in;
+    animation-duration: 1s;
+    animation-fill-mode: forwards;
 }
 
 .chat-bottom-field {
@@ -65,6 +69,15 @@
     width: inherit;
     text-align: right;
     margin-right: 1em;
+}
+
+@keyframes chat-in {
+    0% {
+        right: -15%;
+    }
+    100% {
+        right: 0;
+    }
 }
 
 @keyframes chat-msg-in {

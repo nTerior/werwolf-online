@@ -28,7 +28,6 @@ function createBottomField(): HTMLDivElement {
 
 function createChatField(): HTMLDivElement {
     chat_content.classList.add("chat-content")
-    
     State.ws.setOnPacket("recv-chat-message", packet => {
         addChatMessage(packet.data.author, packet.data.content)
         chat_content.scrollTop = chat_content.scrollHeight
@@ -39,6 +38,7 @@ function createChatField(): HTMLDivElement {
 function createChatMessage(author: string, content: string, timestamp: string): HTMLDivElement {
     var div = document.createElement("div")
     div.classList.add("chat-message")
+    if(author == State.game.getSelfPlayer().name) div.classList.add("own-chat-message")
 
     div.appendChild(createHeader("h4", author, "chat-message-author", "chat-message-content"))
     div.appendChild(createDivText(content, "chat-message-text", "chat-message-content"))

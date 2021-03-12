@@ -27,18 +27,33 @@
 
 .chat-content {
     overflow-y: scroll;
+    overflow-x: hidden;
     scrollbar-width: 0;
     height: 20em;
+    scroll-behavior: smooth;
 }
 
 .chat-message {
+    position: relative;
+
     padding: 0.2em 0;
     margin-right: 1em;
+    border: 0.125em solid rgb(60, 97, 99);
     background-color: cadetblue;
     border-radius: 0 1.5em 1.5em 1.5em;
     color: black;
     margin-bottom: 1em;
     width: inherit;
+
+    animation-name: chat-msg-in;
+    animation-duration: 500ms;
+    animation-fill-mode: forwards;
+    animation-timing-function: ease-out;
+}
+
+.own-chat-message {
+    border-radius: 1.5em 0 1.5em 1.5em;
+    animation-name: own-chat-msg-in;
 }
 
 .chat-message-content {
@@ -50,4 +65,26 @@
     width: inherit;
     text-align: right;
     margin-right: 1em;
+}
+
+@keyframes chat-msg-in {
+    0% {
+        left: -15em;
+        opacity: 0;
+    }
+    100% {
+        left: 0;
+        opacity: 1;
+    }
+}
+
+@keyframes own-chat-msg-in {
+    0% {
+        right: -15em;
+        opacity: 0;
+    }
+    100% {
+        right: 0;
+        opacity: 1;
+    }
 }

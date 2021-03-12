@@ -84,11 +84,6 @@ export class Game {
     private async waitForTurnResponses(roles: RoleName[]): Promise<void> {
         var players: Player[] = []
 
-        var roles_sum: number = 0
-        roles.forEach(r => {
-            roles_sum += this.settings?.settings.role_settings[r]!
-        })
-
         return new Promise(res => {
             this.events.on("player-perform-turn", (player_id, target_id, sub_command) => {
                 var player: Player = this.getPlayer(player_id)!
@@ -110,6 +105,11 @@ export class Game {
                         getNewRoleByRoleName(RoleName.WEREWOLF).sendAll(this, new Packet("recv-status-message", player.name + " hat für " + this.getPlayer(target_id)!.name + " als Opfer gestimmt."))
                         break
                 }
+
+                var roles_sum: number = 0
+                roles.forEach(r => {
+                    roles_sum += this.settings?.settings.role_settings[r]!
+                })
 
                 players.push(player)
                 if(players.length == roles_sum) {

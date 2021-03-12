@@ -12,6 +12,10 @@
     cursor: pointer;
 }
 
+.player-dead {
+    opacity: 0.5;
+}
+
 .game-player img {
     width: 7em;
 }

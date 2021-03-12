@@ -176,6 +176,7 @@ function updatePlayer(id: string) {
     var div = document.getElementById("game-player-" + id)!
     if(State.game.players.find(e => e.id == id)!.dead) {
         div.classList.remove("clickable");
+        div.classList.add("player-dead");
         div.onclick = ev => {}
     }
     (<HTMLImageElement>(div.getElementsByClassName("game-player-image")[0])).src = State.game.players.find(e => e.id == id)!.getImage().src

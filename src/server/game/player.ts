@@ -1,4 +1,5 @@
 import * as lws from "ws"
+import { Packet } from "../../packet"
 import { Role } from "../../role"
 import { Game } from "./game"
 
@@ -28,6 +29,21 @@ export class Player {
 
     public killNight(ignore_love: boolean = false) {
         console.log("Player " + this.name + " killed in night in game " + this.game.id)
+
+        this.game.settings!.settings.role_settings[this.role!.name]!--
+        this.ws.send(new Packet("you-died").serialize())
+
+        this.game.players.forEach(p => {
+            var data = {
+                id: this.id, 
+            }
+            if(this.game.settings?.settings.reveal_role_death) {
+                //@ts-expect-error
+                data.role = this.role!.name
+            }
+            p.ws.send(new Packet("player-died", data).serialize())
+        })
+        
         if(this.sleeping_by) return
         this.dead = true
         
@@ -36,17 +52,17 @@ export class Player {
         if(ignore_love) return
         if(!this.loves_id) return
         this.game.getPlayer(this.loves_id)?.killNight(true)
-
-        this.game.settings!.settings.role_settings[this.role!.name]!--
     }
     
     public killDay(ignore_love: boolean = false) {
         console.log("Player " + this.name + " killed on day in game " + this.game.id)
+
+        this.game.settings!.settings.role_settings[this.role!.name]!--
+        this.ws.send(new Packet("you-died").serialize())
+
         this.dead = true
         if(ignore_love) return
         if(!this.loves_id) return
         this.game.getPlayer(this.loves_id)?.killDay(true)
-        
-        this.game.settings!.settings.role_settings[this.role!.name]!--
     }
 }

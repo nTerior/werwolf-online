@@ -41,8 +41,10 @@ export class Game {
         day
         winCheck: true => break look
         */
-       
-       await(this.gameRunnable())
+
+        this.setDay()
+
+        //await (this.gameRunnable())
     }
 
     private async roleTurnAndWait(...names: RoleName[]) {
@@ -66,6 +68,16 @@ export class Game {
         await delay(500)
     }
     
+    private setDay() {
+        this.getPlayer(this.werewolf_prey)?.killNight()
+        this.werewolf_prey = ""
+        this.players.forEach(p => {
+            p.sleeping_by = ""
+            p.undersleeper_id = ""
+            if (!p.dead) p.ws.send(new Packet("daytime").serialize())
+        })
+    }
+
     private werewolf_target_list: string[] = []
     private werewolf_prey: string = ""
 
@@ -92,9 +104,10 @@ export class Game {
                 // ==============================================
 
                 switch(player.role?.name) {
-                    case RoleName.WEREWOLF:
+                    case RoleName.WEREWOLF: case RoleName.GIRL:
                         this.werewolf_target_list.push(target_id)
-                        player.role.sendAll(this, new Packet("recv-status-message", player.name + " hat für " + this.getPlayer(target_id)!.name + " als Opfer gestimmt."))
+                        getNewRoleByRoleName(RoleName.GIRL).sendAll(this, new Packet("recv-status-message", player.name + " hat für " + this.getPlayer(target_id)!.name + " als Opfer gestimmt."))
+                        getNewRoleByRoleName(RoleName.WEREWOLF).sendAll(this, new Packet("recv-status-message", player.name + " hat für " + this.getPlayer(target_id)!.name + " als Opfer gestimmt."))
                         break
                 }
 
@@ -109,7 +122,7 @@ export class Game {
                     // ==============================================
 
                     switch(player.role?.name) {
-                        case RoleName.WEREWOLF:
+                        case RoleName.WEREWOLF: case RoleName.GIRL:
                             this.werewolf_prey = maxCount(this.werewolf_target_list)
                             break
                     }

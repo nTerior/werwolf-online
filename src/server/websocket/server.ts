@@ -70,8 +70,8 @@ const packetHandler: {[key:string]: (data:any, ws: lws, wsid: string) => Promise
         var game: Game = getGame(data["game_id"])!
         var player = game.getPlayer(wsid)!
         if(![RoleName.WEREWOLF, RoleName.GIRL].includes(player.role!.name)) return {}
-        getNewRoleByRoleName(RoleName.WEREWOLF)!.sendAll(game, new Packet("recv-chat-message", {author: data["author"], content: data["content"]}))
-        getNewRoleByRoleName(RoleName.GIRL)!.sendAll(game, new Packet("recv-chat-message", {author: data["author"], content: data["content"]}))
+        getNewRoleByRoleName(RoleName.WEREWOLF)!.sendAll(game, new Packet("recv-chat-message", {author: data["author"], content: data["content"]}), true)
+        getNewRoleByRoleName(RoleName.GIRL)!.sendAll(game, new Packet("recv-chat-message", {author: data["author"], content: data["content"]}), true)
         return {}
     }
 }

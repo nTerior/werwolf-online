@@ -12,14 +12,10 @@ export function displayString(content: string, time: number=1000, text_classes: 
     var last = display_stack.pop()
 
     if(last) {
-
-        if(last.text == content) {
-            display_stack.push(last)
-            return
-        }
-
         last.element.classList.add("display-inactive")
-        setTimeout(() => get_root().removeChild(last!.element), 1000)
+        try {
+            setTimeout(() => get_root().removeChild(last!.element), 1000)
+        } catch (DOMException) { }
     }
 
     var div = document.createElement("div")
@@ -38,7 +34,9 @@ export function displayString(content: string, time: number=1000, text_classes: 
         setTimeout(() => {
             div.classList.remove("display-active")
             div.classList.add("display-inactive")
-            setTimeout(() => get_root().removeChild(div), 1000)
+            try {
+                setTimeout(() => get_root().removeChild(div), 1000)
+            } catch (DOMException) {}
         }, time)
     }
 

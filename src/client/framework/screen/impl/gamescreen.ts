@@ -1,4 +1,4 @@
-import { RoleName, Werewolf } from "../../../../role";
+import { getNewRoleByRoleName, Role, RoleName, Werewolf } from "../../../../role";
 import { getEnumKeyByEnumValue } from "../../../../utils";
 import { Player } from "../../../game/player";
 import { State } from "../../../state";
@@ -33,6 +33,23 @@ export function generateGameScreen(): Screen {
 }
 
 function initGameLogicListeners() {
+    State.ws.setOnPacket("daytime", packet => {
+        displayString("Tag")
+        setTitle("Tag")
+    })
+    State.ws.setOnPacket("player-died", packet => {
+        State.game.players.find(e => e.id == packet.data.id)!.dead = true
+        if(packet.data.role) {
+            var r: Role = getNewRoleByRoleName(packet.data.role)!
+            State.game.players.find(e => e.id == packet.data.id)!.role = r
+            new Message(State.game.players.find(e => e.id == packet.data.id)!.name + " (ein(e) " + r.name + ") ist gestorben").display()
+        } else 
+            new Message(State.game.players.find(e => e.id == packet.data.id)!.name + " ist gestorben").display()
+        updatePlayer(packet.data.id)
+    })
+    State.ws.setOnPacket("you-died", packet => {
+        displayString("Du bist gestorben!", -1, ["red"])
+    })
     State.ws.setOnPacket("your-turn", packet => {
         new Message("Du bist nun dran!").display()
         displayString("Du bist dran", 2000)
@@ -42,7 +59,7 @@ function initGameLogicListeners() {
     State.ws.setOnPacket("turn-end", packet => {
         new Message("Dein Zug ist zu Ende").display()
         displayString("Nacht", -1)
-        setTimeout("Im Spiel")
+        setTitle("Nacht")
     })
     State.ws.setOnPacket("recv-status-message", packet => {
         new Message(packet.data).display()

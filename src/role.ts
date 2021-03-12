@@ -79,9 +79,9 @@ export abstract class Role {
             }
         })
     }
-    public sendAll(game: Game, packet: Packet) {
+    public sendAll(game: Game, packet: Packet, include_dead: boolean = false) {
         game.players.forEach(p => {
-            if(p.role?.name == this.name && !p.dead) {
+            if(p.role?.name == this.name && (!p.dead || include_dead)) {
                 p.ws.send(packet.serialize())
             }
         })
@@ -113,12 +113,16 @@ export class Werewolf extends Role {
     }
 }
 export class Girl extends Role {
+    private werewolf_fn: Werewolf
     constructor() {
         super(RoleName.GIRL)
+        this.werewolf_fn = <Werewolf>getNewRoleByRoleName(RoleName.WEREWOLF)
     }
     public on_interact(p: Player): void {
+        this.werewolf_fn.on_interact(p)
     }
     public on_turn(): void {
+        this.werewolf_fn.on_turn()
     }
 }
 export class Witch extends Role {

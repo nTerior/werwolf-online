@@ -27,6 +27,10 @@
     animation-fill-mode: forwards;
 }
 
+.red {
+    color: darkred;
+}
+
 @keyframes display-in {
     0% {
         top: -100%;

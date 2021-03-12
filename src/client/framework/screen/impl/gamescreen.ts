@@ -80,7 +80,7 @@ function initGameLogicListeners() {
         updatePlayer(other.id)
 
         new Message("Du bist nun in " + other.name + " (ein(e) " + packet.data.role + ") verliebt", -1).display()
-        new Message("Dein neues Ziel ist nun, dass du und " + other.name + " die letzten Überlebenden seid")
+        new Message("Dein neues Ziel ist nun, dass du und " + other.name + " die letzten Überlebenden seid", -1).display()
     })
 }
 

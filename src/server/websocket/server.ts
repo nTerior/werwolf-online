@@ -87,7 +87,7 @@ const packetHandler: {[key:string]: (data:any, ws: lws, wsid: string) => Promise
         var player = game.getPlayer(wsid)!
         if(player.role!.name != RoleName.SEER) return {}
         if(!game.roles_turn.includes(player.role!.name)) return {}
-
+        if(data.target == "") return {}
         return {result: game.getPlayer(data.target)?.role!.name}
     }
 }

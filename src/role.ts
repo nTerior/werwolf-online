@@ -1,5 +1,5 @@
 import { ActionMenu, Action, removeAllActionMenus } from "./client/framework/actionmenu"
-import { Message } from "./client/framework/message"
+import { Message, Urgency } from "./client/framework/message"
 import { updatePlayer } from "./client/framework/screen/impl/gamescreen"
 import { Player } from "./client/game/player"
 import { State } from "./client/state"
@@ -154,7 +154,9 @@ export class Witch extends Role {
         },
         {
             name: "Nein",
-            onclick: () => {}
+            onclick: () => {
+                State.ws.sendPacket(new Packet("player-perform-turn", { game_id: State.game.id, target_id: ""}))
+            }
         }).show()
     }
 
@@ -222,6 +224,7 @@ export class Seer extends Role {
         p.role = getNewRoleByRoleName(name)
         updatePlayer(p.id)
         new Message(p.name + " ist ein " + name, -1).display()
+        removeAllActionMenus()
         State.ws.sendPacket(new Packet("player-perform-turn", { game_id: State.game.id, target_id: ""}))
     }
     public on_turn(): void {
@@ -267,12 +270,28 @@ export class Amor extends Role {
     }
 }
 export class Mattress extends Role {
+    private previous_sleeping_by: string = ""
     constructor() {
         super(RoleName.MATTRESS)
     }
     public on_interact(p: Player): void {
+        if(this.previous_sleeping_by == p.id) {
+            new Message("Du kannst bei " + p.name + " nicht schlafen, da du bereits bei diesem Spieler geschlafen hast.", 5000, Urgency.ERROR)
+            return
+        }
+        removeAllActionMenus()
+        new Message("Du schläfst diese Nacht bei " + p.name).display()
+        this.previous_sleeping_by = p.id
+        State.ws.sendPacket(new Packet("player-perform-turn", { game_id: State.game.id, target_id: p.id}))
     }
     public on_turn(): void {
+        new ActionMenu("Schlafort auswählen", "Klicke auf den Spieler, bei dem du diese Nacht schlafen willst. Du kannst aber nicht zweimal hintereinander bei demselben Spieler schlafen. Bist du in dieser Nacht das Opfer, stirbst du nicht. Ist allerdings der Spieler das Opfer, bei dem du schläfst, so stirbst du auch. Wenn du bei niemandem schlafen willst, klicke auf \"Zuhause bleiben\"", false,
+        {
+            name: "Zuhause bleiben",
+            onclick: () => {
+                State.ws.sendPacket(new Packet("player-perform-turn", { game_id: State.game.id, target_id: "" }))
+            }
+        }).show()
     }
 }
 export class Villager extends Role {

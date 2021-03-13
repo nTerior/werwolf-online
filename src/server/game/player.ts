@@ -21,6 +21,8 @@ export class Player {
     public witchCanHeal: boolean = true
     public witchCanKill: boolean = true
 
+    public mattressSleepingBy: string = ""
+
     public game: Game
 
     constructor(name: string, id: string, ws: lws, game: Game) {
@@ -30,7 +32,8 @@ export class Player {
         this.game = game
     }
 
-    public killNight(ignore_love: boolean = false) {
+    public killNight(ignore_love: boolean = false, ignore_sleeping: boolean = false) {
+        if(this.sleeping_by && !ignore_sleeping) return
         console.log("Player " + this.name + " killed in night in game " + this.game.id)
 
         this.game.settings!.settings.role_settings[this.role!.name]!--
@@ -47,14 +50,14 @@ export class Player {
             p.ws.send(new Packet("player-died", data).serialize())
         })
         
-        if(this.sleeping_by) return
         this.dead = true
-        
-        if(this.undersleeper_id) this.game.getPlayer(this.undersleeper_id)?.killNight()
+        if(this.undersleeper_id) {
+            this.game.getPlayer(this.undersleeper_id)?.killNight(false, true)
+        }
 
         if(ignore_love) return
         if(!this.loves_id) return
-        this.game.getPlayer(this.loves_id)?.killNight(true)
+        this.game.getPlayer(this.loves_id)?.killNight(true, true)
     }
     
     public killDay(ignore_love: boolean = false) {

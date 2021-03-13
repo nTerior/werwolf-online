@@ -134,6 +134,18 @@ export class Game {
                             this.witch_prey = sub_command.kill
                             player.witchCanKill = false
                         }
+                        break
+                    case RoleName.MATTRESS:
+                        if(target_id == "") break
+                        var target: Player = this.getPlayer(target_id)!
+
+                        if(player.mattressSleepingBy == target.id) break
+
+                        player.sleeping_by = target.id
+                        player.mattressSleepingBy = target.id
+                        
+                        target.undersleeper_id = player.id
+                        break
                 }
 
                 var roles_sum: number = 0

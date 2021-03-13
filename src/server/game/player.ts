@@ -18,6 +18,9 @@ export class Player {
     public undersleeper_id: string = ""
     public sleeping_by: string = ""
 
+    public witchCanHeal: boolean = true
+    public witchCanKill: boolean = true
+
     public game: Game
 
     constructor(name: string, id: string, ws: lws, game: Game) {

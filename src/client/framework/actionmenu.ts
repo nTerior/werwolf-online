@@ -14,11 +14,17 @@ interface ActionMenuBuild {
 
 const actionmenu_stack: ActionMenuBuild[] = []
 
+export function removeAllActionMenus() {
+    actionmenu_stack.forEach(a => {
+        removeActionMenu(a.action)
+    })
+}
+
 function pushActionMenu(menu: ActionMenu) {
     var tmp = actionmenu_stack.pop()
     if(tmp) {
         actionmenu_stack.push(tmp)
-        removeActionMenu(tmp.action)
+        if(!tmp.action.stays_on_new) removeActionMenu(tmp.action)
     }
     var build = buildActionMenu(menu)
     actionmenu_stack.push(build)
@@ -64,6 +70,7 @@ export class ActionMenu {
     public description: string
     public actions: Action[]
     public cancellable: boolean
+    public stays_on_new: boolean = false
 
     constructor(title: string, description: string, cancellable: boolean, ...actions: Action[]) {
         this.title = title

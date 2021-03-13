@@ -1,4 +1,4 @@
-import { ActionMenu, Action } from "./client/framework/actionmenu"
+import { ActionMenu, Action, removeAllActionMenus } from "./client/framework/actionmenu"
 import { Message } from "./client/framework/message"
 import { updatePlayer } from "./client/framework/screen/impl/gamescreen"
 import { Player } from "./client/game/player"
@@ -37,7 +37,7 @@ export function getNewRoleByRoleName(name: RoleName) {
         case RoleName.HUNTER:
             return new Hunter()
     }
-    
+
     switch (name) {
         case RoleName.WEREWOLF:
             return new Werewolf()
@@ -68,21 +68,21 @@ export abstract class Role {
 
     public sendTurn(game: Game) {
         game.players.forEach(p => {
-            if(p.role?.name == this.name && !p.dead) {
+            if (p.role?.name == this.name && !p.dead) {
                 p.ws.send(new Packet("your-turn").serialize())
             }
         })
     }
     public sendUnTurn(game: Game) {
         game.players.forEach(p => {
-            if(p.role?.name == this.name && !p.dead) {
+            if (p.role?.name == this.name && !p.dead) {
                 p.ws.send(new Packet("turn-end").serialize())
             }
         })
     }
     public sendAll(game: Game, packet: Packet, include_dead: boolean = false) {
         game.players.forEach(p => {
-            if(p.role?.name == this.name && (!p.dead || include_dead)) {
+            if (p.role?.name == this.name && (!p.dead || include_dead)) {
                 p.ws.send(packet.serialize())
             }
         })
@@ -95,19 +95,19 @@ export class Werewolf extends Role {
     }
     public on_interact(p: Player): void {
         new ActionMenu("Opfer auswählen", "Möchtest du " + p.name + " als Opfer auswählen? Wenn mehr als die Hälfte der anderen Werwölfe auch für dieses Opfer stimmen, stirbt dieses diese Nacht", false,
-        {
-            name: "Ja",
-            onclick: () => { this.add_player_to_vote(p) }
-        },
-        {
-            name: "Nein",
-            onclick: () => {}
-        }).show()
+            {
+                name: "Ja",
+                onclick: () => { this.add_player_to_vote(p) }
+            },
+            {
+                name: "Nein",
+                onclick: () => { }
+            }).show()
     }
 
     private add_player_to_vote(p: Player) {
         new Message("Du hast für " + p.name + " als Opfer gewählt.").display()
-        State.ws.sendPacket(new Packet("player-perform-turn", {game_id: State.game.id, target_id: p.id}))
+        State.ws.sendPacket(new Packet("player-perform-turn", { game_id: State.game.id, target_id: p.id }))
     }
 
     public on_turn(): void {
@@ -127,12 +127,90 @@ export class Girl extends Role {
     }
 }
 export class Witch extends Role {
+    private able_heal: boolean = true
+    private able_kill: boolean = true
+
+    private prey_id?: string
+
+    private heals_prey?: boolean
+
+    private can_kill: boolean = false
+
     constructor() {
         super(RoleName.WITCH)
     }
-    public on_interact(p: Player): void {
+    async on_interact(p: Player) {
+        if(!this.can_kill) return
+
+        new ActionMenu(p.name + " töten", "Möchtest du " + p.name + " wirklich töten?", false,
+        {
+            name: "Ja",
+            onclick: () => {
+                this.can_kill = false
+                this.able_kill = false
+                removeAllActionMenus()
+                State.ws.sendPacket(new Packet("player-perform-turn", { game_id: State.game.id, target_id: this.heals_prey ? this.prey_id : "", sub_command: {kill: p.id}}))
+            }
+        },
+        {
+            name: "Nein",
+            onclick: () => {}
+        }).show()
     }
-    public on_turn(): void {
+
+    async on_turn() {
+        this.can_kill = false
+        this.heals_prey = false
+
+        if(this.able_heal) {
+
+            this.prey_id = (await State.ws.sendAndRecvPacket(new Packet("witch-get-prey", { game_id: State.game.id }))).data
+            var prey = State.game.players.find(e => e.id == this.prey_id)!
+            new ActionMenu("Opfer heilen", "Das Opfer der Werwölfe ist " + prey.name + ". Möchtest du es heilen?", false,
+                {
+                    name: "Ja",
+                    onclick: () => {
+                        this.heals_prey = true
+                        this.able_heal = false
+                        
+                        if (this.able_kill) {
+                            setTimeout(() => {
+                                this.showKillActionMenu()
+                            }, 500)
+                        }
+                    }
+                },
+                {
+                    name: "Nein",
+                    onclick: () => {
+                        this.heals_prey = false
+                        if (this.able_kill) {
+                            setTimeout(() => {
+                                this.showKillActionMenu()
+                            }, 500)
+                        }
+                    }
+                }).show()
+        } else {
+            if(this.able_kill) this.showKillActionMenu()
+            else {
+                new Message("Da du weder heilen, noch töten kannst, wirst du nun übersprungen").display()
+                State.ws.sendPacket(new Packet("player-perform-turn", { game_id: State.game.id, target_id: "", sub_command: {kill: ""}}))
+            }
+        }
+    }
+
+    private showKillActionMenu() {
+        this.can_kill = true
+        var menu = new ActionMenu("Spieler töten", "Möchtest du einen Spieler töten? Wenn Ja, klicke auf diesen Spieler, wenn Nein, klicke auf \"Nein\"", false,
+        {
+            name: "Nein",
+            onclick: () => {
+                State.ws.sendPacket(new Packet("player-perform-turn", { game_id: State.game.id, target_id: this.heals_prey ? this.prey_id : "", sub_command: {kill: ""}}))
+            }
+        })
+        menu.stays_on_new = true
+        menu.show()
     }
 }
 export class Seer extends Role {
@@ -152,7 +230,7 @@ export class Amor extends Role {
 
         var actions: Action[] = []
         State.game.players.forEach(players => {
-            if(p == players) return
+            if (p == players) return
             actions.push({
                 name: players.name,
                 onclick: () => {
@@ -165,7 +243,7 @@ export class Amor extends Role {
 
                     new Message("Du hast " + p.name + " mit " + players.name + " verliebt", -1).display()
 
-                    State.ws.sendPacket(new Packet("player-perform-turn", {game_id: State.game.id, target_id: p.id, sub_command: players.id}))
+                    State.ws.sendPacket(new Packet("player-perform-turn", { game_id: State.game.id, target_id: p.id, sub_command: players.id }))
                 }
             })
         })

@@ -70,7 +70,11 @@ export class Game {
     
     private setDay() {
         this.getPlayer(this.werewolf_prey)?.killNight()
+        this.getPlayer(this.witch_prey)?.killNight()
+
         this.werewolf_prey = ""
+        this.witch_prey = ""
+
         this.players.forEach(p => {
             p.sleeping_by = ""
             p.undersleeper_id = ""
@@ -79,7 +83,9 @@ export class Game {
     }
 
     private werewolf_target_list: string[] = []
-    private werewolf_prey: string = ""
+    public werewolf_prey: string = ""
+    
+    private witch_prey: string = ""
 
     private async waitForTurnResponses(roles: RoleName[]): Promise<void> {
         var players: Player[] = []
@@ -115,6 +121,15 @@ export class Game {
                         p1.ws.send(new Packet("love-reveal", { id: p2.id, role: p2.role?.name }).serialize())
                         p2.ws.send(new Packet("love-reveal", { id: p1.id, role: p1.role?.name }).serialize())
                         break
+                    case RoleName.WITCH:
+                        if(target_id != "" && player.witchCanHeal) {
+                            this.werewolf_prey = ""
+                            player.witchCanHeal = false
+                        }
+                        if(sub_command.kill != "" && player.witchCanKill) {
+                            this.witch_prey = sub_command.kill
+                            player.witchCanKill = false
+                        }
                 }
 
                 var roles_sum: number = 0

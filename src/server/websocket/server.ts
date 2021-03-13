@@ -79,6 +79,12 @@ const packetHandler: {[key:string]: (data:any, ws: lws, wsid: string) => Promise
         var player = game.getPlayer(wsid)!
         if(player.role!.name != RoleName.WITCH) return {}
         return {result: game.werewolf_prey}
+    },
+    "seer-reveal-role": async(data, ws, wsid) => {
+        var game: Game = getGame(data["game_id"])!
+        var player = game.getPlayer(wsid)!
+        if(player.role!.name != RoleName.SEER) return {}
+        return {result: game.getPlayer(data.target)?.role!.name}
     }
 }
 

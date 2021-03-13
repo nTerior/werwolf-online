@@ -217,9 +217,21 @@ export class Seer extends Role {
     constructor() {
         super(RoleName.SEER)
     }
-    public on_interact(p: Player): void {
+    async on_interact(p: Player) {
+        var name = (await State.ws.sendAndRecvPacket(new Packet("seer-reveal-role", { game_id: State.game.id, target: p.id }))).data
+        p.role = getNewRoleByRoleName(name)
+        updatePlayer(p.id)
+        new Message(p.name + " ist ein " + name, -1).display()
+        State.ws.sendPacket(new Packet("player-perform-turn", { game_id: State.game.id, target_id: ""}))
     }
     public on_turn(): void {
+        new ActionMenu("Identität erfahren", "Klicke auf den Spieler, von dem du die Identität erfahren möchtest. Klicke auf \"Keinem Spieler\", wenn du von niemandem die Identität erfahren möchtest oder bereits von allen die Identität erfahren hast.", false,
+        {
+            name: "Keinem Spieler",
+            onclick: () => {
+                State.ws.sendPacket(new Packet("player-perform-turn", { game_id: State.game.id, target_id: ""}))
+            }
+        }).show()
     }
 }
 export class Amor extends Role {

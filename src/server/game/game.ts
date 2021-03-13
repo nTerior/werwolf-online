@@ -47,8 +47,10 @@ export class Game {
         //await (this.gameRunnable())
     }
 
+    public roles_turn: RoleName[] = []
+
     private async roleTurnAndWait(...names: RoleName[]) {
-        
+        this.roles_turn = names
         var tmp: boolean = false
         names.forEach(n => {
             if(this.settings?.settings.role_settings[n] != 0) tmp = true
@@ -69,6 +71,8 @@ export class Game {
     }
     
     private setDay() {
+        this.roles_turn = []
+
         this.getPlayer(this.werewolf_prey)?.killNight()
         this.getPlayer(this.witch_prey)?.killNight()
 

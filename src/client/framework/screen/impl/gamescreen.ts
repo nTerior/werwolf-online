@@ -87,7 +87,7 @@ function initGameLogicListeners() {
 function createRoleCounts(): HTMLDivElement {
     var div = document.createElement("div")
     div.classList.add("ingame-settings-info", "game-info-inline")
-    div.appendChild(createHeader("h3", "Folgende Rollen sind im Spiel:"))
+    div.appendChild(createHeader("h3", "Rollen im Spiel", "ingame-settings-header"))
 
     for(var role in State.game.settings?.settings.role_settings) {
         //@ts-expect-error
@@ -99,10 +99,10 @@ function createRoleCounts(): HTMLDivElement {
         var text
         if(!State.game.settings?.settings.reveal_role_death) {
             //@ts-expect-error
-            text = createText(role + ": ? / " + State.game.settings?.settings.role_settings[role])
+            text = createDivText(role + ": ? / " + State.game.settings?.settings.role_settings[role])
         } else {
             //@ts-expect-error
-            text = createText(role + ": " + State.game.settings?.settings.role_settings[role] + " / " + State.game.settings?.settings.role_settings[role])
+            text = createDivText(role + ": " + State.game.settings?.settings.role_settings[role] + " / " + State.game.settings?.settings.role_settings[role])
         }
         
         text.id = "ingame-settings-info-role-" + getEnumKeyByEnumValue(RoleName, role)

@@ -132,7 +132,7 @@ function createUserList(): HTMLDivElement {
     var div = document.createElement("div")
     div.classList.add("game-user-list", "game-info-inline")
 
-    var count = createHeader("h3", "Spieler: " + State.game.players.length)
+    var count = createHeader("h3", State.game.players.length + " Spieler")
     div.appendChild(count)
 
     State.ws.setOnPacket("player-left", async packet => {
@@ -155,7 +155,7 @@ function createUserList(): HTMLDivElement {
         
         State.game.players.splice(index, 1)
         
-        count.textContent = "Spieler: " + State.game.players.length
+        count.textContent = State.game.players.length + " Spieler"
     })
 
     State.game.players.forEach(p => {

@@ -140,8 +140,6 @@ function createUserList(): HTMLDivElement {
         
         div.removeChild(document.getElementById("game-player-" + packet.data.id)!)
         
-        count.textContent = "Spieler: " + State.game.players.length
-        
         if(packet.data.role) {
             //@ts-expect-error
             State.game.role_counts[packet.data.role]--
@@ -156,6 +154,8 @@ function createUserList(): HTMLDivElement {
         if(State.game.self_is_owner && !tmp) new Message("Du bist nun der Host", -1).display()
         
         State.game.players.splice(index, 1)
+        
+        count.textContent = "Spieler: " + State.game.players.length
     })
 
     State.game.players.forEach(p => {

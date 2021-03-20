@@ -89,6 +89,23 @@ const packetHandler: {[key:string]: (data:any, ws: lws, wsid: string) => Promise
         if(!game.roles_turn.includes(player.role!.name)) return {}
         if(data.target == "") return {}
         return {result: game.getPlayer(data.target)?.role!.name}
+    },
+    "majorSuggestVote": async(data, ws, wsid) => {
+        var game: Game = getGame(data["game_id"])!
+        var player = game.getPlayer(wsid)!
+        if(player.dead) return {}
+        if(!game.majorSuggestions.includes(data["suggestion"])) {
+            game.majorSuggestions.push(data["suggestion"])
+            game.players.forEach(p => {
+                p.ws.send(new Packet("majorVoteSuggestion", data["suggestion"]).serialize())
+            })
+        }
+        return {}
+    },
+    "majorVoted": async(data, ws, wsid) => {
+        var game: Game = getGame(data["game_id"])!
+        game.events.emit("playerVoteMajor", game.getPlayer(wsid)!, data["vote"])
+        return {}
     }
 }
 

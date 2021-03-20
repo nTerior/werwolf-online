@@ -28,6 +28,7 @@
     top: 27em;
     background-color: rgba(0, 0, 0, 0.4);
     border-radius: 1.5em 0 0 1.5em;
+    color: white;
 }
 
 .ingame-settings-header {

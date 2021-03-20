@@ -17,6 +17,10 @@ export class Game {
 
     public events: EventEmitter
 
+    private round: number = 0
+
+    public majorSuggestions: string[] = []
+
     constructor(owner_id: string) {
         this.id = generateGameId()
         this.owner_id = owner_id
@@ -30,11 +34,11 @@ export class Game {
     }
 
     private async gameRunnable() {
+        this.round++
         await this.roleTurnAndWait(RoleName.MATTRESS)
         await this.roleTurnAndWait(RoleName.WEREWOLF, RoleName.GIRL)
         await this.roleTurnAndWait(RoleName.WITCH)
         await this.roleTurnAndWait(RoleName.SEER)
-        
         /*
         TODOS:
         winCheck: true => break look
@@ -44,7 +48,54 @@ export class Game {
 
         this.setDay()
 
+        if(this.round == 1) {
+            await this.majorVoteAndWait()
+        }
+
         //await (this.gameRunnable())
+    }
+
+    private async majorVoteAndWait() {
+        this.players.forEach(p => {
+            if(p.dead) return
+            p.ws.send(new Packet("majorVote").serialize())
+        })
+        await this.waitForMajorVotes()
+    }
+
+    public majorVotes: string[] = []
+    private async waitForMajorVotes(): Promise<Player> {
+        var voted: Player[] = []
+        
+        return new Promise<Player>(res => {
+            this.events.on("playerVoteMajor", (player, vote) => {
+                if(voted.includes(player)) return
+                if(player.dead) return
+
+                voted.push(player)
+                this.majorVotes.push(vote)
+
+                this.players.forEach(p => {
+                    p.ws.send(new Packet("recv-status-message", player.name + " hat für " + this.getPlayer(vote)!.name + " als Bürgermeister gestimmt.").serialize())
+                })
+
+                var votes_sum: number = 0
+                this.players.forEach(p => {
+                    if(p.dead) return
+                    votes_sum++
+                })
+
+                if(voted.length == votes_sum) {
+                    var major: Player = this.getPlayer(maxCount(this.majorVotes))!
+                    major.major = true
+                    major.ws.send(new Packet("selfMajorReveal").serialize())
+                    this.players.forEach(p => {
+                        p.ws.send(new Packet("majorReveal", major.id).serialize())
+                    })
+                }
+                
+            })
+        })
     }
 
     public roles_turn: RoleName[] = []
@@ -71,6 +122,8 @@ export class Game {
     }
     
     private setDay() {
+        this.majorSuggestions = []
+        this.majorVotes = []
         this.roles_turn = []
 
         this.getPlayer(this.werewolf_prey)?.killNight()

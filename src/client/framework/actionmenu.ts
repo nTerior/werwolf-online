@@ -71,6 +71,7 @@ export class ActionMenu {
     public actions: Action[]
     public cancellable: boolean
     public stays_on_new: boolean = false
+    public shown: boolean = false
 
     constructor(title: string, description: string, cancellable: boolean, ...actions: Action[]) {
         this.title = title
@@ -79,7 +80,24 @@ export class ActionMenu {
         this.cancellable = cancellable
     }
 
+    public addAction(action: Action) {
+        this.actions.push(action)
+        
+        var build = actionmenu_stack.find(e => e.action == this)
+        if (build == undefined) return
+        var div = build.element
+        if (div == undefined) return
+        
+        div.getElementsByClassName("actionmenu-actions")[0].appendChild(createButton(action.name, () => {
+            
+            action.onclick()
+            removeActionMenu(this)
+
+        }, "actionmenu-action"))
+    }
+
     public show() {
+        this.shown = true
         pushActionMenu(this)
     }
 }

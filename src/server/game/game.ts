@@ -285,6 +285,7 @@ export class Game {
         })
 
         if(this.settings && player.role) {
+            if(!player.dead)
             this.settings.settings.role_settings[player.role.name]!--
         }
         

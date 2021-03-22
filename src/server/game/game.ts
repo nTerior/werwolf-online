@@ -2,11 +2,15 @@ import { Player } from "./player"
 import * as lws from "ws"
 import { Packet } from "../../packet"
 import { Settings } from "../../settings"
-import { getNewRoleByRoleName, RoleName } from "../../role"
+import { getNewRoleByRoleName, Role, RoleName } from "../../role"
 import { delay, getEnumKeyByEnumValue } from "../../utils"
 import { EventEmitter } from "ws"
 
 var games: Game[] = []
+
+const won_werewolves = 1
+const won_villagers = 2
+const won_loved = 3
 
 export class Game {
     public id: string
@@ -39,12 +43,8 @@ export class Game {
         await this.roleTurnAndWait(RoleName.WEREWOLF, RoleName.GIRL)
         await this.roleTurnAndWait(RoleName.WITCH)
         await this.roleTurnAndWait(RoleName.SEER)
-        /*
-        TODOS:
-        winCheck: true => break look
-        day
-        winCheck: true => break look
-        */
+
+        if(this.endGame()) return
 
         this.setDay()
 
@@ -52,7 +52,38 @@ export class Game {
             await this.majorVoteAndWait()
         }
 
+        //TODO: Day Vote
+
+        if(this.endGame()) return
+
         //await (this.gameRunnable())
+    }
+
+    private endGame() {
+        var won: number = this.checkWon()
+        if(!won) return false
+
+        return true
+    }
+
+    private checkWon(): number {
+        var werewolves: number = 0;
+        var loved: number = 0;
+        var villagers: number = 0;
+
+        this.players.forEach(p => {
+            if(p.dead) return
+
+            if(p.role!.name == RoleName.WEREWOLF) werewolves++
+            else villagers++
+
+            if(p.inLove) loved++
+        })
+
+        if(loved && !werewolves && !villagers) return won_loved
+        if(werewolves && !villagers) return won_werewolves
+        if(villagers && !werewolves) return won_villagers
+        return 0
     }
 
     private async majorVoteAndWait() {

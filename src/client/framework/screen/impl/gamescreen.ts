@@ -64,6 +64,8 @@ function initGameLogicListeners() {
             //@ts-expect-error
             State.game.role_counts[packet.data.role]--
             //@ts-expect-error
+            if(State.game.role_counts[packet.data.role] < 0) State.game.role_counts[packet.data.role] = 0
+            //@ts-expect-error
             updateRoleCount(getEnumKeyByEnumValue(RoleName, packet.data.role))
         } else
             new Message(State.game.players.find(e => e.id == packet.data.id)!.name + " ist gestorben").display()
@@ -183,6 +185,8 @@ function createUserList(): HTMLDivElement {
         if (packet.data.role) {
             //@ts-expect-error
             State.game.role_counts[packet.data.role]--
+            //@ts-expect-error
+            if(State.game.role_counts[packet.data.role] < 0) State.game.role_counts[packet.data.role] = 0
             //@ts-expect-error
             updateRoleCount(getEnumKeyByEnumValue(RoleName, packet.data.role))
         }

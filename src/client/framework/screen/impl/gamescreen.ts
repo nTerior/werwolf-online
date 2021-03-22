@@ -3,7 +3,7 @@ import { getNewRoleByRoleName, Role, RoleName, Werewolf } from "../../../../role
 import { getEnumKeyByEnumValue } from "../../../../utils";
 import { Player } from "../../../game/player";
 import { State } from "../../../state";
-import { ActionMenu } from "../../actionmenu";
+import { Action, ActionMenu } from "../../actionmenu";
 import { createChat } from "../../chat";
 import { displayString } from "../../display";
 import { setGlobalBackground } from "../../framework";
@@ -123,6 +123,22 @@ function initGameLogicListeners() {
         var major = State.game.getSelfPlayer()
         major.major = true
         new Message("Du bist nun der neue Bürgermeister!", -1).display()
+    })
+    State.ws.setOnPacket("activate-hunter", packet => {
+        new Message("Du bist gestorben. Als Jäger darfst du allerdings noch eine Person töten.", -1).display()
+        displayString("", 1)
+        var actions: Action[] = []
+        State.game.players.forEach(p => {
+            if (p == State.game.getSelfPlayer()) return
+            actions.push({
+                name: p.name,
+                onclick: () => {
+                    State.ws.sendPacket(new Packet("hunterPerformAction", { game_id: State.game.id, target_id: p.id }))
+                    new Message("Du hast " + p.name + " mit in den Tod gerissen.").display()
+                }
+            })
+        })
+        new ActionMenu("Du bist als Jäger gestorben", "Du du gestorben bist, darfst du als Jäger noch eine Person töten. Welchen Spieler willst du töten?", false, ...actions).show()
     })
 }
 

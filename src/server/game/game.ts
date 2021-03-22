@@ -46,7 +46,7 @@ export class Game {
 
         if(this.endGame()) return
 
-        this.setDay()
+        await this.setDay()
 
         if(this.round == 1) {
             await this.majorVoteAndWait()
@@ -152,13 +152,13 @@ export class Game {
         await delay(500)
     }
     
-    private setDay() {
+    async setDay() {
         this.majorSuggestions = []
         this.majorVotes = []
         this.roles_turn = []
 
-        this.getPlayer(this.werewolf_prey)?.killNight()
-        this.getPlayer(this.witch_prey)?.killNight()
+        await this.getPlayer(this.werewolf_prey)?.killNight()
+        await this.getPlayer(this.witch_prey)?.killNight()
 
         this.werewolf_prey = ""
         this.witch_prey = ""

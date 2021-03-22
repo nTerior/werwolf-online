@@ -106,6 +106,13 @@ const packetHandler: {[key:string]: (data:any, ws: lws, wsid: string) => Promise
         var game: Game = getGame(data["game_id"])!
         game.events.emit("playerVoteMajor", game.getPlayer(wsid)!, data["vote"])
         return {}
+    },
+    "hunterPerformAction": async(data, ws, wsid) => {
+        var game: Game = getGame(data["game_id"])!
+        var player = game.getPlayer(wsid)!
+        if(player.role!.name != RoleName.HUNTER) return {}
+        game.events.emit("hunter-perform-kill", data["target_id"])
+        return {}
     }
 }
 

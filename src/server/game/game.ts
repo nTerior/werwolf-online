@@ -44,24 +44,40 @@ export class Game {
         await this.roleTurnAndWait(RoleName.WITCH)
         await this.roleTurnAndWait(RoleName.SEER)
 
-        //if(this.endGame()) return
-
         await this.setDay()
-
+        if(this.endGame()) return
+        
         if(this.round == 1) {
             await this.majorVoteAndWait()
         }
 
         await this.dayVoteAndWait()
 
-        //if(this.endGame()) return
+        if(this.endGame()) return
 
-        //await (this.gameRunnable())
+        await (this.gameRunnable())
     }
 
     private endGame() {
         var won: number = this.checkWon()
         if(!won) return false
+
+        this.players.forEach(p => {
+            p.ws.send(new Packet("recv-status-message", {msg: "Die " + (won == won_loved ? "Verliebten" : won == won_villagers ? "Dorfbewohner" : "Werwölfe") + " haben gewonnen!", dur: -1}).serialize())
+            
+            var packet: Packet = new Packet("game-lost")
+            if(p.role!.name == RoleName.WEREWOLF && won == won_werewolves) {
+                packet.name = "game-won"
+            } else if(p.role!.name != RoleName.WEREWOLF && won == won_villagers) {
+                packet.name = "game-won"
+            } else if(p.inLove && won == won_loved) {
+                packet.name = "game-won"   
+            } else if(won == -1) {
+                packet.name = "game-tie"
+            }
+
+            p.ws.send(packet.serialize())
+        })
 
         return true
     }
@@ -75,7 +91,7 @@ export class Game {
             if(p.dead) return
 
             if(p.role!.name == RoleName.WEREWOLF) werewolves++
-            else villagers++
+            else if(!p.inLove) villagers++
 
             if(p.inLove) loved++
         })
@@ -83,6 +99,8 @@ export class Game {
         if(loved && !werewolves && !villagers) return won_loved
         if(werewolves && !villagers) return won_werewolves
         if(villagers && !werewolves) return won_villagers
+
+        if(this.players.filter(e => !e.dead).length == 0) return -1
         return 0
     }
 

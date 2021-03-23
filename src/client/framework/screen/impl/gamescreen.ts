@@ -7,7 +7,7 @@ import { Action, ActionMenu } from "../../actionmenu";
 import { createChat } from "../../chat";
 import { displayString } from "../../display";
 import { setGlobalBackground } from "../../framework";
-import { Message } from "../../message";
+import { Message, Urgency } from "../../message";
 import { createDivText, createHeader, createText } from "../../text";
 import { Screen, setTitle } from "../screen";
 
@@ -179,6 +179,16 @@ function initGameLogicListeners() {
         })
 
         new ActionMenu("Hinrichtung", "Als Bürgermeister darfst du nun entscheiden, welcher der folgenden Spieler sterben soll.", false, ...action).show()
+    })
+
+    State.ws.setOnPacket("game-won", packet => {
+        displayString("🎉 Gewonnen 🎉", -1, ["green"])
+    })
+    State.ws.setOnPacket("game-lost", packet => {
+        displayString("Verloren!", -1, ["red"])
+    })
+    State.ws.setOnPacket("game-tie", packet => {
+        displayString("Unentschieden!", -1)
     })
 }
 

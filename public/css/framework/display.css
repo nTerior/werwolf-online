@@ -31,6 +31,10 @@
     color: darkred;
 }
 
+.green {
+    color: green;
+}
+
 @keyframes display-in {
     0% {
         top: -100%;

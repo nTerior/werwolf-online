@@ -97,6 +97,7 @@ const packetHandler: {[key:string]: (data:any, ws: lws, wsid: string) => Promise
         if(!game.majorSuggestions.includes(data["suggestion"])) {
             game.majorSuggestions.push(data["suggestion"])
             game.players.forEach(p => {
+                p.ws.send(new Packet("recv-status-message", player.name + " hat " + game.getPlayer(data["suggestion"])!.name + " zur Wahl aufgestellt.").serialize())
                 p.ws.send(new Packet("majorVoteSuggestion", data["suggestion"]).serialize())
             })
         }
@@ -112,6 +113,30 @@ const packetHandler: {[key:string]: (data:any, ws: lws, wsid: string) => Promise
         var player = game.getPlayer(wsid)!
         if(player.role!.name != RoleName.HUNTER) return {}
         game.events.emit("hunter-perform-kill", data["target_id"])
+        return {}
+    },
+    "daySuggestVote": async(data, ws, wsid) => {
+        var game: Game = getGame(data["game_id"])!
+        var player = game.getPlayer(wsid)!
+        if(player.dead) return {}
+        var target = game.getPlayer(data["suggestion"])!
+        if(!game.dayVoteSuggestions.includes(target)) {
+            game.dayVoteSuggestions.push(target)
+            game.players.forEach(p => {
+                p.ws.send(new Packet("recv-status-message", player.name + " hat " + target.name + " angeklagt.").serialize())
+                p.ws.send(new Packet("dayVoteSuggestion", data["suggestion"]).serialize())
+            })
+        }
+        return {}
+    },
+    "dayVoted": async(data, ws, wsid) => {
+        var game: Game = getGame(data["game_id"])!
+        game.events.emit("playerVoteDay", game.getPlayer(wsid)!, data["vote"])
+        return {}
+    },
+    "majorExecution": async(data, ws, wsid) => {
+        var game: Game = getGame(data["game_id"])!
+        game.events.emit("majorExecution", data["target"])
         return {}
     }
 }

@@ -44,6 +44,7 @@ export function generateGameScreen(): Screen {
 
 function initGameLogicListeners() {
     State.ws.setOnPacket("majorVoteSuggestion", packet => {
+        if(State.game.getSelfPlayer().dead) return
         majorVoteMenu.addAction({
             name: State.game.players.find(e => e.id == packet.data)!.name,
             onclick: () => {
@@ -54,6 +55,7 @@ function initGameLogicListeners() {
         if(!majorVoteMenu.shown) majorVoteMenu.show()
     })
     State.ws.setOnPacket("daytime", _packet => {
+        if(State.game.getSelfPlayer().dead) return
         setGlobalBackground("day")
         displayString("Tag")
         setTitle("Tag")
@@ -62,6 +64,13 @@ function initGameLogicListeners() {
         majorVoteMenu.shown = false
         dayVoteMenu.actions = []
         dayVoteMenu.shown = false
+    })
+    State.ws.setOnPacket("nighttime", packet => {
+        if(State.game.getSelfPlayer().dead) return
+        setGlobalBackground("night")
+        displayString("Nacht", -1)
+        setTitle("Nacht")
+        currentState = "night"
     })
     State.ws.setOnPacket("player-died", packet => {
         State.game.players.find(e => e.id == packet.data.id)!.dead = true
@@ -84,6 +93,7 @@ function initGameLogicListeners() {
         currentState = "dead"
     })
     State.ws.setOnPacket("your-turn", _packet => {
+        if(State.game.getSelfPlayer().dead) return
         new Message("Du bist nun dran!").display()
         displayString("Du bist dran", 2000)
         setTitle("Dein Zug")
@@ -91,6 +101,7 @@ function initGameLogicListeners() {
         currentState = "turn"
     })
     State.ws.setOnPacket("turn-end", _packet => {
+        if(State.game.getSelfPlayer().dead) return
         new Message("Dein Zug ist zu Ende").display()
         displayString("Nacht", -1)
         setTitle("Nacht")
@@ -118,6 +129,7 @@ function initGameLogicListeners() {
         new Message("Euer neues Ziel ist nun, dass du und " + other.name + " die letzten Überlebenden seid", -1).display()
     })
     State.ws.setOnPacket("majorVote", _packet => {
+        if(State.game.getSelfPlayer().dead) return
         displayString("Bürgermeisterwahl")
         setTitle("Bürgermeisterwahl")
         currentState = "majorSuggestVote"
@@ -150,12 +162,14 @@ function initGameLogicListeners() {
         new ActionMenu("Du bist als Jäger gestorben", "Du du gestorben bist, darfst du als Jäger noch eine Person töten. Welchen Spieler willst du töten?", false, ...actions).show()
     })
     State.ws.setOnPacket("dayVote", packet => {
+        if(State.game.getSelfPlayer().dead) return
         displayString("Hinrichtung")
         setTitle("Hinrichtung")
         currentState = "dayVote"
         new ActionMenu("Hinrichtung", "Es können nun Spieler angeklagt werden. Klicke auf einen Spieler, um ihn anzuklagen", false, {name: "Schließen", onclick: () => {}}).show()        
     })
     State.ws.setOnPacket("dayVoteSuggestion", packet => {
+        if(State.game.getSelfPlayer().dead) return
         dayVoteMenu.addAction({
             name: State.game.players.find(e => e.id == packet.data)!.name,
             onclick: () => {
@@ -166,6 +180,7 @@ function initGameLogicListeners() {
         if(!dayVoteMenu.shown) dayVoteMenu.show()
     })
     State.ws.setOnPacket("majorUse", packet => {
+        if(State.game.getSelfPlayer().dead) return
         var action: Action[] = []
         
         var targets: string[] = packet.data.targets

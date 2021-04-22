@@ -54,7 +54,8 @@ export class Game {
         await this.dayVoteAndWait()
 
         if(this.endGame()) return
-
+        
+        this.setNight()
         await (this.gameRunnable())
     }
 
@@ -117,7 +118,7 @@ export class Game {
         var voted: Player[] = []
         var votes: Player[] = []
 
-        return new Promise<void>(res => {
+        await new Promise<void>(res => {
             this.events.on("playerVoteDay", async(player, vote) => {
                 if(voted.includes(player)) return
                 if(player.dead) return
@@ -164,13 +165,13 @@ export class Game {
                                 res()
                             })
                         })
-                        res()
-
                     }
+                    res()
                 }
 
             })
         })
+        this.events.removeAllListeners("playerVoteDay")
     }
 
     private async majorVoteAndWait() {
@@ -185,7 +186,7 @@ export class Game {
     private async waitForMajorVotes(): Promise<void> {
         var voted: Player[] = []
         
-        return new Promise<void>(res => {
+        await new Promise<void>(res => {
             this.events.on("playerVoteMajor", (player, vote) => {
                 if(voted.includes(player)) return
                 if(player.dead) return
@@ -216,6 +217,7 @@ export class Game {
                 
             })
         })
+        this.events.removeAllListeners("playerVoteMajor")
     }
 
     public roles_turn: RoleName[] = []
@@ -245,6 +247,7 @@ export class Game {
         this.majorSuggestions = []
         this.majorVotes = []
         this.roles_turn = []
+        this.werewolf_target_list = []
 
         if(this.werewolf_prey) {
             await this.getPlayer(this.werewolf_prey)?.killNight()
@@ -261,6 +264,13 @@ export class Game {
         })
     }
 
+    private setNight() {
+        this.players.forEach(p => {
+            if (p.dead) return
+            p.ws.send(new Packet("nighttime").serialize())
+        })
+    }
+
     private werewolf_target_list: string[] = []
     public werewolf_prey: string = ""
     
@@ -269,7 +279,7 @@ export class Game {
     private async waitForTurnResponses(roles: RoleName[]): Promise<void> {
         var players: Player[] = []
 
-        return new Promise(res => {
+        await new Promise<void>(res => {
             this.events.on("player-perform-turn", (player_id, target_id, sub_command) => {
                 var player: Player = this.getPlayer(player_id)!
 
@@ -348,6 +358,7 @@ export class Game {
                 }
             })
         })
+        this.events.removeAllListeners("player-perform-turn")
     }
 
     public addPlayer(name: string, id: string, ws: lws) {

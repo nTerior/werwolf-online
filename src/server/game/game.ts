@@ -45,35 +45,35 @@ export class Game {
         await this.roleTurnAndWait(RoleName.SEER)
 
         await this.setDay()
-        if(this.endGame()) return
-        
-        if(this.round == 1) {
+        if (this.endGame()) return
+
+        if (this.round == 1) {
             await this.majorVoteAndWait()
         }
 
         await this.dayVoteAndWait()
 
-        if(this.endGame()) return
-        
+        if (this.endGame()) return
+
         this.setNight()
         await (this.gameRunnable())
     }
 
     private endGame() {
         var won: number = this.checkWon()
-        if(!won) return false
+        if (!won) return false
 
         this.players.forEach(p => {
-            p.ws.send(new Packet("recv-status-message", {msg: "Die " + (won == won_loved ? "Verliebten" : won == won_villagers ? "Dorfbewohner" : "Werwölfe") + " haben gewonnen!", dur: -1}).serialize())
-            
+            p.ws.send(new Packet("recv-status-message", { msg: "Die " + (won == won_loved ? "Verliebten" : won == won_villagers ? "Dorfbewohner" : "Werwölfe") + " haben gewonnen!", dur: -1 }).serialize())
+
             var packet: Packet = new Packet("game-lost")
-            if(p.role!.name == RoleName.WEREWOLF && won == won_werewolves) {
+            if (p.role!.name == RoleName.WEREWOLF && won == won_werewolves) {
                 packet.name = "game-won"
-            } else if(p.role!.name != RoleName.WEREWOLF && won == won_villagers) {
+            } else if (p.role!.name != RoleName.WEREWOLF && won == won_villagers) {
                 packet.name = "game-won"
-            } else if(p.inLove && won == won_loved) {
-                packet.name = "game-won"   
-            } else if(won == -1) {
+            } else if (p.inLove && won == won_loved) {
+                packet.name = "game-won"
+            } else if (won == -1) {
                 packet.name = "game-tie"
             }
 
@@ -89,25 +89,25 @@ export class Game {
         var villagers: number = 0;
 
         this.players.forEach(p => {
-            if(p.dead) return
+            if (p.dead) return
 
-            if(p.role!.name == RoleName.WEREWOLF) werewolves++
-            else if(!p.inLove) villagers++
+            if (p.role!.name == RoleName.WEREWOLF) werewolves++
+            else if (!p.inLove) villagers++
 
-            if(p.inLove) loved++
+            if (p.inLove) loved++
         })
 
-        if(loved && !werewolves && !villagers) return won_loved
-        if(werewolves && !villagers) return won_werewolves
-        if(villagers && !werewolves) return won_villagers
+        if (loved && !werewolves && !villagers) return won_loved
+        if (werewolves && !villagers) return won_werewolves
+        if (villagers && !werewolves) return won_villagers
 
-        if(this.players.filter(e => !e.dead).length == 0) return -1
+        if (this.players.filter(e => !e.dead).length == 0) return -1
         return 0
     }
 
     private async dayVoteAndWait() {
         this.players.forEach(p => {
-            if(p.dead) return
+            if (p.dead) return
             p.ws.send(new Packet("dayVote").serialize())
         })
         await this.waitForDayVotes()
@@ -119,12 +119,12 @@ export class Game {
         var votes: Player[] = []
 
         await new Promise<void>(res => {
-            this.events.on("playerVoteDay", async(player, vote) => {
-                if(voted.includes(player)) return
-                if(player.dead) return
+            this.events.on("playerVoteDay", async (player, vote) => {
+                if (voted.includes(player)) return
+                if (player.dead) return
 
                 voted.push(player)
-                
+
                 var target: Player = this.getPlayer(vote)!
                 votes.push(target)
 
@@ -134,14 +134,14 @@ export class Game {
 
                 var votes_sum: number = 0
                 this.players.forEach(p => {
-                    if(p.dead) return
+                    if (p.dead) return
                     votes_sum++
                 })
-                
-                if(voted.length == votes_sum) {
+
+                if (voted.length == votes_sum) {
                     var possible_kills: Player[] = getAllMax(votes)
-                    
-                    if(possible_kills.length == 1) {
+
+                    if (possible_kills.length == 1) {
                         this.players.forEach(p => {
                             p.ws.send(new Packet("recv-status-message", possible_kills[0].name + " wird nun hingerichtet.").serialize())
                         })
@@ -150,14 +150,14 @@ export class Game {
 
                         var major: Player = this.players[0]
                         this.players.forEach(p => {
-                            if(p.major && !p.dead) major = p
+                            if (p.major && !p.dead) major = p
                         })
 
                         this.players.forEach(p => {
                             p.ws.send(new Packet("recv-status-message", major.name + " darf nun entscheiden, wer stirbt.").serialize())
                         })
 
-                        major.ws.send(new Packet("majorUse", {targets: possible_kills.map(e => e.id)}).serialize())
+                        major.ws.send(new Packet("majorUse", { targets: possible_kills.map(e => e.id) }).serialize())
                         await new Promise<void>(res => {
                             this.events.on("majorExecution", target => {
                                 var killing: Player = this.getPlayer(target)!
@@ -176,7 +176,7 @@ export class Game {
 
     private async majorVoteAndWait() {
         this.players.forEach(p => {
-            if(p.dead) return
+            if (p.dead) return
             p.ws.send(new Packet("majorVote").serialize())
         })
         await this.waitForMajorVotes()
@@ -185,11 +185,11 @@ export class Game {
     public majorVotes: string[] = []
     private async waitForMajorVotes(): Promise<void> {
         var voted: Player[] = []
-        
+
         await new Promise<void>(res => {
             this.events.on("playerVoteMajor", (player, vote) => {
-                if(voted.includes(player)) return
-                if(player.dead) return
+                if (voted.includes(player)) return
+                if (player.dead) return
 
                 voted.push(player)
                 this.majorVotes.push(vote)
@@ -200,21 +200,21 @@ export class Game {
 
                 var votes_sum: number = 0
                 this.players.forEach(p => {
-                    if(p.dead) return
+                    if (p.dead) return
                     votes_sum++
                 })
 
-                if(voted.length == votes_sum) {
+                if (voted.length == votes_sum) {
                     var major: Player = this.getPlayer(maxCount(this.majorVotes))!
                     major.major = true
                     major.ws.send(new Packet("selfMajorReveal").serialize())
                     this.players.forEach(p => {
-                        if(p == major) return
+                        if (p == major) return
                         p.ws.send(new Packet("majorReveal", major.id).serialize())
                     })
                     res()
                 }
-                
+
             })
         })
         this.events.removeAllListeners("playerVoteMajor")
@@ -226,33 +226,33 @@ export class Game {
         this.roles_turn = names
         var tmp: boolean = false
         names.forEach(n => {
-            if(this.settings?.settings.role_settings[n] != 0) tmp = true
+            if (this.settings?.settings.role_settings[n] != 0) tmp = true
         })
-        if(!tmp) return
+        if (!tmp) return
 
         names.forEach(n => {
             getNewRoleByRoleName((<RoleName>getEnumKeyByEnumValue(RoleName, n)))!.sendTurn(this)
         })
 
         await this.waitForTurnResponses(names)
-        
+
         names.forEach(n => {
             getNewRoleByRoleName((<RoleName>getEnumKeyByEnumValue(RoleName, n)))!.sendUnTurn(this)
         })
 
         await delay(500)
     }
-    
+
     async setDay() {
         this.majorSuggestions = []
         this.majorVotes = []
         this.roles_turn = []
         this.werewolf_target_list = []
 
-        if(this.werewolf_prey) {
+        if (this.werewolf_prey) {
             await this.getPlayer(this.werewolf_prey)?.killNight()
         }
-        if(this.witch_prey) await this.getPlayer(this.witch_prey)?.killNight()
+        if (this.witch_prey) await this.getPlayer(this.witch_prey)?.killNight()
 
         this.werewolf_prey = ""
         this.witch_prey = ""
@@ -273,7 +273,7 @@ export class Game {
 
     private werewolf_target_list: string[] = []
     public werewolf_prey: string = ""
-    
+
     private witch_prey: string = ""
 
     private async waitForTurnResponses(roles: RoleName[]): Promise<void> {
@@ -283,18 +283,18 @@ export class Game {
             this.events.on("player-perform-turn", (player_id, target_id, sub_command) => {
                 var player: Player = this.getPlayer(player_id)!
 
-                if(!roles.includes(player.role!.name)) return
-                if(players.includes(player)) return
-                if(player.dead) return
+                if (!roles.includes(player.role!.name)) return
+                if (players.includes(player)) return
+                if (player.dead) return
 
                 // ==============================================
-                
+
                 // ROLE SPECIFIC STUFF
                 // e.g. witches heal, etc.
 
                 // ==============================================
 
-                switch(player.role?.name) {
+                switch (player.role?.name) {
                     case RoleName.WEREWOLF: case RoleName.GIRL:
                         this.werewolf_target_list.push(target_id)
                         getNewRoleByRoleName(RoleName.GIRL).sendAll(this, new Packet("recv-status-message", player.name + " hat für " + this.getPlayer(target_id)!.name + " als Opfer gestimmt."))
@@ -311,24 +311,24 @@ export class Game {
                         p2.ws.send(new Packet("love-reveal", { id: p1.id, role: p1.role?.name }).serialize())
                         break
                     case RoleName.WITCH:
-                        if(target_id != "" && player.witchCanHeal) {
+                        if (target_id != "" && player.witchCanHeal) {
                             this.werewolf_prey = ""
                             player.witchCanHeal = false
                         }
-                        if(sub_command.kill != "" && player.witchCanKill) {
+                        if (sub_command.kill != "" && player.witchCanKill) {
                             this.witch_prey = sub_command.kill
                             player.witchCanKill = false
                         }
                         break
                     case RoleName.MATTRESS:
-                        if(target_id == "") break
+                        if (target_id == "") break
                         var target: Player = this.getPlayer(target_id)!
 
-                        if(player.mattressSleepingBy == target.id) break
+                        if (player.mattressSleepingBy == target.id) break
 
                         player.sleeping_by = target.id
                         player.mattressSleepingBy = target.id
-                        
+
                         target.undersleeper_id = player.id
                         break
                 }
@@ -339,21 +339,21 @@ export class Game {
                 })
 
                 players.push(player)
-                if(players.length == roles_sum) {
-                    
+                if (players.length == roles_sum) {
+
                     // ==============================================
-                
+
                     // OTHER ROLE SPECIFIC STUFF
                     // e.g. Werwolfes kill, etc.
 
                     // ==============================================
 
-                    switch(player.role?.name) {
+                    switch (player.role?.name) {
                         case RoleName.WEREWOLF: case RoleName.GIRL:
                             this.werewolf_prey = maxCount(this.werewolf_target_list)
                             break
                     }
-                 
+
                     res()
                 }
             })
@@ -375,23 +375,23 @@ export class Game {
 
     public removePlayer(id: string) {
         var player: Player = this.players.splice(this.players.findIndex(e => e.id == id), 1)[0]
-        
-        if(this.players.length == 0) {
+
+        if (this.players.length == 0) {
             this.delete()
             return
         }
-        
+
         this.owner_id = this.players[0].id
         var packet: Packet = new Packet("player-left", {
             id: player.id,
         })
 
-        if(this.settings && player.role) {
-            if(!player.dead)
-            this.settings.settings.role_settings[player.role.name]!--
+        if (this.settings && player.role) {
+            if (!player.dead)
+                this.settings.settings.role_settings[player.role.name]!--
         }
-        
-        if(this.settings?.settings.reveal_role_death) {
+
+        if (this.settings?.settings.reveal_role_death) {
             packet.data["role"] = player.role?.name
         }
         this.players.forEach(p => {
@@ -399,13 +399,13 @@ export class Game {
             p.ws.send(packet.serialize())
         })
         console.log(player.name + " left " + this.id)
-        if(player.loves_id) {
+        if (player.loves_id) {
             var loves = this.getPlayer(player.loves_id)!
             loves.loves_id = ""
             loves.inLove = false
         }
-        if(player.undersleeper_id) this.getPlayer(player.undersleeper_id)!.sleeping_by = ""
-        if(player.sleeping_by) this.getPlayer(player.sleeping_by)!.undersleeper_id = ""
+        if (player.undersleeper_id) this.getPlayer(player.undersleeper_id)!.sleeping_by = ""
+        if (player.sleeping_by) this.getPlayer(player.sleeping_by)!.undersleeper_id = ""
     }
 
     public checkName(name: string) {
@@ -441,11 +441,11 @@ export class Game {
 
         // Setting the roles
         var currentPlayerIndex = 0;
-        for(var role in this.settings!.settings.role_settings) {
+        for (var role in this.settings!.settings.role_settings) {
             //@ts-expect-error
             var count = this.settings!.settings.role_settings[role]
-            
-            for(var i = 0; i < count; i++) {
+
+            for (var i = 0; i < count; i++) {
                 //@ts-expect-error
                 this.players[currentPlayerIndex].role = getNewRoleByRoleName(getEnumKeyByEnumValue(RoleName, role))
                 currentPlayerIndex++
@@ -454,13 +454,13 @@ export class Game {
 
         var werwolf_ids: string[] = []
         this.players.forEach(p => {
-            if(p.role?.name == RoleName.WEREWOLF || p.role?.name == RoleName.GIRL) werwolf_ids.push(p.id)
+            if (p.role?.name == RoleName.WEREWOLF || p.role?.name == RoleName.GIRL) werwolf_ids.push(p.id)
         })
 
         this.players.forEach(p => {
-            p.ws.send(new Packet("game-started", {role: p.role?.name, settings: this.settings}).serialize())
-            if(p.role?.name == RoleName.WEREWOLF || p.role?.name == RoleName.GIRL) {
-                p.ws.send(new Packet("werewolf-reveal", {ids: werwolf_ids}).serialize())
+            p.ws.send(new Packet("game-started", { role: p.role?.name, settings: this.settings }).serialize())
+            if (p.role?.name == RoleName.WEREWOLF || p.role?.name == RoleName.GIRL) {
+                p.ws.send(new Packet("werewolf-reveal", { ids: werwolf_ids }).serialize())
             }
         })
 
@@ -473,12 +473,12 @@ export class Game {
 function generateGameId(): string {
     const possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
     var result = ""
-    for(var i = 0; i < 20; i++) {
+    for (var i = 0; i < 5; i++) {
         var item = possible[Math.floor(Math.random() * possible.length)];
         result += item
     }
-    
-    if(games.map(e => e.id).includes(result)) return generateGameId()
+
+    if (games.map(e => e.id).includes(result)) return generateGameId()
     return result
 }
 
@@ -486,19 +486,18 @@ export function getGame(id: string): Game | undefined {
     return games.find(e => e.id == id)
 }
 
-function maxCount(array:any[]) {
-    if(array.length == 0)
+function maxCount(array: any[]) {
+    if (array.length == 0)
         return null;
-    var modeMap:any = {};
+    var modeMap: any = {};
     var maxEl = array[0], maxCount = 1;
-    for(var i = 0; i < array.length; i++) {
+    for (var i = 0; i < array.length; i++) {
         var el = array[i];
-        if(modeMap[el] == null)
+        if (modeMap[el] == null)
             modeMap[el] = 1;
         else
-            modeMap[el]++;  
-        if(modeMap[el] > maxCount)
-        {
+            modeMap[el]++;
+        if (modeMap[el] > maxCount) {
             maxEl = el;
             maxCount = modeMap[el];
         }
@@ -517,7 +516,7 @@ function getAllMax(array: any[]): any[] {
     var maxes: any[] = []
 
     array.forEach(a => {
-        if(count(a, array) == max_count && !maxes.includes(a)) maxes.push(a)
+        if (count(a, array) == max_count && !maxes.includes(a)) maxes.push(a)
     })
     console.log(array.length)
     return maxes

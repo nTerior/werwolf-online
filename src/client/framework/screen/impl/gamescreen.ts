@@ -44,18 +44,18 @@ export function generateGameScreen(): Screen {
 
 function initGameLogicListeners() {
     State.ws.setOnPacket("majorVoteSuggestion", packet => {
-        if(State.game.getSelfPlayer().dead) return
+        if (State.game.getSelfPlayer().dead) return
         majorVoteMenu.addAction({
             name: State.game.players.find(e => e.id == packet.data)!.name,
             onclick: () => {
                 currentState = "day"
-                State.ws.sendPacket(new Packet("majorVoted", {game_id: State.game.id, vote: packet.data}))
+                State.ws.sendPacket(new Packet("majorVoted", { game_id: State.game.id, vote: packet.data }))
             }
         })
-        if(!majorVoteMenu.shown) majorVoteMenu.show()
+        if (!majorVoteMenu.shown) majorVoteMenu.show()
     })
     State.ws.setOnPacket("daytime", _packet => {
-        if(State.game.getSelfPlayer().dead) return
+        if (State.game.getSelfPlayer().dead) return
         setGlobalBackground("day")
         displayString("Tag")
         setTitle("Tag")
@@ -66,7 +66,7 @@ function initGameLogicListeners() {
         dayVoteMenu.shown = false
     })
     State.ws.setOnPacket("nighttime", packet => {
-        if(State.game.getSelfPlayer().dead) return
+        if (State.game.getSelfPlayer().dead) return
         setGlobalBackground("night")
         displayString("Nacht", -1)
         setTitle("Nacht")
@@ -81,7 +81,7 @@ function initGameLogicListeners() {
             //@ts-expect-error
             State.game.role_counts[packet.data.role]--
             //@ts-expect-error
-            if(State.game.role_counts[packet.data.role] < 0) State.game.role_counts[packet.data.role] = 0
+            if (State.game.role_counts[packet.data.role] < 0) State.game.role_counts[packet.data.role] = 0
             //@ts-expect-error
             updateRoleCount(getEnumKeyByEnumValue(RoleName, packet.data.role))
         } else
@@ -90,10 +90,12 @@ function initGameLogicListeners() {
     })
     State.ws.setOnPacket("you-died", _packet => {
         displayString("Du bist gestorben!", -1, ["red"])
+        setTitle("Du bist tot")
+        setGlobalBackground("day")
         currentState = "dead"
     })
     State.ws.setOnPacket("your-turn", _packet => {
-        if(State.game.getSelfPlayer().dead) return
+        if (State.game.getSelfPlayer().dead) return
         new Message("Du bist nun dran!").display()
         displayString("Du bist dran", 2000)
         setTitle("Dein Zug")
@@ -101,14 +103,14 @@ function initGameLogicListeners() {
         currentState = "turn"
     })
     State.ws.setOnPacket("turn-end", _packet => {
-        if(State.game.getSelfPlayer().dead) return
+        if (State.game.getSelfPlayer().dead) return
         new Message("Dein Zug ist zu Ende").display()
         displayString("Nacht", -1)
         setTitle("Nacht")
         currentState = "night"
     })
     State.ws.setOnPacket("recv-status-message", packet => {
-        if(packet.data.dur) {
+        if (packet.data.dur) {
             new Message(packet.data.msg, packet.data.dur).display()
         } else {
             new Message(packet.data).display()
@@ -129,11 +131,11 @@ function initGameLogicListeners() {
         new Message("Euer neues Ziel ist nun, dass du und " + other.name + " die letzten Überlebenden seid", -1).display()
     })
     State.ws.setOnPacket("majorVote", _packet => {
-        if(State.game.getSelfPlayer().dead) return
+        if (State.game.getSelfPlayer().dead) return
         displayString("Bürgermeisterwahl")
         setTitle("Bürgermeisterwahl")
         currentState = "majorSuggestVote"
-        new ActionMenu("Bürgermeisterwahl", "Es ist nun Bürgermeisterwahl. Klicke auf einen Spieler, um ihn zur Wahl zu stellen. Du kannst allerdings nur einen Spieler aufstellen.", false, {name: "Schließen", onclick: () => {}}).show()
+        new ActionMenu("Bürgermeisterwahl", "Es ist nun Bürgermeisterwahl. Klicke auf einen Spieler, um ihn zur Wahl zu stellen. Du kannst allerdings nur einen Spieler aufstellen.", false, { name: "Schließen", onclick: () => { } }).show()
     })
     State.ws.setOnPacket("majorReveal", packet => {
         var major = State.game.players.find(e => e.id == packet.data)!
@@ -162,33 +164,33 @@ function initGameLogicListeners() {
         new ActionMenu("Du bist als Jäger gestorben", "Du du gestorben bist, darfst du als Jäger noch eine Person töten. Welchen Spieler willst du töten?", false, ...actions).show()
     })
     State.ws.setOnPacket("dayVote", packet => {
-        if(State.game.getSelfPlayer().dead) return
+        if (State.game.getSelfPlayer().dead) return
         displayString("Hinrichtung")
         setTitle("Hinrichtung")
         currentState = "dayVote"
-        new ActionMenu("Hinrichtung", "Es können nun Spieler angeklagt werden. Klicke auf einen Spieler, um ihn anzuklagen", false, {name: "Schließen", onclick: () => {}}).show()        
+        new ActionMenu("Hinrichtung", "Es können nun Spieler angeklagt werden. Klicke auf einen Spieler, um ihn anzuklagen", false, { name: "Schließen", onclick: () => { } }).show()
     })
     State.ws.setOnPacket("dayVoteSuggestion", packet => {
-        if(State.game.getSelfPlayer().dead) return
+        if (State.game.getSelfPlayer().dead) return
         dayVoteMenu.addAction({
             name: State.game.players.find(e => e.id == packet.data)!.name,
             onclick: () => {
                 currentState = "day"
-                State.ws.sendPacket(new Packet("dayVoted", {game_id: State.game.id, vote: packet.data}))
+                State.ws.sendPacket(new Packet("dayVoted", { game_id: State.game.id, vote: packet.data }))
             }
         })
-        if(!dayVoteMenu.shown) dayVoteMenu.show()
+        if (!dayVoteMenu.shown) dayVoteMenu.show()
     })
     State.ws.setOnPacket("majorUse", packet => {
-        if(State.game.getSelfPlayer().dead) return
+        if (State.game.getSelfPlayer().dead) return
         var action: Action[] = []
-        
+
         var targets: string[] = packet.data.targets
         targets.forEach(e => {
             action.push({
                 name: State.game.players.find(f => f.id == e)!.name,
                 onclick: () => {
-                    State.ws.sendPacket(new Packet("majorExecution", {game_id: State.game.id, target: e}))
+                    State.ws.sendPacket(new Packet("majorExecution", { game_id: State.game.id, target: e }))
                 }
             })
         })
@@ -267,7 +269,7 @@ function createUserList(): HTMLDivElement {
             //@ts-expect-error
             State.game.role_counts[packet.data.role]--
             //@ts-expect-error
-            if(State.game.role_counts[packet.data.role] < 0) State.game.role_counts[packet.data.role] = 0
+            if (State.game.role_counts[packet.data.role] < 0) State.game.role_counts[packet.data.role] = 0
             //@ts-expect-error
             updateRoleCount(getEnumKeyByEnumValue(RoleName, packet.data.role))
         }
@@ -322,35 +324,36 @@ export function updatePlayer(id: string) {
 }
 
 function handlePlayerInteraction(p: Player) {
-    if(State.game.getSelfPlayer().dead) return
+    if (State.game.getSelfPlayer().dead) return
 
     if (currentState == "turn") {
         State.game.getSelfPlayer().role?.on_interact(p)
     } else if (currentState == "majorSuggestVote") {
         new ActionMenu("Bürgermeister vorschlagen", "Möchtest du " + p.name + " als Bürgermeister vorschlagen?", false,
-        {
-            name: "Ja",
-            onclick: () => {
-                currentState = "day"
-                State.ws.sendPacket(new Packet("majorSuggestVote", {game_id: State.game.id, suggestion: p.id}))
-            }
-        },
-        {
-            name: "Nein",
-            onclick: () => {}
-        }).show()
-    } else if (currentState = "dayVote") {
+            {
+                name: "Ja",
+                onclick: () => {
+                    currentState = "day"
+                    State.ws.sendPacket(new Packet("majorSuggestVote", { game_id: State.game.id, suggestion: p.id }))
+                }
+            },
+            {
+                name: "Nein",
+                onclick: () => { }
+            }).show()
+    } else if (currentState == "dayVote") {
+        console.log(currentState)
         new ActionMenu("Anklage", "Möchtest du " + p.name + " wirklich anklagen?", false,
-        {
-            name: "Ja",
-            onclick: () => {
-                currentState = "day"
-                State.ws.sendPacket(new Packet("daySuggestVote", {game_id: State.game.id, suggestion: p.id}))
-            }
-        },
-        {
-            name: "Nein",
-            onclick: () => {}
-        }).show()
+            {
+                name: "Ja",
+                onclick: () => {
+                    currentState = "day"
+                    State.ws.sendPacket(new Packet("daySuggestVote", { game_id: State.game.id, suggestion: p.id }))
+                }
+            },
+            {
+                name: "Nein",
+                onclick: () => { }
+            }).show()
     }
 }

@@ -17,7 +17,7 @@ async function init() {
 }
 
 async function initWebsocket() {
-    var ws = new WebsocketClient("ws://localhost:5354")
+    var ws = new WebsocketClient((window.location.protocol == "http:" ? "ws://" : "wss://") + window.location.hostname + ":5354")
     await ws.start()
     State.ws = ws
 }

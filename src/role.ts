@@ -70,6 +70,7 @@ export abstract class Role {
         game.players.forEach(p => {
             if (p.role?.name == this.name && !p.dead) {
                 p.ws.send(new Packet("your-turn").serialize())
+                console.log(p.name)
             }
         })
     }
@@ -140,31 +141,31 @@ export class Witch extends Role {
         super(RoleName.WITCH)
     }
     async on_interact(p: Player) {
-        if(!this.can_kill) return
+        if (!this.can_kill) return
 
         new ActionMenu(p.name + " töten", "Möchtest du " + p.name + " wirklich töten?", false,
-        {
-            name: "Ja",
-            onclick: () => {
-                this.can_kill = false
-                this.able_kill = false
-                removeAllActionMenus()
-                State.ws.sendPacket(new Packet("player-perform-turn", { game_id: State.game.id, target_id: this.heals_prey ? this.prey_id : "", sub_command: {kill: p.id}}))
-            }
-        },
-        {
-            name: "Nein",
-            onclick: () => {
-                State.ws.sendPacket(new Packet("player-perform-turn", { game_id: State.game.id, target_id: ""}))
-            }
-        }).show()
+            {
+                name: "Ja",
+                onclick: () => {
+                    this.can_kill = false
+                    this.able_kill = false
+                    removeAllActionMenus()
+                    State.ws.sendPacket(new Packet("player-perform-turn", { game_id: State.game.id, target_id: this.heals_prey ? this.prey_id : "", sub_command: { kill: p.id } }))
+                }
+            },
+            {
+                name: "Nein",
+                onclick: () => {
+                    State.ws.sendPacket(new Packet("player-perform-turn", { game_id: State.game.id, target_id: "" }))
+                }
+            }).show()
     }
 
     async on_turn() {
         this.can_kill = false
         this.heals_prey = false
 
-        if(this.able_heal) {
+        if (this.able_heal) {
 
             this.prey_id = (await State.ws.sendAndRecvPacket(new Packet("witch-get-prey", { game_id: State.game.id }))).data
             var prey = State.game.players.find(e => e.id == this.prey_id)!
@@ -174,7 +175,7 @@ export class Witch extends Role {
                     onclick: () => {
                         this.heals_prey = true
                         this.able_heal = false
-                        
+
                         if (this.able_kill) {
                             setTimeout(() => {
                                 this.showKillActionMenu()
@@ -194,10 +195,10 @@ export class Witch extends Role {
                     }
                 }).show()
         } else {
-            if(this.able_kill) this.showKillActionMenu()
+            if (this.able_kill) this.showKillActionMenu()
             else {
                 new Message("Da du weder heilen, noch töten kannst, wirst du nun übersprungen").display()
-                State.ws.sendPacket(new Packet("player-perform-turn", { game_id: State.game.id, target_id: "", sub_command: {kill: ""}}))
+                State.ws.sendPacket(new Packet("player-perform-turn", { game_id: State.game.id, target_id: "", sub_command: { kill: "" } }))
             }
         }
     }
@@ -205,12 +206,12 @@ export class Witch extends Role {
     private showKillActionMenu() {
         this.can_kill = true
         var menu = new ActionMenu("Spieler töten", "Möchtest du einen Spieler töten? Wenn Ja, klicke auf diesen Spieler, wenn Nein, klicke auf \"Nein\"", false,
-        {
-            name: "Nein",
-            onclick: () => {
-                State.ws.sendPacket(new Packet("player-perform-turn", { game_id: State.game.id, target_id: this.heals_prey ? this.prey_id : "", sub_command: {kill: ""}}))
-            }
-        })
+            {
+                name: "Nein",
+                onclick: () => {
+                    State.ws.sendPacket(new Packet("player-perform-turn", { game_id: State.game.id, target_id: this.heals_prey ? this.prey_id : "", sub_command: { kill: "" } }))
+                }
+            })
         menu.stays_on_new = true
         menu.show()
     }
@@ -225,16 +226,16 @@ export class Seer extends Role {
         updatePlayer(p.id)
         new Message(p.name + " ist ein " + name, -1).display()
         removeAllActionMenus()
-        State.ws.sendPacket(new Packet("player-perform-turn", { game_id: State.game.id, target_id: ""}))
+        State.ws.sendPacket(new Packet("player-perform-turn", { game_id: State.game.id, target_id: "" }))
     }
     public on_turn(): void {
         new ActionMenu("Identität erfahren", "Klicke auf den Spieler, von dem du die Identität erfahren möchtest. Klicke auf \"Keinem Spieler\", wenn du von niemandem die Identität erfahren möchtest oder bereits von allen die Identität erfahren hast.", false,
-        {
-            name: "Keinem Spieler",
-            onclick: () => {
-                State.ws.sendPacket(new Packet("player-perform-turn", { game_id: State.game.id, target_id: ""}))
-            }
-        }).show()
+            {
+                name: "Keinem Spieler",
+                onclick: () => {
+                    State.ws.sendPacket(new Packet("player-perform-turn", { game_id: State.game.id, target_id: "" }))
+                }
+            }).show()
     }
 }
 export class Amor extends Role {
@@ -275,23 +276,23 @@ export class Mattress extends Role {
         super(RoleName.MATTRESS)
     }
     public on_interact(p: Player): void {
-        if(this.previous_sleeping_by == p.id) {
+        if (this.previous_sleeping_by == p.id) {
             new Message("Du kannst bei " + p.name + " nicht schlafen, da du bereits bei diesem Spieler geschlafen hast.", 5000, Urgency.ERROR)
             return
         }
         removeAllActionMenus()
         new Message("Du schläfst diese Nacht bei " + p.name).display()
         this.previous_sleeping_by = p.id
-        State.ws.sendPacket(new Packet("player-perform-turn", { game_id: State.game.id, target_id: p.id}))
+        State.ws.sendPacket(new Packet("player-perform-turn", { game_id: State.game.id, target_id: p.id }))
     }
     public on_turn(): void {
         new ActionMenu("Schlafort auswählen", "Klicke auf den Spieler, bei dem du diese Nacht schlafen willst. Du kannst aber nicht zweimal hintereinander bei demselben Spieler schlafen. Bist du in dieser Nacht das Opfer, stirbst du nicht. Ist allerdings der Spieler das Opfer, bei dem du schläfst, so stirbst du auch. Wenn du bei niemandem schlafen willst, klicke auf \"Zuhause bleiben\"", false,
-        {
-            name: "Zuhause bleiben",
-            onclick: () => {
-                State.ws.sendPacket(new Packet("player-perform-turn", { game_id: State.game.id, target_id: "" }))
-            }
-        }).show()
+            {
+                name: "Zuhause bleiben",
+                onclick: () => {
+                    State.ws.sendPacket(new Packet("player-perform-turn", { game_id: State.game.id, target_id: "" }))
+                }
+            }).show()
     }
 }
 export class Villager extends Role {

@@ -223,6 +223,9 @@ export class Game {
     public roles_turn: RoleName[] = []
 
     private async roleTurnAndWait(...names: RoleName[]) {
+
+        console.log("---\n")
+
         this.roles_turn = names
         var tmp: boolean = false
         names.forEach(n => {
@@ -230,10 +233,12 @@ export class Game {
         })
         if (!tmp) return
 
+        console.log(...names)
         names.forEach(n => {
             getNewRoleByRoleName((<RoleName>getEnumKeyByEnumValue(RoleName, n)))!.sendTurn(this)
         })
 
+        console.log("waiting")
         await this.waitForTurnResponses(names)
 
         names.forEach(n => {

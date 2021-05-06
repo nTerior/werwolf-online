@@ -112,6 +112,12 @@ export class Werewolf extends Role {
     }
 
     public on_turn(): void {
+        new ActionMenu("Werwölfe", "Wenn du einen Spieler töten möchtest, klicke auf ihn. Sollten mehr als die Hälfte aller Werwölfe für dieses Opfer stimmen, so stirbt es.", false,
+            {
+                name: "Schließen",
+                onclick: () => { }
+            }
+        ).show()
     }
 }
 export class Girl extends Role {

@@ -156,7 +156,6 @@ export class Witch extends Role {
             {
                 name: "Nein",
                 onclick: () => {
-                    State.ws.sendPacket(new Packet("player-perform-turn", { game_id: State.game.id, target_id: "" }))
                 }
             }).show()
     }

@@ -47,7 +47,9 @@ export class Game {
         await this.setDay()
         if (this.endGame()) return
 
-        if (this.round == 1) {
+        var majorIsLiving: boolean | undefined = !this.players.find(p => p.major)?.dead
+
+        if (this.round == 1 || majorIsLiving == false || majorIsLiving == undefined) {
             await this.majorVoteAndWait()
         }
 

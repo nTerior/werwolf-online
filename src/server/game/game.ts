@@ -64,7 +64,10 @@ export class Game {
         if (!won) return false
 
         this.players.forEach(p => {
-            p.ws.send(new Packet("recv-status-message", { msg: "Die " + (won == won_loved ? "Verliebten" : won == won_villagers ? "Dorfbewohner" : "Werwölfe") + " haben gewonnen!", dur: -1 }).serialize())
+            if (won != -1)
+                p.ws.send(new Packet("recv-status-message", { msg: "Die " + (won == won_loved ? "Verliebten" : won == won_villagers ? "Dorfbewohner" : "Werwölfe") + " haben gewonnen!", dur: -1 }).serialize())
+            else
+                p.ws.send(new Packet("recv-status-message", { msg: "Unentschieden!", dur: -1 }).serialize())
 
             var packet: Packet = new Packet("game-lost")
             if (p.role!.name == RoleName.WEREWOLF && won == won_werewolves) {
@@ -84,24 +87,27 @@ export class Game {
     }
 
     private checkWon(): number {
+        var livingPlayers: number = 0;
+
         var werewolves: number = 0;
         var loved: number = 0;
         var villagers: number = 0;
 
         this.players.forEach(p => {
             if (p.dead) return
-
-            if (p.role!.name == RoleName.WEREWOLF) werewolves++
-            else if (!p.inLove) villagers++
+            livingPlayers++
 
             if (p.inLove) loved++
+
+            if (p.role!.name == RoleName.WEREWOLF) werewolves++
+            else villagers++
         })
 
-        if (loved && !werewolves && !villagers) return won_loved
+        if (loved && livingPlayers == 2) return won_loved
         if (werewolves && !villagers) return won_werewolves
         if (villagers && !werewolves) return won_villagers
 
-        if (this.players.filter(e => !e.dead).length == 0) return -1
+        if (livingPlayers == 0) return -1
         return 0
     }
 

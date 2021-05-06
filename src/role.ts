@@ -7,12 +7,12 @@ import { Packet } from "./packet"
 import { Game } from "./server/game/game"
 
 export enum RoleName {
+    AMOR = "Amor",
+    MATTRESS = "Matratze",
     WEREWOLF = "Werwolf",
     GIRL = "Mädchen",
     WITCH = "Hexe",
     SEER = "Seherin",
-    AMOR = "Amor",
-    MATTRESS = "Matratze",
     VILLAGER = "Dorfbewohner",
     HUNTER = "Jäger"
 }

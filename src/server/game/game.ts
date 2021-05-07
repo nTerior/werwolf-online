@@ -238,6 +238,7 @@ export class Game {
             if (this.settings?.settings.role_settings[n] != 0) tmp = true
         })
         if (!tmp) return
+        console.log(...names)
 
         names.forEach(n => {
             getNewRoleByRoleName((<RoleName>getEnumKeyByEnumValue(RoleName, n)))!.sendTurn(this)

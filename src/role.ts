@@ -70,7 +70,6 @@ export abstract class Role {
         game.players.forEach(p => {
             if (p.role?.name == this.name && !p.dead) {
                 p.ws.send(new Packet("your-turn").serialize())
-                console.log(p.name)
             }
         })
     }

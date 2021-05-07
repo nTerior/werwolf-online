@@ -81,6 +81,22 @@ export class Player {
     async killDay(ignore_love: boolean = false) {
         console.log("Player " + this.name + " killed on day in game " + this.game.id)
 
+        if (this.role!.name == RoleName.HUNTER) {
+            this.ws.send(new Packet("activate-hunter").serialize())
+            await new Promise<void>(res => {
+
+                this.game.events.on("hunter-perform-kill", target_id => {
+                    if (target_id == undefined) {
+                        res()
+                        return
+                    }
+
+                    this.game.getPlayer(target_id)?.killDay()
+                    res()
+                })
+            })
+        }
+
         this.game.settings!.settings.role_settings[this.role!.name]!--
         this.ws.send(new Packet("you-died").serialize())
 

@@ -350,7 +350,7 @@ async function handlePlayerInteraction(p: Player) {
                     if (res)
                         currentState = "day"
                     else
-                        new Message("Ein Fehler ist aufgetreten! Bitte versuche es gleich noch ein mal", 2000, Urgency.ERROR).display()
+                        new Message(p.name + " wurde bereits angeklagt.", 2000, Urgency.ERROR).display()
                 }
             },
             {

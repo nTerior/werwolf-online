@@ -118,9 +118,12 @@ const packetHandler: { [key: string]: (data: any, ws: lws, wsid: string) => Prom
     "daySuggestVote": async (data, ws, wsid) => {
         var game: Game = getGame(data["game_id"])!
         var player = game.getPlayer(wsid)!
+
         if (player.dead) return {}
+
         var target = game.getPlayer(data["suggestion"])!
         if (!game.dayVoteSuggestions.includes(target)) {
+            console.log(target.name + " wurde als Schuldiger vorgeschlagen")
             game.dayVoteSuggestions.push(target)
             game.players.forEach(p => {
                 p.ws.send(new Packet("recv-status-message", player.name + " hat " + target.name + " angeklagt.").serialize())
@@ -128,6 +131,7 @@ const packetHandler: { [key: string]: (data: any, ws: lws, wsid: string) => Prom
             })
             return { result: true }
         }
+
         return { result: false }
     },
     "dayVoted": async (data, ws, wsid) => {

@@ -259,6 +259,7 @@ export class Game {
         this.majorVotes = []
         this.roles_turn = []
         this.werewolf_target_list = []
+        this.dayVoteSuggestions = []
 
         if (this.werewolf_prey) {
             await this.getPlayer(this.werewolf_prey)?.killNight()

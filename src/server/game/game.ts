@@ -237,6 +237,7 @@ export class Game {
         names.forEach(n => {
             if (this.settings?.settings.role_settings[n] != 0) tmp = true
         })
+        console.log(this.settings?.settings?.role_settings[names[0]])
         if (!tmp) return
         console.log(...names)
 

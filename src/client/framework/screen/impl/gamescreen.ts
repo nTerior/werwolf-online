@@ -296,8 +296,8 @@ function createUser(p: Player): HTMLDivElement {
     var div = document.createElement("div")
     div.classList.add("game-player", "clickable")
     div.id = "game-player-" + p.id
-    div.onclick = _ev => {
-        handlePlayerInteraction(p)
+    div.onclick = async _ev => {
+        await handlePlayerInteraction(p)
     }
 
     var img = p.getImage()
@@ -323,7 +323,7 @@ export function updatePlayer(id: string) {
     (<HTMLImageElement>(div.getElementsByClassName("game-player-image")[0])).src = State.game.players.find(e => e.id == id)!.getImage().src
 }
 
-function handlePlayerInteraction(p: Player) {
+async function handlePlayerInteraction(p: Player) {
     if (State.game.getSelfPlayer().dead) return
 
     if (currentState == "turn") {
@@ -342,13 +342,15 @@ function handlePlayerInteraction(p: Player) {
                 onclick: () => { }
             }).show()
     } else if (currentState == "dayVote") {
-        console.log(currentState)
         new ActionMenu("Anklage", "Möchtest du " + p.name + " wirklich anklagen?", false,
             {
                 name: "Ja",
-                onclick: () => {
-                    currentState = "day"
-                    State.ws.sendPacket(new Packet("daySuggestVote", { game_id: State.game.id, suggestion: p.id }))
+                onclick: async () => {
+                    var res = (await State.ws.sendAndRecvPacket(new Packet("daySuggestVote", { game_id: State.game.id, suggestion: p.id }))).data
+                    if (res)
+                        currentState = "day"
+                    else
+                        new Message("Ein Fehler ist aufgetreten! Bitte versuche es gleich noch ein mal", 2000, Urgency.ERROR).display()
                 }
             },
             {

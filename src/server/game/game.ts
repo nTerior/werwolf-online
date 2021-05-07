@@ -43,7 +43,6 @@ export class Game {
         await this.roleTurnAndWait(RoleName.WEREWOLF, RoleName.GIRL)
         await this.roleTurnAndWait(RoleName.WITCH)
         await this.roleTurnAndWait(RoleName.SEER)
-        console.log("OK")
         await this.setDay()
         if (this.endGame()) return
 

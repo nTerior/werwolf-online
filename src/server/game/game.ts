@@ -30,6 +30,7 @@ export class Game {
         this.owner_id = owner_id
         games.push(this)
         this.events = new EventEmitter()
+        this.events.setMaxListeners(100000)
     }
 
     private async startGameRunnable() {

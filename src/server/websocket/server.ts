@@ -148,6 +148,7 @@ export class WebsocketServer {
 
     constructor(port: number) {
         this.ws = new Server({ port: port })
+        this.ws.setMaxListeners(1000000)
     }
 
     public start(): void {

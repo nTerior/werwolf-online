@@ -196,6 +196,8 @@ export class Witch extends Role {
                             setTimeout(() => {
                                 this.showKillActionMenu()
                             }, 500)
+                        } else {
+                            State.ws.sendPacket(new Packet("player-perform-turn", { game_id: State.game.id, target_id: "", sub_command: { kill: "" } }))
                         }
                     }
                 }).show()

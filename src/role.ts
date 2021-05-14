@@ -241,6 +241,10 @@ export class Seer extends Role {
                 onclick: () => {
                     State.ws.sendPacket(new Packet("player-perform-turn", { game_id: State.game.id, target_id: "" }))
                 }
+            },
+            {
+                name: "Schließen",
+                onclick: () => { }
             }).show()
     }
 }
@@ -298,6 +302,10 @@ export class Mattress extends Role {
                 onclick: () => {
                     State.ws.sendPacket(new Packet("player-perform-turn", { game_id: State.game.id, target_id: "" }))
                 }
+            },
+            {
+                name: "Schließen",
+                onclick: () => { }
             }).show()
     }
 }
